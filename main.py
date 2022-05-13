@@ -4,7 +4,7 @@ import pandas as pd
 import os
 import glob
 
-
+# test
 paths = ['/Users/melissamarius/Documents/all_csv/lucifer', '/Users/melissamarius/Documents/all_csv/seven_diff',
          '/Users/melissamarius/Documents/all_csv/symmetry', '/Users/melissamarius/Documents/all_csv/where_is_tockie']
 tasks = ['lucifer', 'seven_diff', 'symmetry', 'wit']
