@@ -34,13 +34,16 @@ def success_rate_with_time(df):
 
 
 def plot_success_rate(df):
-    return plt.plot(np.arange(0, len(success_rate_with_time(df))), success_rate_with_time(df))
+    return plt.plot(np.arange(0, len(success_rate_with_time(df))), success_rate_with_time(df),label=df['id_candidate'][3])
 
 
-for path in paths:
+for path, task in zip(paths,tasks):
     csv_files = glob.glob(os.path.join(path, "*.csv"))
-    plt.figure('Représentation des pourcentages de réussites en fonction du temps')
+    plt.figure()
+    plt.title(f'Pourcentages de réussites en fonction des essais pour la tache {task}')
     for f in csv_files:
         df_csv = pd.read_csv(f, encoding='ISO-8859-1')
         plot_success_rate(df_csv)
+    plt.legend()
     plt.show()
+
