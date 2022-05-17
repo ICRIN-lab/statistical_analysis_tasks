@@ -4,7 +4,9 @@ import numpy as np
 import pandas as pd
 
 
+
 class seven_diff(Template_Task_Statistics):
+    path = '../seven_diff/csv'
 
     def plot_pourcentage(self, mental_disorder=True, disorder='all', type_image="all"):
         """
@@ -41,5 +43,4 @@ class seven_diff(Template_Task_Statistics):
         tab.columns = ['Id', 'Success_rate', 'Average_reaction_time', 'max_reaction_time', 'min_reaction_time']
         return tab
 
-a = seven_diff('/Users/melissamarius/Documents/all_csv/seven_diff')
-a.plot_pourcentage()
+
