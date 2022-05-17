@@ -75,7 +75,7 @@ class Template_Task_Statistics:
         :return:  a barplot of the average success_rate per disorder
         """
         if disorder == 'all':
-            plt.boxplot(self.stats(wit)['Success_rate']) #Faux, a refaire pour chq caté
+            plt.boxplot(self.stats(wit)['Success_rate']) #Faux, a refaire pour chq caté (ici pr chq personne)
 
     def boxplot_reaction_time(self, disorder='all'):
         """

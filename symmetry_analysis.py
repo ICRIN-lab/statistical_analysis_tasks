@@ -18,3 +18,4 @@ class symmetry(Template_Task_Statistics):
                 plt.plot(tab, color='k')
         plt.legend(['no-disorder', disorder])
         plt.show()
+

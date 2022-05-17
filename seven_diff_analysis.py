@@ -43,4 +43,3 @@ class seven_diff(Template_Task_Statistics):
         tab.columns = ['Id', 'Success_rate', 'Average_reaction_time', 'max_reaction_time', 'min_reaction_time']
         return tab
 
-
