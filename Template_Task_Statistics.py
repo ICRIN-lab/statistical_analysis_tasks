@@ -7,9 +7,9 @@ import os
 
 class Template_Task_Statistics:
     csv_summary = []
-    redcap_csv = pd.read_csv
+    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-05-17_1439.csv', encoding='ISO-8859-1')
     list_disorder = ['all', 'toc', 'du', 'db', 'ta', 'tus', 's']
-    path = []
+    path = '/Users/melissamarius/Documents/all_csv/where_is_tockie'
 
     def __init__(self, disorder='all', pratice=False):
         """
@@ -18,6 +18,7 @@ class Template_Task_Statistics:
         self.disorder = disorder
         self.csv_files = glob.glob(os.path.join(self.path, "*.csv"))
         self.df_files = [pd.read_csv(f, encoding='ISO-8859-1') for f in self.csv_files]
+
         """ Deleting all the lines corresponding to the pratice from all the csv
         """
         if not pratice:
@@ -29,7 +30,7 @@ class Template_Task_Statistics:
 
     def get_list_patients(self, disorder="all"):
         """"
-        :return an array with 1 if the subject has the considered disorder and 0 otherwise
+        :return an array with the id of the subject and 1 if the subject has the considered disorder and 0 otherwise
         """
         all_disorder = np.array(self.redcap_csv['diagnostic_principal'])
         if disorder == 'all':
@@ -37,7 +38,7 @@ class Template_Task_Statistics:
         else:
             list_patients = np.where(all_disorder != self.list_disorder.index(disorder), -1)
             list_patients = np.where(list_patients == self.list_disorder.index(disorder), 1)
-        return list_patients
+        return [self.redcap_csv['record_id'], list_patients]
 
     def success_rate_trials(self, df):
         """
@@ -58,27 +59,30 @@ class Template_Task_Statistics:
         if wit:
             for df in self.df_files:
                 count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
-                tab.happen(np.array([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                                     sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot)])).T
+                tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
+                                     sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot)])
             tab = pd.DataFrame(tab)
-            tab.columns = ['Sucess_rate', 'Average_reaction_time', 'Maximum_reaction time', 'Average_count_image',
-                           'Maximum_count_image', 'Minimum_count_image']
+            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'average_count_image',
+                           'maximum_count_image', 'minimum_count_image']
         else:
             for df in self.df_files:
-                tab.happen(np.array([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time'])])).T
-                tab = pd.DataFrame(tab)
-            tab.columns = ['Sucess_rate', 'Average_reaction_time', 'Maximum_reaction time']
+                tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time'])])
+            tab = pd.DataFrame(tab)
+            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time']
         return tab
 
     def boxplot_success_rate(self, wit=False, disorder='all'):
         """
         :return:  a barplot of the average success_rate per disorder
         """
-        if disorder == 'all':
-            plt.boxplot(self.stats(wit)['Success_rate']) #Faux, a refaire pour chq caté (ici pr chq personne)
+        success = pd.DataFrame(self.stats(wit)['success_rate'], self.get_list_patients(disorder))
+        plt.boxplot(success)
+        plt.barplot(success)
 
     def boxplot_reaction_time(self, disorder='all'):
         """
         :return: a barplot of the average reaction time per disorder
         """
 
+a=Template_Task_Statistics()
+print(a.stats(wit=True)['average_count_image'])
