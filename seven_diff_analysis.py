@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 
 
-
 class seven_diff(Template_Task_Statistics):
     path = '../seven_diff/csv'
 
@@ -21,9 +20,12 @@ class seven_diff(Template_Task_Statistics):
         if type_image == 'chess':
             lim = np.array([151, 200])
 
+        list_patients = self.get_list_patients(disorder)
         plt.figure()
         plt.title(f'Success rate for the task seven diff regarding trials (part = {type_image})')
-        for (df, i) in zip(self.df_files, self.get_list_patients(disorder))[:, 1]:
+        for df in self.df_files:
+            id = str(df['id_candidate'][10])[8:11]
+            i = list_patients[list_patients[1, :] == id][2]
             if i != 1:
                 tab = self.success_rate_trials(df)
                 if mental_disorder:
@@ -34,6 +36,3 @@ class seven_diff(Template_Task_Statistics):
                 plt.legend(['no-disorder', disorder])
         plt.xlim(lim[0], lim[1])
         plt.show()
-
-
-

@@ -56,19 +56,24 @@ class Template_Task_Statistics:
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
         tab = []
+        list_patients = self.get_list_patients()
         if wit:
             for df in self.df_files:
+                id = str(df['id_candidate'][10])[8:11]
+                disorder = list_patients[list_patients[1, :] == id][2]
                 count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
                 tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                                     sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot)])
+                                     sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot), disorder])
             tab = pd.DataFrame(tab)
             tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'average_count_image',
-                           'maximum_count_image', 'minimum_count_image']
+                           'maximum_count_image', 'minimum_count_image', 'disorder']
         else:
             for df in self.df_files:
-                tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time'])])
+                id = str(df['id_candidate'][10])[8:11]
+                disorder = list_patients[list_patients[1, :] == id][2]
+                tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']), 'disorder'])
             tab = pd.DataFrame(tab)
-            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time']
+            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'disorder']
         return tab
 
     def boxplot_success_rate(self, wit=False, disorder='all'):
@@ -83,6 +88,3 @@ class Template_Task_Statistics:
         """
         :return: a barplot of the average reaction time per disorder
         """
-
-a=Template_Task_Statistics()
-print(a.stats(wit=True)['average_count_image'])
