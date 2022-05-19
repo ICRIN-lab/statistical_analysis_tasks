@@ -14,7 +14,7 @@ class Template_Task_Statistics:
 
     def __init__(self, disorder='all', pratice=False):
         """
-        :param pratice: if you want to keep to the pratice in the analysis put pratice=True
+        :param pratice: if you want to keep to the pratice in the other put pratice=True
         """
         self.disorder = disorder
         self.csv_files = glob.glob(os.path.join(self.path, "*.csv"))
@@ -91,7 +91,7 @@ class Template_Task_Statistics:
         plt.show()
         # plt.boxplot(success)
         plt.figure()
-        plt.barplot(mean_success)
+        plt.bar(mean_success)
         plt.show()
 
     def boxplot_reaction_time(self, disorder='all'):
@@ -108,7 +108,7 @@ class Template_Task_Statistics:
         plt.show()
         # plt.boxplot(time)
         plt.figure()
-        plt.barplot(mean_time)
+        plt.bar(mean_time)
         plt.show()
 
 

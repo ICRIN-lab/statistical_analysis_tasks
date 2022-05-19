@@ -71,6 +71,5 @@ for path, task in zip(paths, tasks):
             tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time']
         return tab
 
-a = pd.read_csv('/Users/melissamarius/Documents/all_csv/where_is_tockie/QUI_KEV_001_2022-05-11_18h07.csv',
-                encoding='ISO-8859-1')
-print(int(str(a['id_candidate'][1])[8:11]))
+
+

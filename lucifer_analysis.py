@@ -38,3 +38,4 @@ class lucifer(Template_Task_Statistics):
                     plt.plot(tab, color='k')
             if mental_disorder:
                 plt.legend(['no-disorder', disorder])
+            plt.show()
