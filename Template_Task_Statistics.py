@@ -7,7 +7,8 @@ import os
 
 class Template_Task_Statistics:
     csv_summary = []
-    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-05-17_1439.csv', encoding='ISO-8859-1')
+    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-05-17_1439.csv',
+                             encoding='ISO-8859-1')
     list_disorder = ['all', 'toc', 'du', 'db', 'ta', 'tus', 's']
     path = '/Users/melissamarius/Documents/all_csv/where_is_tockie'
 
@@ -60,31 +61,56 @@ class Template_Task_Statistics:
         if wit:
             for df in self.df_files:
                 id = str(df['id_candidate'][10])[8:11]
-                disorder = list_patients[list_patients[1, :] == id][2]
+                disorder_id = list_patients[list_patients[1, :] == id][2]
                 count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
                 tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                                     sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot), disorder])
+                            sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot), disorder_id])
             tab = pd.DataFrame(tab)
             tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'average_count_image',
                            'maximum_count_image', 'minimum_count_image', 'disorder']
         else:
             for df in self.df_files:
                 id = str(df['id_candidate'][10])[8:11]
-                disorder = list_patients[list_patients[1, :] == id][2]
-                tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']), 'disorder'])
+                disorder_id = list_patients[list_patients[0, :] == id][1]
+                tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
+                            disorder_id])
             tab = pd.DataFrame(tab)
             tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'disorder']
         return tab
 
-    def boxplot_success_rate(self, wit=False, disorder='all'):
+    def boxplot_success_rate(self, disorder='all'):
         """
-        :return:  a barplot of the average success_rate per disorder
+        :return:  a boxplot and a barplot of the average success_rate per disorder
         """
-        success = pd.DataFrame(self.stats(wit)['success_rate'], self.get_list_patients(disorder))
-        plt.boxplot(success)
-        plt.barplot(success)
+        success = pd.DataFrame({"No_disorder": self.stats()['disorder_id' == 0]['success_rate'], disorder:
+            self.stats()['disorder_id' == self.list_disorder.index(disorder)][
+                'success_rate']})
+        mean_success = success.apply(np.mean, axis=1)
+        plt.figure()
+        success[['No_disorder', disorder]].plot(kind='box', title=f'Comparaison of success rate for {disorder}')
+        plt.show()
+        # plt.boxplot(success)
+        plt.figure()
+        plt.barplot(mean_success)
+        plt.show()
 
     def boxplot_reaction_time(self, disorder='all'):
         """
-        :return: a barplot of the average reaction time per disorder
+        :return: a boxplot and a barplot of the average reaction time per disorder
         """
+        time = pd.DataFrame({"No_disorder": self.stats()['disorder_id' == 0]['average_reaction_time'], disorder:
+            self.stats()['disorder_id' == self.list_disorder.index(disorder)][
+                'average_reaction_time']})
+        mean_time = time.apply(np.mean, axis=1)
+
+        plt.figure()
+        time[['No_disorder', disorder]].plot(kind='box', title=f'Comparaison of average reaction time for {disorder}')
+        plt.show()
+        # plt.boxplot(time)
+        plt.figure()
+        plt.barplot(mean_time)
+        plt.show()
+
+
+a = Template_Task_Statistics()
+a.get_list_patients()
