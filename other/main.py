@@ -40,13 +40,13 @@ def plot_success_rate(df):
 
 for path, task in zip(paths, tasks):
     csv_files = glob.glob(os.path.join(path, "*.csv"))
-    plt.figure()
-    plt.title(f'Pourcentages de réussites en fonction des essais pour la tache {task}')
+    #plt.figure()
+    #plt.title(f'Pourcentages de réussites en fonction des essais pour la tache {task}')
     for f in csv_files:
         df_csv = pd.read_csv(f, encoding='ISO-8859-1')
         plot_success_rate(df_csv)
-    plt.legend()
-    plt.show()
+    #plt.legend()
+    #plt.show()
 
 
     def stats(self, wit=False):
@@ -70,6 +70,7 @@ for path, task in zip(paths, tasks):
                 tab = pd.DataFrame(tab)
             tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time']
         return tab
+
 
 
 

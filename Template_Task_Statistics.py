@@ -7,10 +7,9 @@ import os
 
 class Template_Task_Statistics:
     csv_summary = []
-    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-05-17_1439.csv',
-                             encoding='ISO-8859-1')
+    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-05-19_1532.csv')
     list_disorder = ['all', 'toc', 'du', 'db', 'ta', 'tus', 's']
-    path = '/Users/melissamarius/Documents/all_csv/where_is_tockie'
+    path = '../get_csv_cog_tasks/all_csv/seven_diff'
 
     def __init__(self, disorder='all', pratice=False):
         """
@@ -24,7 +23,7 @@ class Template_Task_Statistics:
         """
         if not pratice:
             i = 0
-            while self.df_files[1].no_trial[i] != 0:
+            while self.df_files[0].no_trial[i] != 0:
                 i += 1
             for j in range(len(self.df_files)):
                 self.df_files[j] = self.df_files[j].drop(np.arange(i))
@@ -37,9 +36,9 @@ class Template_Task_Statistics:
         if disorder == 'all':
             list_patients = np.where(all_disorder == 0, 0, 1)
         else:
-            list_patients = np.where(all_disorder != self.list_disorder.index(disorder), -1)
-            list_patients = np.where(list_patients == self.list_disorder.index(disorder), 1)
-        return [self.redcap_csv['record_id'], list_patients]
+            list_patients = np.select([all_disorder == 0, all_disorder == self.list_disorder.index(disorder)],
+                                      [0, 1], -1)
+        return pd.DataFrame(np.array([np.array(self.redcap_csv.record_id), list_patients]).T)
 
     def success_rate_trials(self, df):
         """
@@ -57,23 +56,22 @@ class Template_Task_Statistics:
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
         tab = []
-        list_patients = self.get_list_patients()
         if wit:
             for df in self.df_files:
-                id = str(df['id_candidate'][10])[8:11]
-                disorder_id = list_patients[list_patients[1, :] == id][2]
+                id = int(str(df['id_candidate'].tail(1).item())[8:11])
+                disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
                 count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
                 tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                            sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot), disorder_id])
+                            sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot), int(disorder_id)])
             tab = pd.DataFrame(tab)
             tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'average_count_image',
                            'maximum_count_image', 'minimum_count_image', 'disorder']
         else:
             for df in self.df_files:
-                id = str(df['id_candidate'][10])[8:11]
-                disorder_id = list_patients[list_patients[0, :] == id][1]
+                id = int(str(df['id_candidate'].tail(1).item())[8:11])
+                disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
                 tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                            disorder_id])
+                            int(disorder_id)])
             tab = pd.DataFrame(tab)
             tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'disorder']
         return tab
@@ -112,5 +110,8 @@ class Template_Task_Statistics:
         plt.show()
 
 
-a = Template_Task_Statistics()
-a.get_list_patients()
+
+a=Template_Task_Statistics()
+list_patients = a.get_list_patients(disorder='du')
+
+print(list_patients[list_patients[0]==2][1])

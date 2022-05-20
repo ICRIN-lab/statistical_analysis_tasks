@@ -2,8 +2,8 @@ from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import numpy as np
 
-class symmetry(Template_Task_Statistics):
-    path = '../symmetry/csv'
+class symmetry_analysis(Template_Task_Statistics):
+    path = '../get_csv_cog_tasks/all_csv/symmetry'
 
     def plot_pourcentage(self, mental_disorder=True, disorder='all'):
         """
@@ -11,12 +11,14 @@ class symmetry(Template_Task_Statistics):
         :param disorder: the disorder you are interested in
         """
         col = ['black', 'red']
+        labels = ['no-disorder', disorder]
+        custom_lines = [plt.Line2D([0], [0], color='black', lw=4), plt.Line2D([0], [0], color='red', lw=4)]
         list_patients = self.get_list_patients(disorder)
         plt.figure()
         plt.title(f'Success rate for the task symmetry regarding trials')
         for df in self.df_files:
-            id = str(df['id_candidate'][10])[8:11]
-            i = list_patients[list_patients[0, :] == id][1]
+            id = int(str(df['id_candidate'].tail(1).item())[8:11])
+            i = int(list_patients[list_patients[0] == id][1])
             if i != -1:
                 tab = self.success_rate_trials(df)
                 if mental_disorder:
@@ -24,5 +26,8 @@ class symmetry(Template_Task_Statistics):
                 else:
                     plt.plot(tab, color='k')
             if mental_disorder:
-                plt.legend(['no-disorder', disorder])
+                plt.legend(custom_lines, labels)
         plt.show()
+
+a = symmetry_analysis()
+print(a.plot_pourcentage(disorder='toc'))
