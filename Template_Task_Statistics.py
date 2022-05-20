@@ -11,11 +11,10 @@ class Template_Task_Statistics:
     list_disorder = ['all', 'toc', 'du', 'db', 'ta', 'tus', 's']
     path = '../get_csv_cog_tasks/all_csv/seven_diff'
 
-    def __init__(self, disorder='all', pratice=False):
+    def __init__(self, pratice=False):
         """
         :param pratice: if you want to keep to the pratice in the other put pratice=True
         """
-        self.disorder = disorder
         self.csv_files = glob.glob(os.path.join(self.path, "*.csv"))
         self.df_files = [pd.read_csv(f, encoding='ISO-8859-1') for f in self.csv_files]
 
@@ -64,7 +63,7 @@ class Template_Task_Statistics:
                 tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
                             sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot), int(disorder_id)])
             tab = pd.DataFrame(tab)
-            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'average_count_image',
+            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction_time', 'average_count_image',
                            'maximum_count_image', 'minimum_count_image', 'disorder']
         else:
             for df in self.df_files:
@@ -73,45 +72,11 @@ class Template_Task_Statistics:
                 tab.append([np.mean(df['result']), np.mean(df['reaction_time']), np.max(df['reaction_time']),
                             int(disorder_id)])
             tab = pd.DataFrame(tab)
-            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction time', 'disorder']
+            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction_time', 'disorder']
         return tab
 
-    def boxplot_success_rate(self, disorder='all'):
+    def boxplot_average(self, category='success_rate', *args):
         """
-        :return:  a boxplot and a barplot of the average success_rate per disorder
+        :param category: the category of the output of stats that you want to see
+        :return: a boxplot and a barplot of the average success rate or average reaction time per disorder
         """
-        success = pd.DataFrame({"No_disorder": self.stats()['disorder_id' == 0]['success_rate'], disorder:
-            self.stats()['disorder_id' == self.list_disorder.index(disorder)][
-                'success_rate']})
-        mean_success = success.apply(np.mean, axis=1)
-        plt.figure()
-        success[['No_disorder', disorder]].plot(kind='box', title=f'Comparaison of success rate for {disorder}')
-        plt.show()
-        # plt.boxplot(success)
-        plt.figure()
-        plt.bar(mean_success)
-        plt.show()
-
-    def boxplot_reaction_time(self, disorder='all'):
-        """
-        :return: a boxplot and a barplot of the average reaction time per disorder
-        """
-        time = pd.DataFrame({"No_disorder": self.stats()['disorder_id' == 0]['average_reaction_time'], disorder:
-            self.stats()['disorder_id' == self.list_disorder.index(disorder)][
-                'average_reaction_time']})
-        mean_time = time.apply(np.mean, axis=1)
-
-        plt.figure()
-        time[['No_disorder', disorder]].plot(kind='box', title=f'Comparaison of average reaction time for {disorder}')
-        plt.show()
-        # plt.boxplot(time)
-        plt.figure()
-        plt.bar(mean_time)
-        plt.show()
-
-
-
-
-
-
-

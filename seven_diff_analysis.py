@@ -28,37 +28,57 @@ class seven_diff_analysis(Template_Task_Statistics):
 
         plt.figure()
         plt.title(f'Success rate for the task seven diff regarding trials (part = {type_image})')
+        n1 = 0
+        n2 = 0
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
-            i= int(list_patients[list_patients[0] == id][1])
+            i = int(list_patients[list_patients[0] == id][1])
             if i != -1:
                 tab = self.success_rate_trials(df)
                 if mental_disorder:
                     plt.plot(tab, color=col[i])
+                    if i == 0:
+                        n1 += 1
+                    else:
+                        n2 += 1
                 else:
                     plt.plot(tab, color='k')
+
             if mental_disorder:
-                plt.legend(custom_lines, ['no-disorder', disorder])
+                plt.legend(custom_lines, [f'no-disorder (n={n1})', f'{disorder} (n={n2})'])
         plt.xlim(lim[0], lim[1])
+        plt.ylabel('success rate')
+        plt.xlabel('number of trials')
         plt.show()
 
-    def boxplot_reaction_time(self, disorder='all', type_image="all"):
+    def boxplot_average(self, category='success_rate', disorder='all', type_image="all"):
         """
         :param type_image: the type or image you are interested between all, various, calligraphy and chess
         """
+        stats = self.stats()
+        if disorder == 'all':
+            success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
+                                    disorder: stats[stats['disorder'] != 0][
+                                        category]})
+            mean_success = success.apply(np.mean, axis=1)
+        else:
+            success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
+                                    disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
+                                        category]})
+            mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
+                            np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
 
-        success = pd.DataFrame({"No_disorder": self.stats()['disorder_id' == 0]['success_rate'], disorder:
-            self.stats()['disorder_id' == self.list_disorder.index(disorder)][
-                'success_rate']})
-        mean_success = success.apply(np.mean, axis=1)
         plt.figure()
-        success[['No_disorder', disorder]].plot(kind='box', title=f'Comparaison of success rate for {disorder}')
+        success[['No_disorder', disorder]].plot(kind='box', title=f'Boxplot of {category} for the task seven diff')
         plt.show()
-        # plt.boxplot(success)
+
         plt.figure()
-        plt.bar(mean_success)
+        plt.title(f'Comparaison of {category} for the task seven diff')
+        plt.bar(range(len(mean_success)), mean_success, color=['black', 'darkred'])
+        plt.xticks(range(len(mean_success)), ['No-disorder', disorder])
         plt.show()
 
 
 a = seven_diff_analysis()
-print(a.plot_pourcentage(disorder='toc', type_image='various'))
+stats = a.stats()
+a.boxplot_average(category='maximum_reaction_time', disorder='toc')

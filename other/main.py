@@ -40,8 +40,8 @@ def plot_success_rate(df):
 
 for path, task in zip(paths, tasks):
     csv_files = glob.glob(os.path.join(path, "*.csv"))
-    #plt.figure()
-    #plt.title(f'Pourcentages de réussites en fonction des essais pour la tache {task}')
+    plt.figure()
+    plt.title(f'Pourcentages de réussites en fonction des essais pour la tache {task}')
     for f in csv_files:
         df_csv = pd.read_csv(f, encoding='ISO-8859-1')
         plot_success_rate(df_csv)
