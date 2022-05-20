@@ -111,7 +111,7 @@ class Template_Task_Statistics:
 
 
 
-a=Template_Task_Statistics()
-list_patients = a.get_list_patients(disorder='du')
 
-print(list_patients[list_patients[0]==2][1])
+
+
+

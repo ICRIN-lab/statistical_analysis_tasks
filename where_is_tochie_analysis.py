@@ -30,3 +30,6 @@ class where_is_tochie_analysis(Template_Task_Statistics):
             if mental_disorder:
                 plt.legend(custom_lines, ['no-disorder', disorder])
         plt.show()
+
+w=where_is_tochie_analysis()
+w.plot_pourcentage()

@@ -28,6 +28,9 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.figure()
         plt.title(f'Success rate for the task lucifer regarding trials (type_lucifer = {type_lucifer})')
         for df in self.df_files:
+            if type_lucifer != 'all':
+                trial_lucifer = self.csv_type_lucifer[self.csv_type_lucifer['type'] == type_lucifer]['no_trial']
+                #df = df[df['no_trial'] == trial_lucifer]
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
             i = int(list_patients[list_patients[0] == id][1])
             if i != -1:
@@ -37,5 +40,9 @@ class lucifer_analysis(Template_Task_Statistics):
                 else:
                     plt.plot(tab, color='k')
             if mental_disorder:
-                plt.legend(custom_lines,['no-disorder', disorder])
+                plt.legend(custom_lines, ['no-disorder', disorder])
         plt.show()
+
+
+l = lucifer_analysis()
+l.plot_pourcentage(type_lucifer='straight')
