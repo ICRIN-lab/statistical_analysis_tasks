@@ -9,11 +9,11 @@ class lucifer_analysis(Template_Task_Statistics):
     csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
     path = '../get_csv_cog_tasks/all_csv/lucifer'
 
-    def get_no_trials(self, type_lucifer='all'):
-        if type_lucifer == 'all':
+    def get_no_trials(self, type='all'):
+        if type == 'all':
             return self.csv_type_lucifer['no_trial']
         else:
-            return self.csv_type_lucifer[self.csv_type_lucifer['type'] == type_lucifer]['no_trial']
+            return self.csv_type_lucifer[self.csv_type_lucifer['type'] == type]['no_trial']
 
     def plot_pourcentage(self, mental_disorder=True, disorder='all', type_lucifer='all', group='all'):
         """
@@ -51,7 +51,7 @@ class lucifer_analysis(Template_Task_Statistics):
 
     def boxplot_average(self, category='success_rate', disorder='all', type_lucifer='all'):
         if type_lucifer != 'all':
-            stats = self.stats(type=True, numbers_trials=self.get_no_trials(type_lucifer=type_lucifer))
+            stats = self.stats(specific_type=True, type=type_lucifer)
         else:
             stats = self.stats()
         if disorder == 'all':
@@ -82,4 +82,5 @@ class lucifer_analysis(Template_Task_Statistics):
 
 l = lucifer_analysis()
 
-l.boxplot_average(type_lucifer='straight')
+print(l.stats(specific_type=True, type='straight'))
+print(l.stats(specific_type=True, type='messy'))

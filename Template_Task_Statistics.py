@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import glob
 import os
+import scipy.stats as sps
 
 
 class Template_Task_Statistics:
@@ -78,33 +79,22 @@ class Template_Task_Statistics:
         """ Create a graph representing success rate depending on the number of trials
             """
 
-    def stats(self, wit=False, type=False, numbers_trials=[]):
+    def stats(self, specific_type=False, type='all'):
         """
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
+        numbers_trials = self.get_no_trials(type)
         tab = []
-        if wit:
-            for df in self.df_files:
-                if type == True:
-                    df = df[df['no_trial'].isin(numbers_trials)]
-                id = int(str(df['id_candidate'].tail(1).item())[8:11])
-                disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-                count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
-                tab.append([np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                            sum(count_tot) / len(count_tot), np.max(count_tot), np.min(count_tot), int(disorder_id)])
-            tab = pd.DataFrame(tab)
-            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction_time', 'average_count_image',
-                           'maximum_count_image', 'minimum_count_image', 'disorder']
-        else:
-            for df in self.df_files:
-                if type == True:
-                    df = df[df['no_trial'].isin(numbers_trials)]
-                id = int(str(df['id_candidate'].tail(1).item())[8:11])
-                disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-                tab.append([np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                            int(disorder_id)])
-            tab = pd.DataFrame(tab)
-            tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction_time', 'disorder']
+
+        for df in self.df_files:
+            if specific_type:
+                df = df[df['no_trial'].isin(numbers_trials)]
+            id = self.get_id(df)
+            disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
+            tab.append([np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
+                        int(disorder_id)])
+        tab = pd.DataFrame(tab)
+        tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction_time', 'disorder']
         return tab
 
     def boxplot_average(self, category='success_rate', *args):
@@ -113,6 +103,21 @@ class Template_Task_Statistics:
         :return: a boxplot and a barplot of the average success result of a certain category (choose among the columns
         of the output of stats()
         """
+
+    def group_comparison(self, specific_type=False, type='all', category='success_rate', disorder='all'):
+        """"
+        :param disorder:
+        :return:
+        """
+        X = self.stats(specific_type=specific_type, type=type)
+        X1 = np.array(X[X.disorder == 0][category])
+        X2 = np.array(X[X.disorder == self.list_disorder.index(disorder)][category])
+        if specific_type:
+            print(f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
+                  f' pour le type {type} , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
+        else:
+            print(f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
+                  f' , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
 
 
 a = Template_Task_Statistics()

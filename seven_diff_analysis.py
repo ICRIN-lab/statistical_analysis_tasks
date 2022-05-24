@@ -60,7 +60,7 @@ class seven_diff_analysis(Template_Task_Statistics):
         :param type_image: the type or image you are interested between all, various, calligraphy and chess
         """
         if type_image != 'all':
-            stats = self.stats(type=True, numbers_trials=self.get_no_trials(type_image=type_image))
+            stats = self.stats(specific_type=True, type=type_image)
         else:
             stats = self.stats()
         if disorder == 'all':
@@ -91,4 +91,4 @@ class seven_diff_analysis(Template_Task_Statistics):
 
 a = seven_diff_analysis()
 
-a.boxplot_average(type_image='chess')
+print(a.boxplot_average(category='average_reaction_time',type_image='calligraphy'))

@@ -8,6 +8,20 @@ import numpy as np
 class where_is_tockie_analysis(Template_Task_Statistics):
     path = '../get_csv_cog_tasks/all_csv/where_is_tockie'
 
+    def stats(self):
+        tab = []
+        for df in self.df_files:
+            id = int(str(df['id_candidate'].tail(1).item())[8:11])
+            disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
+            count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
+            tab.append([np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
+                        np.mean(count_tot), np.max(count_tot), np.min(count_tot),
+                        np.mean(df['result']) * 100 / np.mean(count_tot), int(disorder_id)])
+        tab = pd.DataFrame(tab)
+        tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction_time', 'average_count_image',
+                       'maximum_count_image', 'minimum_count_image', 'success/average_count_image', 'disorder']
+        return tab
+
     def plot_pourcentage(self, mental_disorder=True, disorder='all'):
         """
         :param mental_disorder: put False if you want all data without any distinction otherwise put True
@@ -39,7 +53,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         plt.show()
 
     def boxplot_average(self, category='success_rate', disorder='all'):
-        stats = self.stats(wit=True)
+        stats = self.stats()
         if disorder == 'all':
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] != 0][
@@ -58,12 +72,22 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         plt.show()
 
         plt.figure()
-        plt.title(f'Comparaison of {category} for the task where is tockie')
+        plt.title(f'Comparison of {category} for the task where is tockie')
         plt.bar(range(len(mean_success)), mean_success, color=self.col)
         plt.xticks(range(len(mean_success)), ['No-disorder', disorder])
         plt.ylabel(f'{category}')
         plt.show()
 
+    def count_image_analysis(self):
+        """ More results regarding the variable count_image
+    """
+        x = self.stats()
+        # count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
+        # for trial in range(len(df['no_trial'])):
+        # a = df.count_image[trial]
+        return x['success_rate'] / x['average_count_image']
+
 
 w = where_is_tockie_analysis()
-w.boxplot_average(category='maximum_count_image')
+print(w.count_image_analysis())
+print(w.boxplot_average(category='success/average_count_image'))
