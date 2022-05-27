@@ -6,7 +6,8 @@ import numpy as np
 
 
 class where_is_tockie_analysis(Template_Task_Statistics):
-    path = '../get_csv_cog_tasks/all_csv/where_is_tockie'
+    #path = '../get_csv_cog_tasks/all_csv/where_is_tockie'
+    path = '/Users/melissamarius/Documents/all_csv_provisoire/where_is_tockie'
 
     def stats(self):
         tab = []
@@ -58,7 +59,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] != 0][
                                         category]})
-            mean_success = success.apply(np.mean, axis=1)
+            mean_success = success.apply(np.mean, axis=0)
         else:
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
@@ -81,13 +82,8 @@ class where_is_tockie_analysis(Template_Task_Statistics):
     def count_image_analysis(self):
         """ More results regarding the variable count_image
     """
-        x = self.stats()
-        # count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
-        # for trial in range(len(df['no_trial'])):
-        # a = df.count_image[trial]
-        return x['success_rate'] / x['average_count_image']
 
 
 w = where_is_tockie_analysis()
-print(w.count_image_analysis())
-print(w.boxplot_average(category='success/average_count_image'))
+w.plot_pourcentage(disorder='toc')
+w.boxplot_average(category='average_reaction_time')

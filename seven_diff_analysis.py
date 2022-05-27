@@ -5,7 +5,8 @@ import pandas as pd
 
 
 class seven_diff_analysis(Template_Task_Statistics):
-    path = '../get_csv_cog_tasks/all_csv/seven_diff'
+    # path = '../get_csv_cog_tasks/all_csv/seven_diff'
+    path = '/Users/melissamarius/Documents/all_csv_provisoire/seven_diff'
 
     def get_no_trials(self, type_image='all'):
         if type_image == 'all':
@@ -51,6 +52,7 @@ class seven_diff_analysis(Template_Task_Statistics):
                 plt.legend(custom_lines, [f'no-disorder (n={n1})', f'{disorder} (n={n2})'])
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
+        plt.tight_layout()
         plt.show()
 
     def boxplot_average(self, category='success_rate', disorder='all', type_image="all"):
@@ -67,7 +69,7 @@ class seven_diff_analysis(Template_Task_Statistics):
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] != 0][
                                         category]})
-            mean_success = success.apply(np.mean, axis=1)
+            mean_success = success.apply(np.mean, axis=0)
         else:
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
@@ -79,6 +81,7 @@ class seven_diff_analysis(Template_Task_Statistics):
         success[['No_disorder', disorder]].plot(kind='box', title=f'Boxplot of {category} '
                                                                   f'for the task seven diff (part = {type_image})')
         plt.ylabel(f'{category}')
+        plt.tight_layout()
         plt.show()
 
         plt.figure()
@@ -86,9 +89,11 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.bar(range(len(mean_success)), mean_success, color=self.col)
         plt.xticks(range(len(mean_success)), ['No-disorder', disorder])
         plt.ylabel(f'{category}')
+        plt.tight_layout()
         plt.show()
 
 
 a = seven_diff_analysis()
 
-print(a.boxplot_average(category='average_reaction_time',type_image='calligraphy'))
+a.plot_pourcentage()
+a.boxplot_average(category='average_reaction_time')

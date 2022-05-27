@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 
 class symmetry_analysis(Template_Task_Statistics):
-    path = '../get_csv_cog_tasks/all_csv/symmetry'
+    #path = '../get_csv_cog_tasks/all_csv/symmetry'
+    path = '/Users/melissamarius/Documents/all_csv_provisoire/symmetry'
 
     def plot_pourcentage(self, mental_disorder=True, disorder='all'):
         """
@@ -43,7 +44,7 @@ class symmetry_analysis(Template_Task_Statistics):
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] != 0][
                                         category]})
-            mean_success = success.apply(np.mean, axis=1)
+            mean_success = success.apply(np.mean, axis=0)
         else:
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
@@ -63,4 +64,5 @@ class symmetry_analysis(Template_Task_Statistics):
         plt.show()
 
 a = symmetry_analysis()
-print(a.boxplot_average())
+print(a.stats()['disorder'],a.stats()['success_rate'])
+a.boxplot_average(category='average_reaction_time')

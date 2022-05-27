@@ -7,8 +7,8 @@ import numpy as np
 
 class lucifer_analysis(Template_Task_Statistics):
     csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
-    path = '../get_csv_cog_tasks/all_csv/lucifer'
-
+    #path = '../get_csv_cog_tasks/all_csv/lucifer'
+    path ='/Users/melissamarius/Documents/all_csv_provisoire/lucifer'
     def get_no_trials(self, type='all'):
         if type == 'all':
             return self.csv_type_lucifer['no_trial']
@@ -58,7 +58,7 @@ class lucifer_analysis(Template_Task_Statistics):
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] != 0][
                                         category]})
-            mean_success = success.apply(np.mean, axis=1)
+            mean_success = success.apply(np.mean, axis=0)
         else:
             success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
@@ -82,5 +82,4 @@ class lucifer_analysis(Template_Task_Statistics):
 
 l = lucifer_analysis()
 
-print(l.stats(specific_type=True, type='straight'))
-print(l.stats(specific_type=True, type='messy'))
+l.plot_pourcentage()
