@@ -64,5 +64,5 @@ class symmetry_analysis(Template_Task_Statistics):
         plt.show()
 
 a = symmetry_analysis()
-print(a.stats()['disorder'],a.stats()['success_rate'])
+print(a.stats())
 a.boxplot_average(category='average_reaction_time')

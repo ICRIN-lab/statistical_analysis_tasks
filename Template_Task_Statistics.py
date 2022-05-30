@@ -8,7 +8,7 @@ import scipy.stats as sps
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path to the correct one"""
-    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-05-25_1720.csv')
+    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-05-30_1600.csv')
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -19,7 +19,7 @@ class Template_Task_Statistics:
     col = ['black', 'darkred']
 
     """ Path of the file, which should be set in every class analysis"""
-    path = '../get_csv_cog_tasks/all_csv/seven_diff'
+    path = []
 
     def __init__(self, pratice=False):
         """
@@ -91,10 +91,10 @@ class Template_Task_Statistics:
                 df = df[df['no_trial'].isin(numbers_trials)]
             id = self.get_id(df)
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-            tab.append([np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
+            tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
                         int(disorder_id)])
         tab = pd.DataFrame(tab)
-        tab.columns = ['success_rate', 'average_reaction_time', 'maximum_reaction_time', 'disorder']
+        tab.columns = ['Id', 'success_rate', 'average_reaction_time', 'maximum_reaction_time', 'disorder']
         return tab
 
     def boxplot_average(self, category='success_rate', *args):
@@ -120,4 +120,3 @@ class Template_Task_Statistics:
                   f' , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
 
 
-a = Template_Task_Statistics()
