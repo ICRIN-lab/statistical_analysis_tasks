@@ -81,5 +81,5 @@ class lucifer_analysis(Template_Task_Statistics):
 
 
 l = lucifer_analysis()
-
+l.boxplot_average()
 l.plot_pourcentage()

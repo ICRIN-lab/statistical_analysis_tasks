@@ -96,5 +96,6 @@ class seven_diff_analysis(Template_Task_Statistics):
 a = seven_diff_analysis()
 
 a.plot_pourcentage()
-a.boxplot_average(category='average_reaction_time')
-print(a.stats()[a.stats()['Id']==17])
+
+a.boxplot_average(category='success_rate')
+
