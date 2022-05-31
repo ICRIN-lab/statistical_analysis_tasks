@@ -31,7 +31,7 @@ def Repartition_age():
     plt.title("Répartition de l'âge pour l'échantillon en entier")
     plt.boxplot(resume.age)
     plt.show()
-    print("L'age moyen est :", np.mean(resume.age), "ans , le maximum de ", max(resume.age), "ans et le minimum de ",
+    print("L'age moyen est :", np.mean(resume.age), "ans , le maximum est de ", max(resume.age), "ans et le minimum est de ",
           min(resume.age), "ans")
 
     # Age moyen selon les groupes
