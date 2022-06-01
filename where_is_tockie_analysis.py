@@ -84,10 +84,6 @@ class where_is_tockie_analysis(Template_Task_Statistics):
     """
 
 
-w = where_is_tockie_analysis()
-w.plot_pourcentage()
-w.boxplot_average(category='maximum_count_image')
-w.boxplot_average(category='success/average_count_image')
 
 
 

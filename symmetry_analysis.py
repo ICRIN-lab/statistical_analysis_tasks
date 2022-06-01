@@ -65,6 +65,3 @@ class symmetry_analysis(Template_Task_Statistics):
         plt.show()
 
 
-a = symmetry_analysis()
-a.boxplot_average()
-a.plot_pourcentage()

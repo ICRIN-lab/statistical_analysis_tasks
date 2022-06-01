@@ -2,8 +2,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, date
+from seven_diff_analysis import seven_diff_analysis
+from lucifer_analysis import lucifer_analysis
+from where_is_tockie_analysis import where_is_tockie_analysis
+from symmetry_analysis import symmetry_analysis
 
-redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-05-30_1600.csv')
+csv_type_lucifer = pd.read_csv('/Users/melissamarius/PycharmProjects/statistical_analysis/csv_type_lucifer.csv')
+redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-01_1015.csv')
 
 
 def age(born):
@@ -31,7 +36,8 @@ def Repartition_age():
     plt.title("Répartition de l'âge pour l'échantillon en entier")
     plt.boxplot(resume.age)
     plt.show()
-    print("L'age moyen est :", np.mean(resume.age), "ans , le maximum est de ", max(resume.age), "ans et le minimum est de ",
+    print("L'age moyen est :", round(np.mean(resume.age)), "ans , le maximum est de ", max(resume.age),
+          "ans et le minimum est de ",
           min(resume.age), "ans")
 
     # Age moyen selon les groupes
@@ -48,19 +54,18 @@ def Repartition_sexe():
              len(resume.sexe[resume.sexe == 1]) / len(resume.sexe) * 100], labels=['Femme', 'Homme'], autopct='%1.1f%%')
     plt.show()
 
-    # Répartion selon les groupes
+    # Répartition selon les groupes
     group = [resume_no_disorder, resume_disorder, resume_toc]
     men_means = [repart_sexe(df)[1] for df in group]
     women_means = [repart_sexe(df)[0] for df in group]
     labels = ['No_disorder', 'All disorder', "Toc"]
-    x = np.arange(len(labels))  # the label locations
-    width = 0.35  # the width of the bars
+    x = np.arange(len(labels))
+    width = 0.35
 
     fig, ax = plt.subplots()
     rects1 = ax.bar(x - width / 2, men_means, width, label='Men')
     rects2 = ax.bar(x + width / 2, women_means, width, label='Women')
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('Pourcentage (%)')
     ax.set_title('Répartition du sexe selon les groupes')
     ax.set_xticks(x)
@@ -84,8 +89,26 @@ def Repartition_sexe():
 
 
 plt.title('Répartition des sujets')
-plt.pie([len(resume_no_disorder), len(resume_disorder), len(resume_toc)], labels=['No_disorder', 'All disorder', 'Toc'],
+plt.pie([len(resume_no_disorder), len(resume) - len(resume_no_disorder) - len(resume_toc), len(resume_toc)],
+        labels=['No_disorder', 'Other disorder', 'Toc'],
         autopct='%1.1f%%')
 plt.show()
 Repartition_sexe()
 Repartition_age()
+print('\n')
+
+# Analyse des données manquantes
+task =[seven_diff_analysis, lucifer_analysis, where_is_tockie_analysis, symmetry_analysis]
+task_name = ['seven_diff', 'lucifer', 'where_is_tockie', 'symmetry']
+for analysis, name in zip(task, task_name):
+    task_analysis = analysis()
+    print(f"Le nombre de données manquantes pour {name} est de :",
+          len(task_analysis.redcap_csv['record_id']) - len(task_analysis.df_files))
+    all_id = []
+    for df in task_analysis.df_files:
+        all_id.append(task_analysis.get_id(df))
+    missing_csv_id = []
+    for id in task_analysis.redcap_csv['record_id']:
+        if id not in all_id:
+            missing_csv_id.append(id)
+    print(f"Il n'y a pas de csv pour la tâche {name} pour les individus", missing_csv_id)
