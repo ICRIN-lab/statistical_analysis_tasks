@@ -10,7 +10,6 @@ csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
 class lucifer_analysis(Template_Task_Statistics):
     csv_type_lucifer = csv_type_lucifer
     path = '../get_csv_cog_tasks/all_csv/lucifer'
-    #path = '/Users/melissamarius/Documents/all_csv_provisoire/lucifer'
 
     def get_no_trials(self, type='all'):
         if type == 'all':
@@ -81,3 +80,7 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.xticks(range(len(mean_success)), ['No-disorder', disorder])
         plt.ylabel(f'{category}')
         plt.show()
+
+
+a=lucifer_analysis()
+a.plot_pourcentage()

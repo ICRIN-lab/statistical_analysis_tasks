@@ -6,7 +6,6 @@ import pandas as pd
 
 class symmetry_analysis(Template_Task_Statistics):
     path = "../get_csv_cog_tasks/all_csv/symmetry"
-    #path = '/Users/melissamarius/Documents/all_csv_provisoire/symmetry'
 
     def plot_pourcentage(self, mental_disorder=True, disorder='all'):
         """

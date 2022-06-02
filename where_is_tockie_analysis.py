@@ -8,8 +8,6 @@ import numpy as np
 class where_is_tockie_analysis(Template_Task_Statistics):
     path = '../get_csv_cog_tasks/all_csv/where_is_tockie'
 
-    # path = '/Users/melissamarius/Documents/all_csv_provisoire/where_is_tockie'
-
     def stats(self):
         tab = []
         for df in self.df_files:
