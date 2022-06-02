@@ -8,7 +8,7 @@ from where_is_tockie_analysis import where_is_tockie_analysis
 from symmetry_analysis import symmetry_analysis
 
 csv_type_lucifer = pd.read_csv('/Users/melissamarius/PycharmProjects/statistical_analysis/csv_type_lucifer.csv')
-redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-01_1015.csv')
+redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-02_1025.csv')
 
 
 def age(born):
@@ -98,7 +98,7 @@ Repartition_age()
 print('\n')
 
 # Analyse des données manquantes
-task =[seven_diff_analysis, lucifer_analysis, where_is_tockie_analysis, symmetry_analysis]
+task = [seven_diff_analysis, lucifer_analysis, where_is_tockie_analysis, symmetry_analysis]
 task_name = ['seven_diff', 'lucifer', 'where_is_tockie', 'symmetry']
 for analysis, name in zip(task, task_name):
     task_analysis = analysis()
@@ -112,3 +112,4 @@ for analysis, name in zip(task, task_name):
         if id not in all_id:
             missing_csv_id.append(id)
     print(f"Il n'y a pas de csv pour la tâche {name} pour les individus", missing_csv_id)
+

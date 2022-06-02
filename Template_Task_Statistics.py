@@ -8,7 +8,7 @@ import scipy.stats as sps
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path to the correct one"""
-    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-01_1015.csv')
+    redcap_csv = pd.read_csv('/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-02_1025.csv')
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -19,7 +19,7 @@ class Template_Task_Statistics:
     col = ['black', 'darkred']
 
     """ Path of the file, which should be set in every class analysis"""
-    path = []
+    path = ""
 
     def __init__(self, pratice=False):
         """
@@ -30,11 +30,11 @@ class Template_Task_Statistics:
 
         """ Deleting all the lines corresponding to the pratice from all the csv
         """
-        if not pratice:
-            i = 0
-            while self.df_files[0].no_trial[i] != 0:
-                i += 1
-            for j in range(len(self.df_files)):
+        for j in range(len(self.df_files)):
+            if not pratice:
+                i = 0
+                while self.df_files[j].no_trial[i] != 0:
+                    i += 1
                 self.df_files[j] = self.df_files[j].drop(np.arange(i))
 
     def get_id(self, df):
@@ -118,5 +118,6 @@ class Template_Task_Statistics:
         else:
             print(f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
                   f' , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
+
 
 

@@ -5,8 +5,8 @@ import pandas as pd
 
 
 class seven_diff_analysis(Template_Task_Statistics):
-    #path = '../get_csv_cog_tasks/all_csv/seven_diff'
-    path = '/Users/melissamarius/Documents/all_csv_provisoire/seven_diff'
+    path = '../get_csv_cog_tasks/all_csv/seven_diff'
+    #path = '/Users/melissamarius/Documents/all_csv_provisoire/seven_diff'
 
     def get_no_trials(self, type_image='all'):
         if type_image == 'all':

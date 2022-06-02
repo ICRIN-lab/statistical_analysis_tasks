@@ -4,13 +4,13 @@ from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import numpy as np
 
-csv_type_lucifer = pd.read_csv('/Users/melissamarius/PycharmProjects/statistical_analysis/csv_type_lucifer.csv')
+csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
 
 
 class lucifer_analysis(Template_Task_Statistics):
     csv_type_lucifer = csv_type_lucifer
-    # path = '../get_csv_cog_tasks/all_csv/lucifer'
-    path = '/Users/melissamarius/Documents/all_csv_provisoire/lucifer'
+    path = '../get_csv_cog_tasks/all_csv/lucifer'
+    #path = '/Users/melissamarius/Documents/all_csv_provisoire/lucifer'
 
     def get_no_trials(self, type='all'):
         if type == 'all':

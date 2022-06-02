@@ -6,8 +6,9 @@ import numpy as np
 
 
 class where_is_tockie_analysis(Template_Task_Statistics):
-    #path = '../get_csv_cog_tasks/all_csv/where_is_tockie'
-    path = '/Users/melissamarius/Documents/all_csv_provisoire/where_is_tockie'
+    path = '../get_csv_cog_tasks/all_csv/where_is_tockie'
+
+    # path = '/Users/melissamarius/Documents/all_csv_provisoire/where_is_tockie'
 
     def stats(self):
         tab = []
@@ -19,7 +20,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
                         np.mean(count_tot), np.max(count_tot), np.min(count_tot),
                         np.mean(df['result']) * 100 / np.mean(count_tot), int(disorder_id)])
         tab = pd.DataFrame(tab)
-        tab.columns = ['Id','success_rate', 'average_reaction_time', 'maximum_reaction_time', 'average_count_image',
+        tab.columns = ['Id', 'success_rate', 'average_reaction_time', 'maximum_reaction_time', 'average_count_image',
                        'maximum_count_image', 'minimum_count_image', 'success/average_count_image', 'disorder']
         return tab
 
@@ -82,8 +83,5 @@ class where_is_tockie_analysis(Template_Task_Statistics):
     def count_image_analysis(self):
         """ More results regarding the variable count_image
     """
-
-
-
 
 
