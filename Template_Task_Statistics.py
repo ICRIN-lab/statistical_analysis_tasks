@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import glob
 import os
 import scipy.stats as sps
@@ -16,15 +15,16 @@ class Template_Task_Statistics:
 
     """ Color for the graph, respectfully the color for no_disorder representation and the color for disorder 
     representation"""
-    col = ['black', 'darkred']
+    col = ['black', 'green']
 
     """ Path of the file, which should be set in every class analysis"""
     path = ""
 
     def __init__(self, pratice=False):
         """
-        :param pratice: if you want to keep to the pratice in the other put pratice=True
+        :param pratice: if you want to keep to the pratice in the analysis put pratice=True
         """
+
         self.csv_files = glob.glob(os.path.join(self.path, "*.csv"))
         self.df_files = [pd.read_csv(f, encoding='ISO-8859-1') for f in self.csv_files]
 
@@ -43,8 +43,8 @@ class Template_Task_Statistics:
         return int(str(df['id_candidate'].tail(1).item())[8:11])
 
     def get_list_patients(self, disorder="all"):
-        """"
-        :return an array with the id of the subject and 1 if the subject has the considered disorder and 0 otherwise
+        """" Get the list of people with the considered disorder
+        :return a dataframe with the id of the subject and 1 or 0 if the subject has the considered disorder
         """
         all_disorder = np.array(self.redcap_csv['diagnostic_principal'])
         if disorder == 'all':
@@ -55,15 +55,17 @@ class Template_Task_Statistics:
         return pd.DataFrame(np.array([np.array(self.redcap_csv.record_id), list_patients]).T)
 
     def success_rate_trials(self, df):
-        """
-        :return: 2 arrays, an array with no_trial in index 0 and an array with the success rate for all subjects
+        """ Get the success_rate regarding trials from the column result of the dataframe
+        :param resulting dataframe of a task with result regarding trial
+        :return: an array with the success rate regarding no_trial for the data of the considered dataframe
         """
         success = [np.mean(df["result"][:n]) * 100 for n in range(1, len(df['result']) + 1)]
         return np.array(success)
 
     def total_people(self, mental_disorder=True, disorder='all'):
         """
-        :param disorder:
+        :param mental_disorder : False, if you want the entire data, True otherwise
+        :param disorder: the specific disorder you which to look at between the list_disorder (default= 'all')
         :return: the number of people suffering from the disorder selected in our data regarding the redcap csv
         """
         if not mental_disorder:
@@ -71,16 +73,10 @@ class Template_Task_Statistics:
         else:
             return self.get_list_patients(disorder)[1][self.get_list_patients(disorder)[1] == 1]
 
-    def get_no_trials(self, *args):
-        """ Get the numbers of trials within a certain category
-        """
-
-    def plot_pourcentage(self, *args):
-        """ Create a graph representing success rate depending on the number of trials
-            """
-
     def stats(self, specific_type=False, type='all'):
         """
+        :param specific_type : Put True if you want to look at a specific type of trials (default = False)
+        :param type : The type you are interested in, change regarding tasks (default = 'all')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
         numbers_trials = self.get_no_trials(type)
@@ -97,6 +93,16 @@ class Template_Task_Statistics:
         tab.columns = ['Id', 'success_rate', 'average_reaction_time', 'maximum_reaction_time', 'disorder']
         return tab
 
+    def get_no_trials(self, *args):
+        """ Get the numbers of trials within a certain category
+        """
+
+    def plot_pourcentage(self, *args):
+        """ Create a graph representing success rate depending on the number of trials
+            """
+
+
+
     def boxplot_average(self, category='success_rate', *args):
         """
         :param category: the category of the output of stats that you want to see
@@ -105,9 +111,11 @@ class Template_Task_Statistics:
         """
 
     def group_comparison(self, specific_type=False, type='all', category='success_rate', disorder='all'):
-        """"
-        :param disorder:
-        :return:
+        """" Student test for considered criteria
+        :param specific_type : Put True if you want to look at a specific type of trials (default = False)
+        :param type : The type you are interested in, change regarding tasks (default = 'all')
+        :param category: the category of the output of stats that you want to see
+        :param disorder: The disorder you want to compare with control group
         """
         X = self.stats(specific_type=specific_type, type=type)
         X1 = np.array(X[X.disorder == 0][category])

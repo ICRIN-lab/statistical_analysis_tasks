@@ -83,3 +83,5 @@ class where_is_tockie_analysis(Template_Task_Statistics):
     """
 
 
+a=where_is_tockie_analysis()
+print(a.stats())
