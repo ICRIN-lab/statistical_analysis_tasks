@@ -91,6 +91,3 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.tight_layout()
         plt.show()
 
-
-a = seven_diff_analysis()
-a.plot_pourcentage()

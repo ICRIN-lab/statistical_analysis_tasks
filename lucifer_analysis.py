@@ -80,7 +80,3 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.xticks(range(len(mean_success)), ['No-disorder', disorder])
         plt.ylabel(f'{category}')
         plt.show()
-
-
-a=lucifer_analysis()
-a.plot_pourcentage()

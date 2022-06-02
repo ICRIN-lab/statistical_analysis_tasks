@@ -64,5 +64,3 @@ class symmetry_analysis(Template_Task_Statistics):
         plt.show()
 
 
-s = symmetry_analysis()
-s.plot_pourcentage()
