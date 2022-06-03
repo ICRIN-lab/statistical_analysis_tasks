@@ -8,7 +8,7 @@ import numpy as np
 class where_is_tockie_analysis(Template_Task_Statistics):
     path = '../get_csv_cog_tasks/all_csv/where_is_tockie'
 
-    def stats(self):
+    def stats(self,specific_type=False, type='all'):
         tab = []
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
@@ -82,6 +82,5 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         """ More results regarding the variable count_image
     """
 
-
-a=where_is_tockie_analysis()
-print(a.stats())
+w=where_is_tockie_analysis()
+w.boxplot_average(disorder='toc')

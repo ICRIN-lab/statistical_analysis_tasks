@@ -127,5 +127,8 @@ class Template_Task_Statistics:
             print(f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
                   f' , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
 
-
+        if sps.ttest_ind(X1, X2)[1] > 0.05:
+            print("Il n'y a pas de différence significative entre les deux groupes comparés")
+        else :
+            print("Il y a une différence significative entre les deux groupes comparés")
 

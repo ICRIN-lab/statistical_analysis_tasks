@@ -80,3 +80,6 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.xticks(range(len(mean_success)), ['No-disorder', disorder])
         plt.ylabel(f'{category}')
         plt.show()
+
+l=lucifer_analysis()
+l.boxplot_average(disorder='toc',type_lucifer='straight')

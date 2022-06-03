@@ -91,3 +91,6 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.tight_layout()
         plt.show()
 
+s=seven_diff_analysis()
+s.plot_pourcentage(disorder='toc',type_image='chess')
+#s.boxplot_average(disorder='toc')
