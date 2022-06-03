@@ -11,7 +11,7 @@ class Template_Task_Statistics:
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
-    list_disorder = ['all', 'toc', 'du', 'db', 'ta', 'tus', 's']
+    list_disorder = ['all', 'ocd', 'du', 'db', 'ta', 'tus', 's']
 
     """ Color for the graph, respectfully the color for no_disorder representation and the color for disorder 
     representation"""
@@ -42,7 +42,7 @@ class Template_Task_Statistics:
         """
         return int(str(df['id_candidate'].tail(1).item())[8:11])
 
-    def get_list_patients(self, disorder="all"):
+    def get_list_patients(self, disorder="ocd"):
         """" Get the list of people with the considered disorder
         :return a dataframe with the id of the subject and 1 or 0 if the subject has the considered disorder
         """
@@ -62,10 +62,10 @@ class Template_Task_Statistics:
         success = [np.mean(df["result"][:n]) * 100 for n in range(1, len(df['result']) + 1)]
         return np.array(success)
 
-    def total_people(self, mental_disorder=True, disorder='all'):
+    def total_people(self, mental_disorder=True, disorder='ocd'):
         """
         :param mental_disorder : False, if you want the entire data, True otherwise
-        :param disorder: the specific disorder you which to look at between the list_disorder (default= 'all')
+        :param disorder: the specific disorder you which to look at between the list_disorder (default= 'toc')
         :return: the number of people suffering from the disorder selected in our data regarding the redcap csv
         """
         if not mental_disorder:
@@ -73,10 +73,10 @@ class Template_Task_Statistics:
         else:
             return self.get_list_patients(disorder)[1][self.get_list_patients(disorder)[1] == 1]
 
-    def stats(self, specific_type=False, type='all'):
+    def stats(self, specific_type=False, type='ocd'):
         """
         :param specific_type : Put True if you want to look at a specific type of trials (default = False)
-        :param type : The type you are interested in, change regarding tasks (default = 'all')
+        :param type : The type you are interested in, change regarding tasks (default = 'ocd')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
         numbers_trials = self.get_no_trials(type)
@@ -110,10 +110,10 @@ class Template_Task_Statistics:
         of the output of stats()
         """
 
-    def group_comparison(self, specific_type=False, type='all', category='success_rate', disorder='all'):
+    def group_comparison(self, specific_type=False, type='all', category='success_rate', disorder='ocd'):
         """" Student test for considered criteria
         :param specific_type : Put True if you want to look at a specific type of trials (default = False)
-        :param type : The type you are interested in, change regarding tasks (default = 'all')
+        :param type : The type you are interested in, change regarding tasks (default = 'ocd')
         :param category: the category of the output of stats that you want to see
         :param disorder: The disorder you want to compare with control group
         """
@@ -129,6 +129,6 @@ class Template_Task_Statistics:
 
         if sps.ttest_ind(X1, X2)[1] > 0.05:
             print("Il n'y a pas de différence significative entre les deux groupes comparés")
-        else :
+        else:
             print("Il y a une différence significative entre les deux groupes comparés")
 

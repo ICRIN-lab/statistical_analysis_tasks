@@ -1,18 +1,20 @@
 ,Characteristic,Total,Control group,TOC group,Other disorder
 0,n = ,26,14,7,5
-1,Homme,46.15384615384615,42.857142857142854,42.857142857142854,60.0
-2,Femme,53.84615384615385,57.14285714285714,57.14285714285714,40.0
-3,Age moyen,37.19230769230769,36.42857142857143,41.142857142857146,33.8
-4,Primaire,0,0,0,0
-5,Secondaire,2,0,1,1
-6,Bac,7,1,4,2
-7,BEP/CAP,0,0,0,0
-8,BTS,1,1,0,0
-9,Licence,8,7,1,0
-10,Master,4,1,1,2
-11,Doctorat,4,4,0,0
-12,Célibataire,13,5,4,4
-13,En couple,6,4,2,0
-14,Marié(e),4,3,1,0
-15,Divorcé(e),2,1,0,1
-16,Veuf(ve),1,1,0,0
+1,Gender,,,,
+2,Men,12,6,3,3
+3,Women,14,8,4,2
+4,Age moyen,37.19230769230769,36.42857142857143,41.142857142857146,33.8
+5,Educational level,,,,
+6,Primary School,0,0,0,0
+7,Secondary School,2,0,1,1
+8,Bac,7,1,4,2
+9,BEP/CAP,0,0,0,0
+10,BTS,1,1,0,0
+11,Licence,8,7,1,0
+12,Master,4,1,1,2
+13,Marital Status,,,,
+14,Single,13,5,4,4
+15,En couple,6,4,2,0
+16,Maried,4,3,1,0
+17,Divorced,2,1,0,1
+18,Widowed,1,1,0,0

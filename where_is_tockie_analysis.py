@@ -22,7 +22,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
                        'maximum_count_image', 'minimum_count_image', 'success/average_count_image', 'disorder']
         return tab
 
-    def plot_pourcentage(self, mental_disorder=True, disorder='all'):
+    def plot_pourcentage(self, mental_disorder=True, disorder='ocd'):
         """
         :param mental_disorder: put False if you want all data without any distinction otherwise put True
         :param disorder: the disorder you are interested in
@@ -47,34 +47,34 @@ class where_is_tockie_analysis(Template_Task_Statistics):
                 else:
                     plt.plot(tab, color='k')
             if mental_disorder:
-                plt.legend(custom_lines, ['no-disorder', disorder])
+                plt.legend(custom_lines, ["Healthy Control", disorder])
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
         plt.show()
 
-    def boxplot_average(self, category='success_rate', disorder='all'):
+    def boxplot_average(self, category='success_rate', disorder='ocd'):
         stats = self.stats()
         if disorder == 'all':
-            success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
+            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] != 0][
                                         category]})
             mean_success = success.apply(np.mean, axis=0)
         else:
-            success = pd.DataFrame({"No_disorder": stats[stats['disorder'] == 0][category],
+            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
                                     disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
                                         category]})
             mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
                             np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
 
         plt.figure()
-        success[['No_disorder', disorder]].plot(kind='box', title=f'Boxplot of {category} for the task where is tockie')
+        success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} for the task where is tockie')
         plt.ylabel(f'{category}')
         plt.show()
 
         plt.figure()
         plt.title(f'Comparison of {category} for the task where is tockie')
         plt.bar(range(len(mean_success)), mean_success, color=self.col)
-        plt.xticks(range(len(mean_success)), ['No-disorder', disorder])
+        plt.xticks(range(len(mean_success)), ["Healthy Control", disorder])
         plt.ylabel(f'{category}')
         plt.show()
 
@@ -82,5 +82,3 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         """ More results regarding the variable count_image
     """
 
-w=where_is_tockie_analysis()
-w.boxplot_average(disorder='toc')

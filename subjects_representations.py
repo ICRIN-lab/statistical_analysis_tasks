@@ -19,25 +19,22 @@ def age(born):
                                                     born.day))
 
 
-def repart_sexe(df):
-    return [len(df.sexe[df.sexe == 0]) / len(df.sexe) * 100,
-            len(df.sexe[df.sexe == 1]) / len(df.sexe) * 100]
+def repart_sex(df):
+    return [len(df.sexe[df.sexe == 0]),
+            len(df.sexe[df.sexe == 1])]
 
 
-control = redcap_csv[redcap_csv.diagnostic_principal == 0]
-toc = redcap_csv[redcap_csv.diagnostic_principal == 1]
+hc = redcap_csv[redcap_csv.diagnostic_principal == 0]
+ocd = redcap_csv[redcap_csv.diagnostic_principal == 1]
 redcap_without_control = redcap_csv[redcap_csv.diagnostic_principal != 0]
 other = redcap_without_control[redcap_without_control.diagnostic_principal != 1]
 
-control = control.assign(age=control['ddn'].apply(age))
-toc = toc.assign(age=toc['ddn'].apply(age))
+hc = hc.assign(age=hc['ddn'].apply(age))
+ocd = ocd.assign(age=ocd['ddn'].apply(age))
 other = other.assign(age=other['ddn'].apply(age))
-print(control['age'].describe())
+
 resume = pd.DataFrame(
-    {'age': redcap_csv['ddn'].apply(age), 'sexe': redcap_csv['sexe'], 'disorder': redcap_csv['diagnostic_principal']})
-resume_no_disorder = control
-resume_disorder = other
-resume_toc = toc
+    {'age': redcap_csv['ddn'].apply(age), 'gender': redcap_csv['sexe'], 'disorder': redcap_csv['diagnostic_principal']})
 
 
 def Repartition_age():
@@ -45,29 +42,26 @@ def Repartition_age():
     plt.title("Répartition de l'âge pour l'échantillon en entier")
     plt.boxplot(resume.age)
     plt.show()
-    print("L'age moyen est :", round(np.mean(resume.age)), "ans , le maximum est de ", max(resume.age),
-          "ans et le minimum est de ",
-          min(resume.age), "ans")
 
     # Age moyen selon les groupes
     plt.title("Age moyen pour selon les groupes")
-    plt.boxplot([resume_no_disorder.age, resume_toc.age, resume_disorder.age])
-    plt.xticks(np.array([1, 2, 3]), ['No-disorder', "Other disorder", "Disorder"])
+    plt.boxplot([hc.age, ocd.age, other.age])
+    plt.xticks(np.array([1, 2, 3]), ["Healthy Control", "OCD", "Other disorder"])
     plt.show()
 
 
 def Repartition_sexe():
-    # Répartion du sexe dans l'échantillion entier
+    # Répartition du sexe dans l'échantillion entier
     plt.title("Répartition du sexe pour l'échantillon en entier")
     plt.pie([len(resume.sexe[resume.sexe == 0]) / len(resume.sexe) * 100,
              len(resume.sexe[resume.sexe == 1]) / len(resume.sexe) * 100], labels=['Femme', 'Homme'], autopct='%1.1f%%')
     plt.show()
 
     # Répartition selon les groupes
-    group = [resume_no_disorder, resume_disorder, resume_toc]
-    men_means = [repart_sexe(df)[1] for df in group]
-    women_means = [repart_sexe(df)[0] for df in group]
-    labels = ['No_disorder', 'Other disorder', "Toc"]
+    group = [hc, ocd, other]
+    men_means = [repart_sex(df)[1] for df in group]
+    women_means = [repart_sex(df)[0] for df in group]
+    labels = ["Healthy Control", 'Other disorder', "OCD"]
     x = np.arange(len(labels))
     width = 0.35
 
@@ -75,7 +69,7 @@ def Repartition_sexe():
     rects1 = ax.bar(x - width / 2, men_means, width, label='Men')
     rects2 = ax.bar(x + width / 2, women_means, width, label='Women')
 
-    ax.set_ylabel('Pourcentage (%)')
+    ax.set_ylabel('')
     ax.set_title('Répartition du sexe selon les groupes')
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
@@ -98,8 +92,8 @@ def Repartition_sexe():
 
 
 plt.title('Répartition des sujets')
-plt.pie([len(resume_no_disorder), len(resume) - len(resume_no_disorder) - len(resume_toc), len(resume_toc)],
-        labels=['No_disorder', 'Other disorder', 'Toc'],
+plt.pie([len(hc), len(ocd), len(other)],
+        labels=["Healthy control", 'Other disorder', 'Toc'],
         autopct='%1.1f%%')
 plt.show()
 
@@ -120,28 +114,30 @@ for analysis, name in zip(task, task_name):
     print(f"Il n'y a pas de csv pour la tâche {name} pour les individus", missing_csv_id)
 
 # Création d'un tableau avec les characteristiques principales des individus
-data_baseline = pd.DataFrame(np.array(['n = ', len(redcap_csv['record_id']), len(control), len(toc), len(other)]).T)
-data_baseline[1] = ['Homme', repart_sexe(redcap_csv)[1], repart_sexe(control)[1], repart_sexe(toc)[1],
-                    repart_sexe(other)[1]]
-data_baseline[2] = ['Femme', repart_sexe(redcap_csv)[0], repart_sexe(control)[0], repart_sexe(toc)[0],
-                    repart_sexe(other)[0]]
-data_baseline[3] = ['Age moyen', np.mean(redcap_csv['ddn'].apply(age)), np.mean(control.age),np.mean(toc.age),np.mean(other.age)]
-nom_etudes = ['Primaire', 'Secondaire', 'Bac', 'BEP/CAP', 'BTS', 'Licence', 'Master', 'Doctorat']
+data_baseline = pd.DataFrame(np.array(['n = ', len(redcap_csv['record_id']), len(hc), len(ocd), len(other)]).T)
+data_baseline[1] = ['Gender', "", "", "", ""]
+data_baseline[2] = ['Men', repart_sex(redcap_csv)[1], repart_sex(hc)[1], repart_sex(ocd)[1],
+                    repart_sex(other)[1]]
+data_baseline[3] = ['Women', repart_sex(redcap_csv)[0], repart_sex(hc)[0], repart_sex(ocd)[0],
+                    repart_sex(other)[0]]
+data_baseline[4] = ['Age moyen', np.mean(redcap_csv['ddn'].apply(age)), np.mean(hc.age), np.mean(ocd.age),
+                    np.mean(other.age)]
+data_baseline[5] = ['Educational level', "", "", "", ""]
+nom_etudes = ['Primary School', 'Secondary School', 'Bac', 'BEP/CAP', 'BTS', 'Licence', 'Master', 'Doctorat']
 for i in np.arange(0, 8):
-    data_baseline[i + 4] = [f'{nom_etudes[i]}', len(redcap_csv[redcap_csv.etudes == i]),
-                            len(control[control.etudes == i]), len(toc[toc.etudes == i]), len(other[other.etudes == i])]
-matrimoniale = ['Célibataire', 'En couple', 'Marié(e)', 'Divorcé(e)', 'Veuf(ve)']
+    data_baseline[i + 6] = [f'{nom_etudes[i]}', len(redcap_csv[redcap_csv.etudes == i]),
+                            len(hc[hc.etudes == i]), len(ocd[ocd.etudes == i]), len(other[other.etudes == i])]
+data_baseline[13] = ['Marital Status', "", "", "", ""]
+matrimoniale = ['Single', 'En couple', 'Maried', 'Divorced', 'Widowed']
 for i in np.arange(0, 5):
-    data_baseline[i + 12] = [f'{matrimoniale[i]}', len(redcap_csv[redcap_csv.matrimoniale == i]),
-                             len(control[control.matrimoniale == i]), len(toc[toc.matrimoniale == i]),
+    data_baseline[i + 14] = [f'{matrimoniale[i]}', len(redcap_csv[redcap_csv.matrimoniale == i]),
+                             len(hc[hc.matrimoniale == i]), len(ocd[ocd.matrimoniale == i]),
                              len(other[other.matrimoniale == i])]
+# data_baseline[19] = ['Current Smoker', len(redcap_csv[redcap_csv['tabac'] == 1]),]
 
 data_baseline = pd.DataFrame(np.array(data_baseline).T)
 data_baseline.columns = ['Characteristic', 'Total', 'Control group', 'TOC group', 'Other disorder']
 data_baseline.to_csv('Data_baseline.csv')
 
-
-
-print(toc.ybocs_score_tot.describe())
-#print(control.age.describe())
-
+print(ocd.ybocs_score_tot.describe())
+# print(control.age.describe())
