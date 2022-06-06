@@ -26,8 +26,6 @@ class lucifer_analysis(Template_Task_Statistics):
         """
         custom_lines = [plt.Line2D([0], [0], color=self.col[0], lw=4), plt.Line2D([0], [0], color=self.col[1], lw=4)]
         list_patients = self.get_list_patients(disorder)
-        n1 = 0
-        n2 = 0
         plt.figure()
         numbers_trials = self.get_no_trials(type_lucifer)
         plt.title(f'Success rate for the task lucifer regarding trials (type_lucifer = {type_lucifer})')
@@ -90,5 +88,16 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.ylabel(f'{category}')
         plt.show()
 
+    def scatter_pourcentage(self, category='success_rate', disorder='ocd', type_lucifer='all'):
+        if type_lucifer != 'all':
+            stats = self.stats(specific_type=True, type=type_lucifer)
+        else:
+            stats = self.stats()
+        stats1 = stats[stats.disorder ==1]
+        plt.scatter(np.arange(0,len(stats1[category])), stats1[category],color=self.col[1])
+        stats2 = stats[stats.disorder == 0]
+        plt.scatter(np.arange(0,len(stats2[category])), stats2[category],color=self.col[0])
+        plt.show()
+
 a = lucifer_analysis()
-a.plot_pourcentage()
+a.scatter_pourcentage(type_lucifer='special')

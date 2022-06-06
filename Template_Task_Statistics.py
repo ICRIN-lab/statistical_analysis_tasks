@@ -15,7 +15,7 @@ class Template_Task_Statistics:
 
     """ Color for the graph, respectfully the color for no_disorder representation and the color for disorder 
     representation"""
-    col = ['black', 'green']
+    col = ['black', 'blue']
 
     """ Path of the file, which should be set in every class analysis"""
     path = ""
