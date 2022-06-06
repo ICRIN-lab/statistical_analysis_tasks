@@ -5,7 +5,7 @@ import pandas as pd
 
 
 class seven_diff_analysis(Template_Task_Statistics):
-    path = '../get_csv_cog_tasks/all_csv/seven_diff'
+    path = '../data_ocd_metacognition/tasks_data/seven_diff'
 
     def get_no_trials(self, type_image='all'):
         if type_image == 'all':
@@ -29,8 +29,6 @@ class seven_diff_analysis(Template_Task_Statistics):
 
         plt.figure()
         plt.title(f'Success rate for the task seven diff regarding trials (part = {type_image})')
-        n1 = 0
-        n2 = 0
         numbers_trials = self.get_no_trials(type_image)
         HC_group = []
         disorder_group = []
@@ -40,14 +38,21 @@ class seven_diff_analysis(Template_Task_Statistics):
             df = df[df['no_trial'].isin(numbers_trials)]
             if i != -1:
                 tab = self.success_rate_trials(df)
+                if len(tab) != 200:
+                    size = len(tab)
+                    tab =np.resize(tab,(200))
+                    tab_empty_val =np.empty(tab[size:200].shape)
+                    tab_empty_val = tab_empty_val.fill(np.nan)
+                    tab[size:200] = tab_empty_val
                 if i == 0:
                     HC_group.append(tab)
                 else:
                     disorder_group.append(tab)
-        print(HC_group[1:5])
 
-        mean_HC_group = np.mean(HC_group[1:5], axis=0)
-        mean_dis_group = np.mean(disorder_group[1:5], axis=0)
+
+
+        mean_HC_group = np.nanmean(HC_group, axis=0)
+        mean_dis_group = np.nanmean(disorder_group, axis=0)
         if mental_disorder:
             plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
         plt.plot(mean_HC_group, color=self.col[0])
@@ -95,4 +100,5 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.show()
 
 
-
+a=seven_diff_analysis()
+a.plot_pourcentage()

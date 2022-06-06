@@ -6,7 +6,7 @@ import numpy as np
 
 
 class where_is_tockie_analysis(Template_Task_Statistics):
-    path = '../get_csv_cog_tasks/all_csv/where_is_tockie'
+    path = '../data_ocd_metacognition/tasks_data/where_is_tockie'
 
     def stats(self,specific_type=False, type='all'):
         tab = []
@@ -33,21 +33,30 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         n2 = 0
         plt.figure()
         plt.title(f'Success rate for the task where is tockie regarding trials')
+        HC_group = []
+        disorder_group = []
         for df in self.df_files:
             id = self.get_id(df)
             i = int(list_patients[list_patients[0] == id][1])
             if i != -1:
                 tab = self.success_rate_trials(df)
-                if mental_disorder:
-                    plt.plot(tab, color=self.col[i])
-                    if i == 0:
-                        n1 += 1
-                    else:
-                        n2 += 1
+                if len(tab) != 300:
+                    size = len(tab)
+                    tab = np.resize(tab, (300))
+                    tab_empty_val = np.empty(tab[size:300].shape)
+                    tab_empty_val = tab_empty_val.fill(np.nan)
+                    tab[size:300] = tab_empty_val
+                if i == 0:
+                    HC_group.append(tab)
                 else:
-                    plt.plot(tab, color='k')
-            if mental_disorder:
-                plt.legend(custom_lines, ["Healthy Control", disorder])
+                    disorder_group.append(tab)
+
+        mean_HC_group = np.nanmean(HC_group, axis=0)
+        mean_dis_group = np.nanmean(disorder_group, axis=0)
+        if mental_disorder:
+            plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
+        plt.plot(mean_HC_group, color=self.col[0])
+        plt.plot(mean_dis_group, color=self.col[1])
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
         plt.show()
@@ -82,3 +91,5 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         """ More results regarding the variable count_image
     """
 
+w= where_is_tockie_analysis()
+w.plot_pourcentage()

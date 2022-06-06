@@ -9,7 +9,7 @@ csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
 
 class lucifer_analysis(Template_Task_Statistics):
     csv_type_lucifer = csv_type_lucifer
-    path = '../get_csv_cog_tasks/all_csv/lucifer'
+    path = '../data_ocd_metacognition/tasks_data/lucifer'
 
     def get_no_trials(self, type='all'):
         if type == 'all':
@@ -21,7 +21,7 @@ class lucifer_analysis(Template_Task_Statistics):
         """
         :param mental_disorder:
         :param disorder:
-        :param type_lucifer: the arrangement of lucifer you are interested in , between all, straight and messy
+        :param type_lucifer: the arrangement of lucifer you are interested in , between all, straight, messy and special
         :return:
         """
         custom_lines = [plt.Line2D([0], [0], color=self.col[0], lw=4), plt.Line2D([0], [0], color=self.col[1], lw=4)]
@@ -31,22 +31,31 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.figure()
         numbers_trials = self.get_no_trials(type_lucifer)
         plt.title(f'Success rate for the task lucifer regarding trials (type_lucifer = {type_lucifer})')
+        HC_group = []
+        disorder_group = []
         for df in self.df_files:
             id = self.get_id(df)
             i = int(list_patients[list_patients[0] == id][1])
             df = df[df['no_trial'].isin(numbers_trials)]
             if i != -1:
-                tab = pd.DataFrame(self.success_rate_trials(df))
-                if mental_disorder:
-                    plt.plot(tab, color=self.col[i])
-                    if i == 0:
-                        n1 += 1
-                    else:
-                        n2 += 1
+                tab = self.success_rate_trials(df)
+                if len(tab) != 100:
+                    size = len(tab)
+                    tab = np.resize(tab, (100))
+                    tab_empty_val = np.empty(tab[size:100].shape)
+                    tab_empty_val = tab_empty_val.fill(np.nan)
+                    tab[size:100] = tab_empty_val
+                if i == 0:
+                    HC_group.append(tab)
                 else:
-                    plt.plot(tab, color='k')
-            if mental_disorder:
-                plt.legend(custom_lines, ["Healthy Control", disorder])
+                    disorder_group.append(tab)
+        mean_HC_group = np.nanmean(HC_group, axis=0)
+        mean_dis_group = np.nanmean(disorder_group, axis=0)
+
+        if mental_disorder:
+                plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
+        plt.plot(mean_HC_group, color=self.col[0])
+        plt.plot(mean_dis_group, color=self.col[1])
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
         plt.show()
@@ -81,3 +90,5 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.ylabel(f'{category}')
         plt.show()
 
+a = lucifer_analysis()
+a.plot_pourcentage()
