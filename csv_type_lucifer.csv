@@ -12,7 +12,7 @@ no_trial,type
 10,straight
 11,messy
 12,straight
-13,straight
+13,special
 14,messy
 15,messy
 16,straight
@@ -32,7 +32,7 @@ no_trial,type
 30,messy
 31,straight
 32,messy
-33,straight
+33,special
 34,messy
 35,messy
 36,straight
@@ -49,9 +49,9 @@ no_trial,type
 47,straight
 48,straight
 49,messy
-50,straight
+50,special
 51,messy
-52,straight
+52,special
 53,messy
 54,straight
 55,straight
@@ -92,7 +92,7 @@ no_trial,type
 90,messy
 91,straight
 92,messy
-93,straight
+93,special
 94,messy
 95,straight
 96,messy

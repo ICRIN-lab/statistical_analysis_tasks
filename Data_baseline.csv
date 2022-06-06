@@ -1,20 +1,37 @@
-,Characteristic,Total,Control group,TOC group,Other disorder
-0,n = ,26,14,7,5
-1,Gender,,,,
-2,Men,12,6,3,3
-3,Women,14,8,4,2
-4,Age moyen,37.19230769230769,36.42857142857143,41.142857142857146,33.8
-5,Educational level,,,,
-6,Primary School,0,0,0,0
-7,Secondary School,2,0,1,1
-8,Bac,7,1,4,2
-9,BEP/CAP,0,0,0,0
-10,BTS,1,1,0,0
-11,Licence,8,7,1,0
-12,Master,4,1,1,2
-13,Marital Status,,,,
-14,Single,13,5,4,4
-15,En couple,6,4,2,0
-16,Maried,4,3,1,0
-17,Divorced,2,1,0,1
-18,Widowed,1,1,0,0
+Characteristic,Total,Control group,TOC group,Other disorder
+n = ,26,14,7,5
+Gender,,,,
+Men,12,6,3,3
+Women,14,8,4,2
+Age moyen,37,36,41,34
+Educational level,,,,
+Primary School,0,0,0,0
+Secondary School,2,0,1,1
+Bac,7,1,4,2
+BEP/CAP,0,0,0,0
+BTS,1,1,0,0
+Licence,8,7,1,0
+Master,4,1,1,2
+Doctorate,4,4,0,0
+Marital Status,,,,
+Single,13,5,4,4
+In relationship,6,4,2,0
+Maried,4,3,1,0
+Divorced,2,1,0,1
+Widowed,1,1,0,0
+Current Smoker,4,2,1,1
+Current Alcohol Drinker,5,2,2,1
+Consumption of cafeine,15,10,3,2
+Bad visual acuity,16,6,7,3
+Epilespy antecedent,2,1,0,1
+Brain stimulation,6,1,5,0
+Brain stimulation techniques,,,,
+rTMS,5,1,4,0
+tDCS,0,0,0,0
+deep TMS,1,0,1,0
+TCES,0,0,0,0
+Health state score,,,,
+VAS score,,,,
+HAD anxiety score,,,,
+HAD depression score,,,,
+Ybocs score,,,,

@@ -38,11 +38,6 @@ resume = pd.DataFrame(
 
 
 def Repartition_age():
-    # Répartition de l'age
-    plt.title("Répartition de l'âge pour l'échantillon en entier")
-    plt.boxplot(resume.age)
-    plt.show()
-
     # Age moyen selon les groupes
     plt.title("Age moyen pour selon les groupes")
     plt.boxplot([hc.age, ocd.age, other.age])
@@ -95,49 +90,68 @@ plt.title('Répartition des sujets')
 plt.pie([len(hc), len(ocd), len(other)],
         labels=["Healthy control", 'Other disorder', 'Toc'],
         autopct='%1.1f%%')
-plt.show()
+
+
+# plt.show()
+
 
 # Analyse des données manquantes
-task = [seven_diff_analysis, lucifer_analysis, where_is_tockie_analysis, symmetry_analysis]
-task_name = ['seven_diff', 'lucifer', 'where_is_tockie', 'symmetry']
-for analysis, name in zip(task, task_name):
-    task_analysis = analysis()
-    print(f"Le nombre de données manquantes pour {name} est de :",
-          len(task_analysis.redcap_csv['record_id']) - len(task_analysis.df_files))
-    all_id = []
-    for df in task_analysis.df_files:
-        all_id.append(task_analysis.get_id(df))
-    missing_csv_id = []
-    for id in task_analysis.redcap_csv['record_id']:
-        if id not in all_id:
-            missing_csv_id.append(id)
-    print(f"Il n'y a pas de csv pour la tâche {name} pour les individus", missing_csv_id)
+def all_missing_csv():
+    task = [seven_diff_analysis, lucifer_analysis, where_is_tockie_analysis, symmetry_analysis]
+    task_name = ['seven_diff', 'lucifer', 'where_is_tockie', 'symmetry']
+    for analysis, name in zip(task, task_name):
+        task_analysis = analysis()
+        print(f"Le nombre de données manquantes pour {name} est de :",
+              len(task_analysis.redcap_csv['record_id']) - len(task_analysis.df_files))
+        all_id = []
+        for df in task_analysis.df_files:
+            all_id.append(task_analysis.get_id(df))
+        missing_csv_id = []
+        for id in task_analysis.redcap_csv['record_id']:
+            if id not in all_id:
+                missing_csv_id.append(id)
+        print(f"Il n'y a pas de csv pour la tâche {name} pour les individus", missing_csv_id)
 
-# Création d'un tableau avec les characteristiques principales des individus
-data_baseline = pd.DataFrame(np.array(['n = ', len(redcap_csv['record_id']), len(hc), len(ocd), len(other)]).T)
-data_baseline[1] = ['Gender', "", "", "", ""]
-data_baseline[2] = ['Men', repart_sex(redcap_csv)[1], repart_sex(hc)[1], repart_sex(ocd)[1],
-                    repart_sex(other)[1]]
-data_baseline[3] = ['Women', repart_sex(redcap_csv)[0], repart_sex(hc)[0], repart_sex(ocd)[0],
-                    repart_sex(other)[0]]
-data_baseline[4] = ['Age moyen', np.mean(redcap_csv['ddn'].apply(age)), np.mean(hc.age), np.mean(ocd.age),
-                    np.mean(other.age)]
-data_baseline[5] = ['Educational level', "", "", "", ""]
-nom_etudes = ['Primary School', 'Secondary School', 'Bac', 'BEP/CAP', 'BTS', 'Licence', 'Master', 'Doctorat']
-for i in np.arange(0, 8):
-    data_baseline[i + 6] = [f'{nom_etudes[i]}', len(redcap_csv[redcap_csv.etudes == i]),
-                            len(hc[hc.etudes == i]), len(ocd[ocd.etudes == i]), len(other[other.etudes == i])]
-data_baseline[13] = ['Marital Status', "", "", "", ""]
-matrimoniale = ['Single', 'En couple', 'Maried', 'Divorced', 'Widowed']
-for i in np.arange(0, 5):
-    data_baseline[i + 14] = [f'{matrimoniale[i]}', len(redcap_csv[redcap_csv.matrimoniale == i]),
-                             len(hc[hc.matrimoniale == i]), len(ocd[ocd.matrimoniale == i]),
-                             len(other[other.matrimoniale == i])]
-# data_baseline[19] = ['Current Smoker', len(redcap_csv[redcap_csv['tabac'] == 1]),]
 
-data_baseline = pd.DataFrame(np.array(data_baseline).T)
-data_baseline.columns = ['Characteristic', 'Total', 'Control group', 'TOC group', 'Other disorder']
-data_baseline.to_csv('Data_baseline.csv')
+def fill_column(final_name, name_in_csv, i):
+    return [final_name, len(redcap_csv[redcap_csv[name_in_csv] == i]), len(hc[hc[name_in_csv] == i]),
+            len(ocd[ocd[name_in_csv] == i]),
+            len(other[other[name_in_csv] == i])]
 
-print(ocd.ybocs_score_tot.describe())
-# print(control.age.describe())
+
+def make_data_baseline():
+    data_baseline = [['n = ', len(redcap_csv['record_id']), len(hc), len(ocd), len(other)], ['Gender', "", "", "", ""],
+                     ['Men', repart_sex(redcap_csv)[1], repart_sex(hc)[1], repart_sex(ocd)[1],
+                      repart_sex(other)[1]], ['Women', repart_sex(redcap_csv)[0], repart_sex(hc)[0], repart_sex(ocd)[0],
+                                              repart_sex(other)[0]],
+                     ['Age moyen', round(np.mean(redcap_csv['ddn'].apply(age))), round(np.mean(hc.age)),
+                      round(np.mean(ocd.age)),
+                      round(np.mean(other.age))], ['Educational level', "", "", "", ""]]
+    study_name = ['Primary School', 'Secondary School', 'Bac', 'BEP/CAP', 'BTS', 'Licence', 'Master', 'Doctorate']
+    for i in np.arange(0, 8):
+        data_baseline.append(fill_column(f'{study_name[i]}', 'etudes', i))
+    data_baseline.append(['Marital Status', "", "", "", ""])
+    marital = ['Single', 'In relationship', 'Maried', 'Divorced', 'Widowed']
+    for i in np.arange(0, 5):
+        data_baseline.append(fill_column(f'{marital[i]}', 'matrimoniale', i))
+    data_baseline.append(fill_column('Current Smoker', 'tabac', 1))
+    data_baseline.append(fill_column('Current Alcohol Drinker', 'alcool', 1))
+    data_baseline.append(fill_column('Consumption of cafeine', 'cafeine', 1))
+    data_baseline.append(fill_column('Bad visual acuity', 'acuite', 1))
+    data_baseline.append(fill_column('Epilespy antecedent', 'epilepsie', 1))
+    data_baseline.append(fill_column('Brain stimulation', 'stimulation', 1))
+    data_baseline.append(['Brain stimulation techniques', "", "", "", ""])
+    technique_name = ['rTMS', 'tDCS', 'deep TMS', 'TCES']
+    for i in np.arange(0, 4):
+        data_baseline.append(fill_column(f'{technique_name[i]}', 'technique_stimulation_ni', i))
+    data_baseline.append(['Health state score', "", "", "", ""])
+    data_baseline.append(['VAS score', "", "", "", ""])
+    data_baseline.append(['HAD anxiety score', "", "", "", ""])
+    data_baseline.append(['HAD depression score', "", "", "", ""])
+    data_baseline.append(['Ybocs score', "", "", "", ""])
+    data_baseline = pd.DataFrame(data_baseline)
+    data_baseline.columns = ['Characteristic', 'Total', 'Control group', 'TOC group', 'Other disorder']
+    data_baseline.to_csv('Data_baseline.csv', index=False)
+
+
+make_data_baseline()
