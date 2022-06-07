@@ -2,6 +2,7 @@ from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 
 class seven_diff_analysis(Template_Task_Statistics):
@@ -20,8 +21,8 @@ class seven_diff_analysis(Template_Task_Statistics):
 
     def success_rate_trials_penalized(self, df):
         diff = abs(df['ans_candidate'] - df['good_ans'])
-        condlist = [diff == 0, diff == 1, diff ==4 , diff == 5, diff == 6]
-        choicelist = [1, 2/3, 2/3, 1/3, 0]
+        condlist = [diff == 0, diff == 1, diff == 4, diff == 5, diff == 6]
+        choicelist = [1, 2 / 3, 2 / 3, 1 / 3, 0]
         resultat = np.select(condlist, choicelist)
         success = [np.mean(resultat[:n]) * 100 for n in range(1, len(resultat) + 1)]
         return np.array(success)
@@ -70,56 +71,57 @@ class seven_diff_analysis(Template_Task_Statistics):
             max_HC_group = np.nanmax(HC_group, axis=0)
             min_disorder = np.nanmin(disorder_group, axis=0)
             max_disorder = np.nanmax(disorder_group, axis=0)
-            plt.plot(max_disorder, color='grey', alpha=0.25)
-            plt.plot(min_disorder, color='grey', alpha=0.25)
-            plt.plot(min_HC_group, color='cyan', alpha=0.25)
-            plt.plot(max_HC_group, color='cyan', alpha=0.25)
-            plt.fill_between(np.arange(0, 200), min_HC_group, max_HC_group, color='steelblue', alpha=0.25)
-            plt.fill_between(np.arange(0, 200), min_disorder, max_disorder, color='grey', alpha=0.25)
+            plt.plot(max_disorder, color=self.sub_col[1], alpha=0.5)
+            plt.plot(min_disorder, color=self.sub_col[1], alpha=0.5)
+            plt.plot(min_HC_group, color=self.sub_col[0], alpha=0.5)
+            plt.plot(max_HC_group, color=self.sub_col[0], alpha=0.5)
+            plt.fill_between(np.arange(0, 200), min_HC_group, max_HC_group, color=self.sub_col[0], alpha=0.5)
+            plt.fill_between(np.arange(0, 200), min_disorder, max_disorder, color=self.sub_col[1], alpha=0.5)
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
+        plt.grid(True)
         plt.tight_layout()
         plt.show()
 
-    def boxplot_average(self, category='success_rate', disorder='ocd', type_image="all"):
-        """
+
+def boxplot_average(self, category='success_rate', disorder='ocd', type_image="all"):
+    """
         :param disorder:
         :param category:
         :param type_image: the type or image you are interested between all, various, calligraphy and chess
         """
-        if type_image != 'all':
-            stats = self.stats(specific_type=True, type=type_image)
-        else:
-            stats = self.stats()
-        if disorder == 'all':
-            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    disorder: stats[stats['disorder'] != 0][
-                                        category]})
-            mean_success = success.apply(np.mean, axis=0)
-        else:
-            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
-                                        category]})
-            mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
-                            np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
+    if type_image != 'all':
+        stats = self.stats(specific_type=True, type=type_image)
+    else:
+        stats = self.stats()
+    if disorder == 'all':
+        success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
+                                disorder: stats[stats['disorder'] != 0][
+                                    category]})
+        mean_success = success.apply(np.mean, axis=0)
+    else:
+        success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
+                                disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
+                                    category]})
+        mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
+                        np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
 
-        plt.figure()
-        success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} '
-                                                                      f'for the task seven diff (part = {type_image})')
-        plt.ylabel(f'{category}')
-        plt.tight_layout()
-        plt.show()
+    plt.figure()
+    success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} '
+                                                                  f'for the task seven diff (part = {type_image})')
+    plt.ylabel(f'{category}')
+    plt.tight_layout()
+    plt.show()
 
-        plt.figure()
-        plt.title(f'Comparaison of {category} for the task seven diff (part = {type_image})')
-        plt.bar(range(len(mean_success)), mean_success, color=self.col)
-        plt.xticks(range(len(mean_success)), ["Healthy Control", disorder])
-        plt.ylabel(f'{category}')
-        plt.tight_layout()
-        plt.show()
+    plt.figure()
+    plt.title(f'Comparaison of {category} for the task seven diff (part = {type_image})')
+    plt.bar(range(len(mean_success)), mean_success, color=self.col)
+    plt.xticks(range(len(mean_success)), ["Healthy Control", disorder])
+    plt.ylabel(f'{category}')
+    plt.tight_layout()
+    plt.show()
 
 
 s = seven_diff_analysis()
-df=s.df_files[0]
+df = s.df_files[0]
 s.plot_pourcentage()
-

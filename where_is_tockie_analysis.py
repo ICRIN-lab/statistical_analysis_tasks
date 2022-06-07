@@ -29,8 +29,6 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         """
         custom_lines = [plt.Line2D([0], [0], color=self.col[0], lw=4), plt.Line2D([0], [0], color=self.col[1], lw=4)]
         list_patients = self.get_list_patients(disorder)
-        n1 = 0
-        n2 = 0
         plt.figure()
         plt.title(f'Success rate for the task where is tockie regarding trials')
         HC_group = []
@@ -54,7 +52,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         mean_HC_group = np.nanmean(HC_group, axis=0)
         mean_dis_group = np.nanmean(disorder_group, axis=0)
         if mental_disorder:
-            plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)']).get_frame().set_alpha(0)
+            plt.legend(custom_lines, [f'Healthy Control', f'{disorder} ']).get_frame().set_alpha(0)
         plt.plot(mean_HC_group, color=self.col[0])
         plt.plot(mean_dis_group, color=self.col[1])
         if border ==True:
@@ -68,6 +66,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
             plt.plot(max_HC_group, color='cyan',alpha=0.25)
             plt.fill_between(np.arange(0, len(min_HC_group)), min_HC_group, max_HC_group, color='steelblue',alpha=0.25)
             plt.fill_between(np.arange(0, len(min_disorder)), min_disorder, max_disorder, color='grey',alpha=0.25)
+        plt.grid(True)
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
         plt.show()

@@ -7,7 +7,7 @@ import scipy.stats as sps
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path to the correct one"""
-    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-07_1036.csv")
+    redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-02_1846.csv")
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -15,7 +15,8 @@ class Template_Task_Statistics:
 
     """ Color for the graph, respectfully the color for no_disorder representation and the color for disorder 
     representation"""
-    col = ['black', 'blue']
+    col = ['green', 'blue']
+    sub_col = ['green','cyan']
 
     """ Path of the file, which should be set in every class analysis"""
     path = ""

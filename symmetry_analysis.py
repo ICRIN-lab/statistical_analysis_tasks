@@ -55,6 +55,7 @@ class symmetry_analysis(Template_Task_Statistics):
             plt.fill_between(np.arange(0, 100), min_disorder, max_disorder, color='grey',alpha=0.25)
         plt.plot(mean_HC_group, color=self.col[0])
         plt.plot(mean_dis_group, color=self.col[1])
+        plt.grid(True)
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
         plt.show()
