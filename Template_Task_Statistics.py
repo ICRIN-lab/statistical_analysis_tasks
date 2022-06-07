@@ -7,7 +7,7 @@ import scipy.stats as sps
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path to the correct one"""
-    redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-02_1846.csv")
+    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-07_1036.csv")
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -73,10 +73,10 @@ class Template_Task_Statistics:
         else:
             return self.get_list_patients(disorder)[1][self.get_list_patients(disorder)[1] == 1]
 
-    def stats(self, specific_type=False, type='ocd'):
+    def stats(self, specific_type=False, type='all'):
         """
         :param specific_type : Put True if you want to look at a specific type of trials (default = False)
-        :param type : The type you are interested in, change regarding tasks (default = 'ocd')
+        :param type : The type you are interested in, change regarding tasks (default = 'all')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
         numbers_trials = self.get_no_trials(type)

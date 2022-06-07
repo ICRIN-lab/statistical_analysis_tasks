@@ -22,7 +22,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
                        'maximum_count_image', 'minimum_count_image', 'success/average_count_image', 'disorder']
         return tab
 
-    def plot_pourcentage(self, mental_disorder=True, disorder='ocd'):
+    def plot_pourcentage(self, mental_disorder=True, disorder='ocd',border=False):
         """
         :param mental_disorder: put False if you want all data without any distinction otherwise put True
         :param disorder: the disorder you are interested in
@@ -54,9 +54,20 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         mean_HC_group = np.nanmean(HC_group, axis=0)
         mean_dis_group = np.nanmean(disorder_group, axis=0)
         if mental_disorder:
-            plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
+            plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)']).get_frame().set_alpha(0)
         plt.plot(mean_HC_group, color=self.col[0])
         plt.plot(mean_dis_group, color=self.col[1])
+        if border ==True:
+            min_HC_group = np.nanmin(HC_group, axis=0)
+            max_HC_group = np.nanmax(HC_group, axis=0)
+            min_disorder= np.nanmin(disorder_group, axis=0)
+            max_disorder = np.nanmax(disorder_group, axis=0)
+            plt.plot(max_disorder,color='grey',alpha=0.25)
+            plt.plot(min_disorder,color='grey',alpha=0.25)
+            plt.plot(min_HC_group, color='cyan',alpha=0.25)
+            plt.plot(max_HC_group, color='cyan',alpha=0.25)
+            plt.fill_between(np.arange(0, len(min_HC_group)), min_HC_group, max_HC_group, color='steelblue',alpha=0.25)
+            plt.fill_between(np.arange(0, len(min_disorder)), min_disorder, max_disorder, color='grey',alpha=0.25)
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
         plt.show()
@@ -91,5 +102,4 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         """ More results regarding the variable count_image
     """
 
-w= where_is_tockie_analysis()
-w.plot_pourcentage()
+w=where_is_tockie_analysis()

@@ -18,7 +18,15 @@ class seven_diff_analysis(Template_Task_Statistics):
             numbers_trials = np.arange(151, 201)
         return numbers_trials
 
-    def plot_pourcentage(self, mental_disorder=True, disorder='ocd', type_image="all"):
+    def success_rate_trials_penalized(self, df):
+        diff = abs(df['ans_candidate'] - df['good_ans'])
+        condlist = [diff == 0, diff == 1, diff ==4 , diff == 5, diff == 6]
+        choicelist = [1, 2/3, 2/3, 1/3, 0]
+        resultat = np.select(condlist, choicelist)
+        success = [np.mean(resultat[:n]) * 100 for n in range(1, len(resultat) + 1)]
+        return np.array(success)
+
+    def plot_pourcentage(self, mental_disorder=True, disorder='ocd', type_image="all", border=False):
         """
         :param mental_disorder: put False if you want all data without any distinction otherwise put True
         :param disorder: the disorder you are interested in (default = 'ocd')
@@ -37,11 +45,11 @@ class seven_diff_analysis(Template_Task_Statistics):
             i = int(list_patients[list_patients[0] == id][1])
             df = df[df['no_trial'].isin(numbers_trials)]
             if i != -1:
-                tab = self.success_rate_trials(df)
+                tab = self.success_rate_trials_penalized(df)
                 if len(tab) != 200:
                     size = len(tab)
-                    tab =np.resize(tab,(200))
-                    tab_empty_val =np.empty(tab[size:200].shape)
+                    tab = np.resize(tab, (200))
+                    tab_empty_val = np.empty(tab[size:200].shape)
                     tab_empty_val = tab_empty_val.fill(np.nan)
                     tab[size:200] = tab_empty_val
                 if i == 0:
@@ -49,14 +57,25 @@ class seven_diff_analysis(Template_Task_Statistics):
                 else:
                     disorder_group.append(tab)
 
-
-
         mean_HC_group = np.nanmean(HC_group, axis=0)
+
         mean_dis_group = np.nanmean(disorder_group, axis=0)
         if mental_disorder:
             plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
         plt.plot(mean_HC_group, color=self.col[0])
+
         plt.plot(mean_dis_group, color=self.col[1])
+        if border == True:
+            min_HC_group = np.nanmin(HC_group, axis=0)
+            max_HC_group = np.nanmax(HC_group, axis=0)
+            min_disorder = np.nanmin(disorder_group, axis=0)
+            max_disorder = np.nanmax(disorder_group, axis=0)
+            plt.plot(max_disorder, color='grey', alpha=0.25)
+            plt.plot(min_disorder, color='grey', alpha=0.25)
+            plt.plot(min_HC_group, color='cyan', alpha=0.25)
+            plt.plot(max_HC_group, color='cyan', alpha=0.25)
+            plt.fill_between(np.arange(0, 200), min_HC_group, max_HC_group, color='steelblue', alpha=0.25)
+            plt.fill_between(np.arange(0, 200), min_disorder, max_disorder, color='grey', alpha=0.25)
         plt.ylabel('success rate')
         plt.xlabel('number of trials')
         plt.tight_layout()
@@ -86,7 +105,7 @@ class seven_diff_analysis(Template_Task_Statistics):
 
         plt.figure()
         success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} '
-                                                                  f'for the task seven diff (part = {type_image})')
+                                                                      f'for the task seven diff (part = {type_image})')
         plt.ylabel(f'{category}')
         plt.tight_layout()
         plt.show()
@@ -100,5 +119,7 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.show()
 
 
-a=seven_diff_analysis()
-a.plot_pourcentage()
+s = seven_diff_analysis()
+df=s.df_files[0]
+s.plot_pourcentage()
+

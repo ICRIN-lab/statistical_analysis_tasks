@@ -7,7 +7,7 @@ import pandas as pd
 class symmetry_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/symmetry'
 
-    def plot_pourcentage(self, mental_disorder=True, disorder='ocd'):
+    def plot_pourcentage(self, mental_disorder=True, disorder='ocd',border=False):
         """
         :param mental_disorder: put False if you want all data without any distinction otherwise put True
         :param disorder: the disorder you are interested in
@@ -41,6 +41,18 @@ class symmetry_analysis(Template_Task_Statistics):
         mean_dis_group = np.nanmean(disorder_group, axis=0)
         if mental_disorder:
             plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
+
+        if border ==True:
+            min_HC_group = np.nanmin(HC_group, axis=0)
+            max_HC_group = np.nanmax(HC_group, axis=0)
+            min_disorder= np.nanmin(disorder_group, axis=0)
+            max_disorder = np.nanmax(disorder_group, axis=0)
+            plt.plot(max_disorder,color='grey',alpha=0.25)
+            plt.plot(min_disorder,color='grey',alpha=0.25)
+            plt.plot(min_HC_group, color='cyan',alpha=0.25)
+            plt.plot(max_HC_group, color='cyan',alpha=0.25)
+            plt.fill_between(np.arange(0, 100), min_HC_group, max_HC_group, color='steelblue',alpha=0.25)
+            plt.fill_between(np.arange(0, 100), min_disorder, max_disorder, color='grey',alpha=0.25)
         plt.plot(mean_HC_group, color=self.col[0])
         plt.plot(mean_dis_group, color=self.col[1])
         plt.ylabel('success rate')
@@ -74,4 +86,4 @@ class symmetry_analysis(Template_Task_Statistics):
 
 
 s=symmetry_analysis()
-s.plot_pourcentage()
+s.plot_pourcentage(border=True)

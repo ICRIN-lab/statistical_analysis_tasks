@@ -17,7 +17,7 @@ class lucifer_analysis(Template_Task_Statistics):
         else:
             return self.csv_type_lucifer[self.csv_type_lucifer['type'] == type]['no_trial']
 
-    def plot_pourcentage(self, mental_disorder=True, disorder='ocd', type_lucifer='all', group='all'):
+    def plot_pourcentage(self, mental_disorder=True, disorder='ocd', type_lucifer='all', group='all', border=False):
         """
         :param mental_disorder:
         :param disorder:
@@ -51,7 +51,18 @@ class lucifer_analysis(Template_Task_Statistics):
         mean_dis_group = np.nanmean(disorder_group, axis=0)
 
         if mental_disorder:
-                plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
+            plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
+        if border == True:
+            min_HC_group = np.nanmin(HC_group, axis=0)
+            max_HC_group = np.nanmax(HC_group, axis=0)
+            min_disorder = np.nanmin(disorder_group, axis=0)
+            max_disorder = np.nanmax(disorder_group, axis=0)
+            plt.plot(max_disorder, color='grey', alpha=0.25)
+            plt.plot(min_disorder, color='grey', alpha=0.25)
+            plt.plot(min_HC_group, color='cyan', alpha=0.25)
+            plt.plot(max_HC_group, color='cyan', alpha=0.25)
+            plt.fill_between(np.arange(0, 100), min_HC_group, max_HC_group, color='steelblue', alpha=0.25)
+            plt.fill_between(np.arange(0, 100), min_disorder, max_disorder, color='grey', alpha=0.25)
         plt.plot(mean_HC_group, color=self.col[0])
         plt.plot(mean_dis_group, color=self.col[1])
         plt.ylabel('success rate')
@@ -77,7 +88,7 @@ class lucifer_analysis(Template_Task_Statistics):
 
         plt.figure()
         success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} '
-                                                                  f'for the task lucifer (type_lucifer = {type_lucifer})')
+                                                                      f'for the task lucifer (type_lucifer = {type_lucifer})')
         plt.ylabel(f'{category}')
         plt.show()
 
@@ -93,11 +104,12 @@ class lucifer_analysis(Template_Task_Statistics):
             stats = self.stats(specific_type=True, type=type_lucifer)
         else:
             stats = self.stats()
-        stats1 = stats[stats.disorder ==1]
-        plt.scatter(np.arange(0,len(stats1[category])), stats1[category],color=self.col[1])
+        stats1 = stats[stats.disorder == 1]
+        plt.scatter(np.arange(0, len(stats1[category])), stats1[category], color=self.col[1])
         stats2 = stats[stats.disorder == 0]
-        plt.scatter(np.arange(0,len(stats2[category])), stats2[category],color=self.col[0])
+        plt.scatter(np.arange(0, len(stats2[category])), stats2[category], color=self.col[0])
         plt.show()
 
-a = lucifer_analysis()
-a.scatter_pourcentage(type_lucifer='special')
+
+l = lucifer_analysis()
+l.plot_pourcentage(border=True)
