@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from statistics import mean as mean
 import scipy.stats as sps
-from scipy.stats import chisquare
 from datetime import datetime, date
 from seven_diff_analysis import seven_diff_analysis
 from lucifer_analysis import lucifer_analysis
@@ -39,7 +39,7 @@ resume = pd.DataFrame(
     {'age': redcap_csv['ddn'].apply(age), 'gender': redcap_csv['sexe'], 'disorder': redcap_csv['diagnostic_principal']})
 
 
-def Repartition_age():
+def repartition_age():
     # Age moyen selon les groupes
     plt.title("Age moyen pour selon les groupes")
     plt.boxplot([hc.age, ocd.age, other.age])
@@ -47,7 +47,7 @@ def Repartition_age():
     plt.show()
 
 
-def Repartition_sexe():
+def repartition_sexe():
     # Répartition du sexe dans l'échantillion entier
     plt.title("Répartition du sexe pour l'échantillon en entier")
     plt.pie([len(resume.sexe[resume.sexe == 0]) / len(resume.sexe) * 100,
@@ -116,7 +116,7 @@ def all_missing_csv():
 
 
 def fill_column(final_name, name_in_csv, i, variable=False):
-    if variable == False:
+    if not variable:
         return ["", final_name, len(redcap_csv[redcap_csv[name_in_csv] == i]), len(hc[hc[name_in_csv] == i]),
                 len(ocd[ocd[name_in_csv] == i]),
                 len(other[other[name_in_csv] == i])]
@@ -150,16 +150,21 @@ def make_data_baseline():
     data_baseline.append(fill_column('Current Alcohol Drinker', 'alcool', 1, variable=True))
     data_baseline.append(fill_column('Consumption of cafeine', 'cafeine', 1, variable=True))
     data_baseline.append(fill_column('Bad visual acuity', 'acuite', 1, variable=True))
-    data_baseline.append(fill_column('Epilespy antecedent', 'epilepsie', 1, variable=True))
+    data_baseline.append(fill_column('Epilepsy antecedent', 'epilepsie', 1, variable=True))
     data_baseline.append(fill_column('Brain stimulation', 'stimulation', 1, variable=True))
     data_baseline.append(['Brain stimulation techniques', "", "", "", "", ""])
     technique_name = ['rTMS', 'tDCS', 'deep TMS', 'TCES']
     for i in np.arange(0, 4):
         data_baseline.append(fill_column(f'{technique_name[i]}', 'technique_stimulation_ni', i))
-    data_baseline.append(['Health state score', "", "", "", "", ""])
-    data_baseline.append(['VAS score', "", "", "", "", ""])
-    data_baseline.append(['HAD anxiety score', "", "", "", "", ""])
-    data_baseline.append(['HAD depression score', "", "", "", "", ""])
+    data_baseline.append(
+        ['Resistance score, mean', "", "", "", round(np.mean(ocd.maudsley_score)),
+         round(np.mean(other.maudsley_score))])
+    data_baseline.append(
+        ['Health state score, mean', "", "", "", mean(ocd.eq5d5l_score_tot), mean(other.eq5d5l_score_tot)])
+    data_baseline.append(
+        ['VAS score, mean', "", "", "", np.mean(ocd.eq5d5l_sore_valid_sante), np.mean(other.eq5d5l_sore_valid_sante)])
+    data_baseline.append(['HAD anxiety score, mean', "", "", "", "", np.mean(other.score_had_anx)])
+    data_baseline.append(['HAD depression score', "", "", "", "", np.mean(other.score_had_dep)])
     data_baseline.append(['Ybocs score', "", "", "", "", ""])
     data_baseline.append(["", "< 7", "", "", len(ocd[ocd.ybocs_score_tot < 7]), ""])
     data_baseline.append(["", "8 - 15", "", "", len(ocd[(ocd.ybocs_score_tot >= 8) & (ocd.ybocs_score_tot <= 15)]), ""])
@@ -176,8 +181,40 @@ def make_data_baseline():
 
 
 make_data_baseline()
-data_baseline = pd.read_csv('Data_baseline.csv')
-a = data_baseline[data_baseline.Characteristic == 'Men'].iloc[:, 2].astype(int)
-b = data_baseline[data_baseline.Characteristic == 'Women'].iloc[:, 2:].astype(int)
-c = data_baseline.iloc[[3, 4], 2:].astype(int)
-print(int(np.array(a)[0]))
+
+
+def get_value(characteristic_name, variable=False):
+    data_baseline = pd.read_csv('Data_baseline.csv')
+    if not variable:
+        characteristic_line = data_baseline[data_baseline['Characteristic'] == characteristic_name]
+    else:
+        characteristic_line = data_baseline[data_baseline['Variable'] == characteristic_name]
+    list_values = []
+    for i in range(3, 6):
+        list_values.append(characteristic_line[characteristic_line.columns[i]].astype(int).values[0])
+    return list_values
+
+
+def get_value_opposite(characteristic_name, variable):
+    list = get_value(characteristic_name=characteristic_name,variable=variable)
+    opposite_list = [len(hc) - list[0], len(ocd) - list[1], len(other) - list[2]]
+    return opposite_list
+
+
+def p_value_column():
+    tab = [" ", sps.f_oneway(hc.age, ocd.age, other.age)[1], sps.ttest_ind(get_value('Men'), get_value('Women'))[1],
+           sps.chi2_contingency(
+               [get_value('Single'), get_value('In relationship'), get_value('Maried'), get_value('Divorced'),
+                get_value('Widowed')])[1]]
+    # tab.append(sps.chi2_contingency([ get_value('Secondary education'),
+    #                               get_value('High school diploma'),
+    #                              get_value('BTEC Higher National Diploma'), get_value('Bachelor'),
+    #                            get_value('Master'), get_value('PhD')])[1])
+    names_list = ['Current Smoker', 'Current Alcohol Drinker', 'Consumption of cafeine', 'Bad visual acuity',
+                  'Epilepsy antecedent', 'Brain stimulation']
+    for name in names_list:
+        tab.append(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1])
+    return tab
+
+
+print(p_value_column())

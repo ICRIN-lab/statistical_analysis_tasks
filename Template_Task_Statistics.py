@@ -7,7 +7,7 @@ import scipy.stats as sps
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path to the correct one"""
-    redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-02_1846.csv")
+    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-07_1036.csv")
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -57,7 +57,7 @@ class Template_Task_Statistics:
 
     def success_rate_trials(self, df):
         """ Get the success_rate regarding trials from the column result of the dataframe
-        :param resulting dataframe of a task with result regarding trial
+        :param df: resulting dataframe of a task with result regarding trial
         :return: an array with the success rate regarding no_trial for the data of the considered dataframe
         """
         success = [np.mean(df["result"][:n]) * 100 for n in range(1, len(df['result']) + 1)]
@@ -132,4 +132,3 @@ class Template_Task_Statistics:
             print("Il n'y a pas de différence significative entre les deux groupes comparés")
         else:
             print("Il y a une différence significative entre les deux groupes comparés")
-

@@ -112,5 +112,4 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.show()
 
 
-l = lucifer_analysis()
-l.plot_pourcentage(border=True)
+

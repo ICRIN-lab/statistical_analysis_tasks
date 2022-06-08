@@ -11,8 +11,10 @@ class seven_diff_analysis(Template_Task_Statistics):
     def get_no_trials(self, type_image='all'):
         if type_image == 'all':
             numbers_trials = np.arange(0, 201)
-        elif type_image == 'various':
-            numbers_trials = np.arange(0, 101)
+        elif type_image == 'shocking':
+            numbers_trials = np.arange(0, 50)
+        elif type_image == 'non-shocking':
+            numbers_trials = np.arange(51, 101)
         elif type_image == 'calligraphy':
             numbers_trials = np.arange(101, 151)
         elif type_image == 'chess':
@@ -62,7 +64,7 @@ class seven_diff_analysis(Template_Task_Statistics):
 
         mean_dis_group = np.nanmean(disorder_group, axis=0)
         if mental_disorder:
-            plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
+            plt.legend(custom_lines, [f'Healthy Control', f'{disorder}'])
         plt.plot(mean_HC_group, color=self.col[0])
 
         plt.plot(mean_dis_group, color=self.col[1])
@@ -122,6 +124,4 @@ def boxplot_average(self, category='success_rate', disorder='ocd', type_image="a
     plt.show()
 
 
-s = seven_diff_analysis()
-df = s.df_files[0]
-s.plot_pourcentage()
+

@@ -13,7 +13,8 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-            count_tot = [np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)]
+            count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
+            count_tot = count_tot[~np.isnan(count_tot)]
             tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
                         np.mean(count_tot), np.max(count_tot), np.min(count_tot),
                         np.mean(df['result']) * 100 / np.mean(count_tot), int(disorder_id)])
@@ -101,4 +102,4 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         """ More results regarding the variable count_image
     """
 
-w=where_is_tockie_analysis()
+

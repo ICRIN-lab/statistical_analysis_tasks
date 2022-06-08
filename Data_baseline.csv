@@ -23,17 +23,18 @@ Current Smoker,,5,3,1,1
 Current Alcohol Drinker,,8,5,2,1
 Consumption of cafeine,,18,12,4,2
 Bad visual acuity,,18,7,8,3
-Epilespy antecedent,,2,1,0,1
+Epilepsy antecedent,,2,1,0,1
 Brain stimulation,,7,1,6,0
 Brain stimulation techniques,,,,,
 ,rTMS,5,1,4,0
 ,tDCS,0,0,0,0
 ,deep TMS,1,0,1,0
 ,TCES,0,0,0,0
-Health state score,,,,,
-VAS score,,,,,
-HAD anxiety score,,,,,
-HAD depression score,,,,,
+"Resistance score, mean",,,,6,3
+"Health state score, mean",,,,,19343.2
+"VAS score, mean",,,,42.666666666666664,429.4
+"HAD anxiety score, mean",,,,,11.666666666666666
+HAD depression score,,,,,5.333333333333333
 Ybocs score,,,,,
 ,< 7,,,0,
 ,8 - 15,,,0,
