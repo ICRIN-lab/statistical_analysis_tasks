@@ -126,6 +126,42 @@ def fill_column(final_name, name_in_csv, i, variable=False):
                 len(other[other[name_in_csv] == i])]
 
 
+def get_value(characteristic_name, variable=False):
+    data_baseline = pd.read_csv('Data_baseline.csv')
+    if not variable:
+        characteristic_line = data_baseline[data_baseline['Characteristic'] == characteristic_name]
+    else:
+        characteristic_line = data_baseline[data_baseline['Variable'] == characteristic_name]
+    list_values = []
+    for i in range(3, 6):
+        list_values.append(characteristic_line[characteristic_line.columns[i]].astype(int).values[0])
+    return list_values
+
+
+def get_value_opposite(characteristic_name, variable):
+    list = get_value(characteristic_name=characteristic_name, variable=variable)
+    opposite_list = [len(hc) - list[0], len(ocd) - list[1], len(other) - list[2]]
+    return opposite_list
+
+
+def p_value_column():
+    tab = [" ", sps.f_oneway(hc.age, ocd.age, other.age)[1], sps.ttest_ind(get_value('Men'), get_value('Women'))[1], "",
+           "", "", "", "", "", "", "", "","",
+           sps.chi2_contingency(
+               [get_value('Single'), get_value('In relationship'), get_value('Maried'), get_value('Divorced'),
+                get_value('Widowed')])[1],"","","","","",""]
+    # tab.append(sps.chi2_contingency([ get_value('Secondary education'),
+    #                               get_value('High school diploma'),
+    #                              get_value('BTEC Higher National Diploma'), get_value('Bachelor'),
+    #                            get_value('Master'), get_value('PhD')])[1])
+    names_list = ['Current Smoker', 'Current Alcohol Drinker', 'Consumption of cafeine', 'Bad visual acuity',
+                  'Epilepsy antecedent', 'Brain stimulation']
+    for name in names_list:
+        tab.append(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1])
+    tab.extend([""] * 16)
+    return tab
+
+
 def make_data_baseline():
     data_baseline = [['', "", f"(n = {len(redcap_csv['record_id'])})", f"(n = {len(hc)})", f"(n = {len(ocd)})",
                       f"(n = {len(other)})"],
@@ -177,44 +213,9 @@ def make_data_baseline():
     data_baseline = pd.DataFrame(data_baseline)
     data_baseline.columns = ['Variable', 'Characteristic', 'All subjects', 'Healthy control', 'OCD patients',
                              'Other disorder']
+    data_baseline['p-value'] = p_value_column()
     data_baseline.to_csv('Data_baseline.csv', index=False)
 
 
 make_data_baseline()
-
-
-def get_value(characteristic_name, variable=False):
-    data_baseline = pd.read_csv('Data_baseline.csv')
-    if not variable:
-        characteristic_line = data_baseline[data_baseline['Characteristic'] == characteristic_name]
-    else:
-        characteristic_line = data_baseline[data_baseline['Variable'] == characteristic_name]
-    list_values = []
-    for i in range(3, 6):
-        list_values.append(characteristic_line[characteristic_line.columns[i]].astype(int).values[0])
-    return list_values
-
-
-def get_value_opposite(characteristic_name, variable):
-    list = get_value(characteristic_name=characteristic_name,variable=variable)
-    opposite_list = [len(hc) - list[0], len(ocd) - list[1], len(other) - list[2]]
-    return opposite_list
-
-
-def p_value_column():
-    tab = [" ", sps.f_oneway(hc.age, ocd.age, other.age)[1], sps.ttest_ind(get_value('Men'), get_value('Women'))[1],
-           sps.chi2_contingency(
-               [get_value('Single'), get_value('In relationship'), get_value('Maried'), get_value('Divorced'),
-                get_value('Widowed')])[1]]
-    # tab.append(sps.chi2_contingency([ get_value('Secondary education'),
-    #                               get_value('High school diploma'),
-    #                              get_value('BTEC Higher National Diploma'), get_value('Bachelor'),
-    #                            get_value('Master'), get_value('PhD')])[1])
-    names_list = ['Current Smoker', 'Current Alcohol Drinker', 'Consumption of cafeine', 'Bad visual acuity',
-                  'Epilepsy antecedent', 'Brain stimulation']
-    for name in names_list:
-        tab.append(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1])
-    return tab
-
-
-print(p_value_column())
+baseline1 = pd.read_csv('Data_baseline.csv')

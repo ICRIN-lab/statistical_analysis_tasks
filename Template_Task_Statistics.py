@@ -7,7 +7,7 @@ import scipy.stats as sps
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path to the correct one"""
-    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-07_1036.csv")
+    redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-02_1846.csv")
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """

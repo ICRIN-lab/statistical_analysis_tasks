@@ -1,43 +1,43 @@
-Variable,Characteristic,All subjects,Healthy control,OCD patients,Other disorder
-,,(n = 31),(n = 18),(n = 8),(n = 5)
-"Age, mean",,36,35,40,34
-Gender,,,,,
-,Men,14,7,4,3
-,Women,17,11,4,2
-Educational level,,,,,
-,Primary education,0,0,0,0
-,Secondary education,3,0,2,1
-,High school diploma,7,1,4,2
-,Vocational training,0,0,0,0
-,BTEC Higher National Diploma,1,1,0,0
-,Bachelor,8,7,1,0
-,Master,8,5,1,2
-,PhD,4,4,0,0
-Marital Status,,,,,
-,Single,16,7,5,4
-,In relationship,8,6,2,0
-,Maried,4,3,1,0
-,Divorced,2,1,0,1
-,Widowed,1,1,0,0
-Current Smoker,,5,3,1,1
-Current Alcohol Drinker,,8,5,2,1
-Consumption of cafeine,,18,12,4,2
-Bad visual acuity,,18,7,8,3
-Epilepsy antecedent,,2,1,0,1
-Brain stimulation,,7,1,6,0
-Brain stimulation techniques,,,,,
-,rTMS,5,1,4,0
-,tDCS,0,0,0,0
-,deep TMS,1,0,1,0
-,TCES,0,0,0,0
-"Resistance score, mean",,,,6,3
-"Health state score, mean",,,,,19343.2
-"VAS score, mean",,,,42.666666666666664,429.4
-"HAD anxiety score, mean",,,,,11.666666666666666
-HAD depression score,,,,,5.333333333333333
-Ybocs score,,,,,
-,< 7,,,0,
-,8 - 15,,,0,
-,16 - 23,,,1,
-,24 - 31,,,3,
-,32 - 40,,,4,
+Variable,Characteristic,All subjects,Healthy control,OCD patients,Other disorder,p-value
+,,(n = 26),(n = 14),(n = 7),(n = 5), 
+"Age, mean",,37,36,41,34,0.6623605965193093
+Gender,,,,,,0.7588023606871557
+,Men,12,6,3,3,
+,Women,14,8,4,2,
+Educational level,,,,,,
+,Primary education,0,0,0,0,
+,Secondary education,2,0,1,1,
+,High school diploma,7,1,4,2,
+,Vocational training,0,0,0,0,
+,BTEC Higher National Diploma,1,1,0,0,
+,Bachelor,8,7,1,0,
+,Master,4,1,1,2,
+,PhD,4,4,0,0,0.5953717519215689
+Marital Status,,,,,,
+,Single,13,5,4,4,
+,In relationship,6,4,2,0,
+,Maried,4,3,1,0,
+,Divorced,2,1,0,1,
+,Widowed,1,1,0,0,
+Current Smoker,,4,2,1,1,0.06876273078188458
+Current Alcohol Drinker,,5,2,2,1,0.10354769492325917
+Consumption of cafeine,,15,10,3,2,0.6271931755800852
+Bad visual acuity,,16,6,7,3,0.49809296515337464
+Epilepsy antecedent,,2,1,0,1,0.051374430844367984
+Brain stimulation,,6,1,5,0,0.2669530815155662
+Brain stimulation techniques,,,,,,
+,rTMS,5,1,4,0,
+,tDCS,0,0,0,0,
+,deep TMS,1,0,1,0,
+,TCES,0,0,0,0,
+"Resistance score, mean",,,,6,3,
+"Health state score, mean",,,,,19343.2,
+"VAS score, mean",,,,39.2,429.4,
+"HAD anxiety score, mean",,,,,11.666666666666666,
+HAD depression score,,,,,5.333333333333333,
+Ybocs score,,,,,,
+,< 7,,,0,,
+,8 - 15,,,0,,
+,16 - 23,,,1,,
+,24 - 31,,,2,,
+,32 - 40,,,4,,
