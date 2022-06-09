@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from statistics import mean as mean
 import scipy.stats as sps
 from datetime import datetime, date
 from seven_diff_analysis import seven_diff_analysis
@@ -145,29 +144,45 @@ def get_value_opposite(characteristic_name, variable):
 
 
 def p_value_column():
-    tab = [" ", sps.f_oneway(hc.age, ocd.age, other.age)[1], sps.ttest_ind(get_value('Men'), get_value('Women'))[1], "",
-           "", "", "", "", "", "", "", "","",
-           sps.chi2_contingency(
+    tab_study = [get_value('Primary education'), get_value('Secondary education'),
+                 get_value('High school diploma'), get_value('Vocational training'),
+                 get_value('BTEC Higher National Diploma'), get_value('Bachelor'),
+                 get_value('Master'), get_value('PhD')]
+
+    [tab_study.remove(t) for t in tab_study if t == [0, 0, 0]]
+
+    tab = [" ", round(sps.f_oneway(hc.age, ocd.age, other.age)[1], 3),
+           round(sps.ttest_ind(get_value('Men'), get_value('Women'))[1], 3), "",
+           "", round(sps.chi2_contingency(tab_study)[1], 3), "", "", "", "", "", "", "", "",
+           round(sps.chi2_contingency(
                [get_value('Single'), get_value('In relationship'), get_value('Maried'), get_value('Divorced'),
-                get_value('Widowed')])[1],"","","","","",""]
-    # tab.append(sps.chi2_contingency([ get_value('Secondary education'),
-    #                               get_value('High school diploma'),
-    #                              get_value('BTEC Higher National Diploma'), get_value('Bachelor'),
-    #                            get_value('Master'), get_value('PhD')])[1])
+                get_value('Widowed')])[1], 3), "", "", "", "", ""]
+
     names_list = ['Current Smoker', 'Current Alcohol Drinker', 'Consumption of cafeine', 'Bad visual acuity',
                   'Epilepsy antecedent', 'Brain stimulation']
     for name in names_list:
-        tab.append(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1])
-    tab.extend([""] * 16)
+        tab.append(round(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1], 3))
+    tab.extend([""] * 5)
+
+    names_list2 = ['maudsley_score', 'eq5d5l_score_tot', 'eq5d5l_sore_valid_sante']
+    for name2 in names_list2:
+        ocd_name = np.array(ocd[name2])
+        ocd_tab = ocd_name[~np.isnan(ocd_name)]
+        other_name =np.array(other[name2])
+        other_tab = other_name[~np.isnan(other_name)]
+        tab.append(sps.ttest_ind(ocd_tab, other_tab)[1])
+    tab.extend([""] * 8)
     return tab
 
 
 def make_data_baseline():
     data_baseline = [['', "", f"(n = {len(redcap_csv['record_id'])})", f"(n = {len(hc)})", f"(n = {len(ocd)})",
                       f"(n = {len(other)})"],
-                     ['Age, mean', "", round(np.mean(redcap_csv['ddn'].apply(age))), round(np.mean(hc.age)),
-                      round(np.mean(ocd.age)),
-                      round(np.mean(other.age))],
+                     ['Age', "",
+                      f"{round(np.mean(redcap_csv['ddn'].apply(age)), 2)} ({round(np.std(redcap_csv['ddn'].apply(age)), 2)})",
+                      f"{round(np.mean(hc.age), 2)} ({round(np.std(hc.age), 2)})",
+                      f"{round(np.mean(ocd.age), 2)} ({round(np.std(ocd.age), 2)})",
+                      f"{round(np.mean(other.age), 2)} ({round(np.std(other.age), 2)})"],
                      ['Gender', "", "", "", ""],
                      ["", 'Men', repart_sex(redcap_csv)[1], repart_sex(hc)[1], repart_sex(ocd)[1],
                       repart_sex(other)[1]],
@@ -193,14 +208,21 @@ def make_data_baseline():
     for i in np.arange(0, 4):
         data_baseline.append(fill_column(f'{technique_name[i]}', 'technique_stimulation_ni', i))
     data_baseline.append(
-        ['Resistance score, mean', "", "", "", round(np.mean(ocd.maudsley_score)),
-         round(np.mean(other.maudsley_score))])
+        ['Resistance score (Maudsley)', "", "", "",
+         f"{round(np.mean(ocd.maudsley_score), 2)} ({round(np.std(ocd.maudsley_score), 2)})",
+         f"{round(np.mean(other.maudsley_score), 2)} ({round(np.std(other.maudsley_score), 2)})"])
     data_baseline.append(
-        ['Health state score, mean', "", "", "", mean(ocd.eq5d5l_score_tot), mean(other.eq5d5l_score_tot)])
+        ['Health state score', "", "", "",
+         f"{round(np.mean(ocd.eq5d5l_score_tot), 2)} ({round(np.std(ocd.eq5d5l_score_tot), 2)})",
+         f"{round(np.mean(other.eq5d5l_score_tot), 2)} ({round(np.std(other.eq5d5l_score_tot), 2)})"])
     data_baseline.append(
-        ['VAS score, mean', "", "", "", np.mean(ocd.eq5d5l_sore_valid_sante), np.mean(other.eq5d5l_sore_valid_sante)])
-    data_baseline.append(['HAD anxiety score, mean', "", "", "", "", np.mean(other.score_had_anx)])
-    data_baseline.append(['HAD depression score', "", "", "", "", np.mean(other.score_had_dep)])
+        ['VAS score', "", "", "",
+         f"{round(np.mean(ocd.eq5d5l_sore_valid_sante), 2)} ({round(np.std(ocd.eq5d5l_sore_valid_sante), 2)})",
+         f"{round(np.mean(other.eq5d5l_sore_valid_sante), 2)} ({round(np.std(other.eq5d5l_sore_valid_sante), 2)})"])
+    data_baseline.append(['HAD anxiety score', "", "", "", "",
+                          f"{round(np.mean(other.score_had_anx), 2)} ({round(np.std(other.score_had_anx), 2)})"])
+    data_baseline.append(['HAD depression score', "", "", "", "",
+                          f"{round(np.mean(other.score_had_dep), 2)} ({round(np.std(other.score_had_dep), 2)})"])
     data_baseline.append(['Ybocs score', "", "", "", "", ""])
     data_baseline.append(["", "< 7", "", "", len(ocd[ocd.ybocs_score_tot < 7]), ""])
     data_baseline.append(["", "8 - 15", "", "", len(ocd[(ocd.ybocs_score_tot >= 8) & (ocd.ybocs_score_tot <= 15)]), ""])
@@ -218,4 +240,5 @@ def make_data_baseline():
 
 
 make_data_baseline()
-baseline1 = pd.read_csv('Data_baseline.csv')
+
+
