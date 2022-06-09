@@ -3,6 +3,7 @@ import pandas as pd
 from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
 
@@ -88,8 +89,10 @@ class lucifer_analysis(Template_Task_Statistics):
                             np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
 
         plt.figure()
-        success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} '
-                                                                      f'for the task lucifer (type_lucifer = {type_lucifer})')
+        sns.boxplot(data=success, palette ="PuBuGn")
+        #success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} '
+         #                                                             f'for the task lucifer (type_lucifer = {type_lucifer})',
+          #                                          colors=['blue','red'])
         plt.ylabel(f'{category}')
         plt.show()
 
@@ -106,10 +109,12 @@ class lucifer_analysis(Template_Task_Statistics):
         else:
             stats = self.stats()
         stats1 = stats[stats.disorder == 1]
-        plt.scatter(np.arange(0, len(stats1[category])), stats1[category], color=self.col[1])
+        plt.scatter(np.arange(0, len(stats1[category]), stats1[category], color=self.col[1]))
         stats2 = stats[stats.disorder == 0]
         plt.scatter(np.arange(0, len(stats2[category])), stats2[category], color=self.col[0])
+        plt.grid(True)
         plt.show()
 
 
-
+l = lucifer_analysis()
+l.boxplot_average(type_lucifer='special')

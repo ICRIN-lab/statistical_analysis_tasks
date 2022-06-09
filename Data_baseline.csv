@@ -30,10 +30,10 @@ Brain stimulation techniques,,,,,,
 ,tDCS,0,0,0,0,
 ,deep TMS,1,0,1,0,
 ,TCES,0,0,0,0,
-Resistance score (Maudsley),,,,5.0 (3.08),3.0 (1.55),0.2406521490207935
-"Health state score, mean",,,,17506.57 (10804.7),19343.2 (11752.38),0.8035575871717204
-"VAS score, mean",,,,48.57 (26.51),429.4 (465.26),0.07682867574723046
-"HAD anxiety score, mean",,,,,11.67 (3.09),
+Resistance score (Maudsley),,,,5.0 (3.08),3.0 (1.55),0.241
+Health state score,,,,17506.57 (10804.7),19343.2 (11752.38),0.804
+VAS score,,,,48.57 (26.51),429.4 (465.26),0.077
+HAD anxiety score,,,,,11.67 (3.09),
 HAD depression score,,,,,5.33 (4.03),
 Ybocs score,,,,,,
 ,< 7,,,0,,

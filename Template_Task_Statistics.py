@@ -7,16 +7,20 @@ import scipy.stats as sps
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path to the correct one"""
-    redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-02_1846.csv")
+    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-09_1006.csv")
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
     list_disorder = ['all', 'ocd', 'du', 'db', 'ta', 'tus', 's']
 
+    """ List of names to be shown in graphics"""
+    list_graph_name = ['All disorders', 'OCD', 'Unipolar Depression', 'Bipolar Depression', 'Anxiety Disorder',
+                       'Substance Use Disorder', 'Schizophrenia']
+
     """ Color for the graph, respectfully the color for no_disorder representation and the color for disorder 
     representation"""
-    col = ['green', 'blue']
-    sub_col = ['green','cyan']
+    col = ['royalblue', 'crimson']
+    sub_col = ['royalblue', 'crimson']
 
     """ Path of the file, which should be set in every class analysis"""
     path = ""
@@ -66,7 +70,7 @@ class Template_Task_Statistics:
     def total_people(self, mental_disorder=True, disorder='ocd'):
         """
         :param mental_disorder : False, if you want the entire data, True otherwise
-        :param disorder: the specific disorder you which to look at between the list_disorder (default= 'toc')
+        :param disorder: the specific disorder you which to look at between the list_disorder (default= 'ocd')
         :return: the number of people suffering from the disorder selected in our data regarding the redcap csv
         """
         if not mental_disorder:

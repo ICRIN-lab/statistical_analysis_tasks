@@ -33,13 +33,15 @@ class seven_diff_analysis(Template_Task_Statistics):
         """
         :param mental_disorder: put False if you want all data without any distinction otherwise put True
         :param disorder: the disorder you are interested in (default = 'ocd')
-        :param type_image: the type or image you are interested between all, various, calligraphy and chess
+        :param type_image: the type or image you are interested between all, shocking, non-shocking, calligraphy and chess
         """
         custom_lines = [plt.Line2D([0], [0], color=self.col[0], lw=4), plt.Line2D([0], [0], color=self.col[1], lw=4)]
         list_patients = self.get_list_patients(disorder)
 
         plt.figure()
-        plt.title(f'Success rate for the task seven diff regarding trials (part = {type_image})')
+        plt.suptitle(f'Success rate function of the number of the trial for Seven Differences Task ')
+        plt.title(f'(Block = {type_image})', fontsize=10)
+
         numbers_trials = self.get_no_trials(type_image)
         HC_group = []
         disorder_group = []
@@ -64,10 +66,10 @@ class seven_diff_analysis(Template_Task_Statistics):
 
         mean_dis_group = np.nanmean(disorder_group, axis=0)
         if mental_disorder:
-            plt.legend(custom_lines, [f'Healthy Control', f'{disorder}'])
-        plt.plot(mean_HC_group, color=self.col[0])
+            plt.legend(custom_lines, [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
+        sns.lineplot(data=mean_HC_group, color=self.col[0])
 
-        plt.plot(mean_dis_group, color=self.col[1])
+        sns.lineplot(data=mean_dis_group, color=self.col[1])
         if border == True:
             min_HC_group = np.nanmin(HC_group, axis=0)
             max_HC_group = np.nanmax(HC_group, axis=0)
@@ -79,8 +81,8 @@ class seven_diff_analysis(Template_Task_Statistics):
             plt.plot(max_HC_group, color=self.sub_col[0], alpha=0.5)
             plt.fill_between(np.arange(0, 200), min_HC_group, max_HC_group, color=self.sub_col[0], alpha=0.5)
             plt.fill_between(np.arange(0, 200), min_disorder, max_disorder, color=self.sub_col[1], alpha=0.5)
-        plt.ylabel('success rate')
-        plt.xlabel('number of trials')
+        plt.ylabel('Success rate (%)')
+        plt.xlabel("N trials")
         plt.grid(True)
         plt.tight_layout()
         plt.show()
@@ -116,7 +118,7 @@ def boxplot_average(self, category='success_rate', disorder='ocd', type_image="a
     plt.show()
 
     plt.figure()
-    plt.title(f'Comparaison of {category} for the task seven diff (part = {type_image})')
+    plt.title(f'Comparaison of {category} for the task seven diff (block = {type_image})')
     plt.bar(range(len(mean_success)), mean_success, color=self.col)
     plt.xticks(range(len(mean_success)), ["Healthy Control", disorder])
     plt.ylabel(f'{category}')
@@ -124,4 +126,5 @@ def boxplot_average(self, category='success_rate', disorder='ocd', type_image="a
     plt.show()
 
 
-
+s = seven_diff_analysis()
+s.plot_pourcentage()
