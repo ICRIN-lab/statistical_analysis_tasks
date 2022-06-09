@@ -3,7 +3,7 @@ import pandas as pd
 import scipy.stats as sps
 from datetime import datetime, date
 
-redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-09_1006.csv")
+redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-09_2132.csv")
 
 
 def age(born):
@@ -23,6 +23,10 @@ hc = redcap_csv[redcap_csv.diagnostic_principal == 0]
 ocd = redcap_csv[redcap_csv.diagnostic_principal == 1]
 redcap_without_control = redcap_csv[redcap_csv.diagnostic_principal != 0]
 other = redcap_without_control[redcap_without_control.diagnostic_principal != 1]
+
+hc = hc.assign(age=hc['ddn'].apply(age))
+ocd = ocd.assign(age=ocd['ddn'].apply(age))
+other = other.assign(age=other['ddn'].apply(age))
 
 
 def fill_column(final_name, name_in_csv, i, variable=False):
@@ -48,7 +52,7 @@ def get_value(characteristic_name, variable=False):
     return list_values
 
 
-def get_value_opposite(characteristic_name, variable):
+def get_value_opposite(characteristic_name, variable=False):
     list = get_value(characteristic_name=characteristic_name, variable=variable)
     opposite_list = [len(hc) - list[0], len(ocd) - list[1], len(other) - list[2]]
     return opposite_list
@@ -69,14 +73,17 @@ def p_value_column():
                [get_value('Single'), get_value('In relationship'), get_value('Maried'), get_value('Divorced'),
                 get_value('Widowed')])[1], 3), "", "", "", "", ""]
 
-    names_list = ['Current Smoker', 'Current Alcohol Drinker', 'Consumption of cafeine', 'Bad visual acuity',
-                  'Epilepsy antecedent', 'Brain stimulation']
+    names_list = ['Current Smoker', 'Current Alcohol Drinker', 'Caffeine consumer', 'Poor visual acuity']
     for name in names_list:
         tab.append(round(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1], 3))
+    tab.append(round(sps.f_oneway(get_value('Satisfied with optical correction (yes)'),
+                                  get_value_opposite('Satisfied with optical correction (yes)'))[1], 3))
+    for name in ['Epilepsy antecedent', 'Brain stimulation']:
+        tab.append(round(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1], 3))
+
     tab.extend([""] * 5)
 
-    names_list2 = ['maudsley_score', 'eq5d5l_score_tot', 'eq5d5l_sore_valid_sante']
-    for name2 in names_list2:
+    for name2 in ['maudsley_score', 'eq5d5l_score_tot', 'eq5d5l_sore_valid_sante']:
         ocd_name = np.array(ocd[name2])
         ocd_tab = ocd_name[~np.isnan(ocd_name)]
         other_name = np.array(other[name2])
@@ -110,8 +117,11 @@ def make_data_baseline():
         data_baseline.append(fill_column(f'{marital[i]}', 'matrimoniale', i))
     data_baseline.append(fill_column('Current Smoker', 'tabac', 1, variable=True))
     data_baseline.append(fill_column('Current Alcohol Drinker', 'alcool', 1, variable=True))
-    data_baseline.append(fill_column('Consumption of cafeine', 'cafeine', 1, variable=True))
-    data_baseline.append(fill_column('Bad visual acuity', 'acuite', 1, variable=True))
+    data_baseline.append(fill_column('Caffeine consumer', 'cafeine', 1, variable=True))
+    data_baseline.append(fill_column('Poor visual acuity', 'acuite', 1, variable=True))
+    # data_baseline.append(["",'Satisfied with optical correction', "", "", "", ""])
+    data_baseline.append(fill_column('Satisfied with optical correction (yes)', 'correction', 1))
+    # data_baseline.append(fill_column('No', 'correction', 0))
     data_baseline.append(fill_column('Epilepsy antecedent', 'epilepsie', 1, variable=True))
     data_baseline.append(fill_column('Brain stimulation', 'stimulation', 1, variable=True))
     data_baseline.append(['Brain stimulation techniques', "", "", "", "", ""])
@@ -146,6 +156,7 @@ def make_data_baseline():
     data_baseline = pd.DataFrame(data_baseline)
     data_baseline.columns = ['Variable', 'Characteristic', 'All subjects', 'Healthy control', 'OCD patients',
                              'Other disorder']
+    data_baseline.to_csv('Data_baseline.csv', index=False)
     data_baseline['p-value'] = p_value_column()
     data_baseline.to_csv('Data_baseline.csv', index=False)
 

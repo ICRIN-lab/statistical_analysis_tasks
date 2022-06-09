@@ -2,62 +2,25 @@ from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 
 class symmetry_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/symmetry'
 
-    def plot_pourcentage(self, mental_disorder=True, disorder='ocd', border=False):
+    def plot_pourcentage(self, disorder='ocd', border=False):
         """
-        :param mental_disorder: put False if you want all data without any distinction otherwise put True
         :param disorder: the disorder you are interested in
         """
-        labels = ["Healthy Control", disorder]
-        custom_lines = [plt.Line2D([0], [0], color=self.col[0], lw=4), plt.Line2D([0], [0], color=self.col[1], lw=4)]
-        list_patients = self.get_list_patients(disorder)
-        n1 = 0
-        n2 = 0
+
         plt.figure()
-        plt.title(f'Success rate for the task symmetry regarding trials')
-        HC_group = []
-        disorder_group = []
-        for df in self.df_files:
-            id = self.get_id(df)
-            i = int(list_patients[list_patients[0] == id][1])
-            if i != -1:
-                tab = self.success_rate_trials(df)
-                if len(tab) != 100:
-                    size = len(tab)
-                    tab = np.resize(tab, (100))
-                    tab_empty_val = np.empty(tab[size:100].shape)
-                    tab_empty_val = tab_empty_val.fill(np.nan)
-                    tab[size:100] = tab_empty_val
-                if i == 0:
-                    HC_group.append(tab)
-                else:
-                    disorder_group.append(tab)
-
-        mean_HC_group = np.nanmean(HC_group, axis=0)
-        mean_dis_group = np.nanmean(disorder_group, axis=0)
-        if mental_disorder:
-            plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
-
-        if border == True:
-            min_HC_group = np.nanmin(HC_group, axis=0)
-            max_HC_group = np.nanmax(HC_group, axis=0)
-            min_disorder = np.nanmin(disorder_group, axis=0)
-            max_disorder = np.nanmax(disorder_group, axis=0)
-            plt.plot(max_disorder, color='grey', alpha=0.25)
-            plt.plot(min_disorder, color='grey', alpha=0.25)
-            plt.plot(min_HC_group, color='cyan', alpha=0.25)
-            plt.plot(max_HC_group, color='cyan', alpha=0.25)
-            plt.fill_between(np.arange(0, 100), min_HC_group, max_HC_group, color='steelblue', alpha=0.25)
-            plt.fill_between(np.arange(0, 100), min_disorder, max_disorder, color='grey', alpha=0.25)
-        plt.plot(mean_HC_group, color=self.col[0])
-        plt.plot(mean_dis_group, color=self.col[1])
+        plt.suptitle(f'Success rate function of the number of the trial for Symmetry Task')
+        self.all_success_plot(disorder='ocd',border=border, max_len=100)
+        plt.legend(self.custom_lines,[f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
+        plt.ylabel('Success rate (%)')
+        plt.xlabel("N trials")
         plt.grid(True)
-        plt.ylabel('success rate')
-        plt.xlabel('number of trials')
+        plt.tight_layout()
         plt.show()
 
     def boxplot_average(self, category='success_rate', disorder='ocd'):
@@ -86,3 +49,5 @@ class symmetry_analysis(Template_Task_Statistics):
         plt.show()
 
 
+s = symmetry_analysis()
+s.plot_pourcentage(border=True)

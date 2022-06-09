@@ -18,57 +18,27 @@ class lucifer_analysis(Template_Task_Statistics):
         else:
             return self.csv_type_lucifer[self.csv_type_lucifer['type'] == type]['no_trial']
 
-    def plot_pourcentage(self, mental_disorder=True, disorder='ocd', type_lucifer='all', group='all', border=False):
+    def plot_pourcentage(self, disorder='ocd', type_lucifer='all', group='all', border=False):
         """
-        :param mental_disorder:
         :param disorder:
         :param type_lucifer: the arrangement of lucifer you are interested in , between all, straight, messy and special
         :return:
         """
-        custom_lines = [plt.Line2D([0], [0], color=self.col[0], lw=4), plt.Line2D([0], [0], color=self.col[1], lw=4)]
-        list_patients = self.get_list_patients(disorder)
-        plt.figure()
-        numbers_trials = self.get_no_trials(type_lucifer)
-        plt.title(f'Success rate for the task lucifer regarding trials (type_lucifer = {type_lucifer})')
-        HC_group = []
-        disorder_group = []
-        for df in self.df_files:
-            id = self.get_id(df)
-            i = int(list_patients[list_patients[0] == id][1])
-            df = df[df['no_trial'].isin(numbers_trials)]
-            if i != -1:
-                tab = self.success_rate_trials(df)
-                if len(tab) != 100:
-                    size = len(tab)
-                    tab = np.resize(tab, (100))
-                    tab_empty_val = np.empty(tab[size:100].shape)
-                    tab_empty_val = tab_empty_val.fill(np.nan)
-                    tab[size:100] = tab_empty_val
-                if i == 0:
-                    HC_group.append(tab)
-                else:
-                    disorder_group.append(tab)
-        mean_HC_group = np.nanmean(HC_group, axis=0)
-        mean_dis_group = np.nanmean(disorder_group, axis=0)
+        if type_lucifer != "all":
+            specific_type = True
+        else:
+            specific_type = False
 
-        if mental_disorder:
-            plt.legend(custom_lines, [f'Healthy Control (n=)', f'{disorder} (n=)'])
-        if border == True:
-            min_HC_group = np.nanmin(HC_group, axis=0)
-            max_HC_group = np.nanmax(HC_group, axis=0)
-            min_disorder = np.nanmin(disorder_group, axis=0)
-            max_disorder = np.nanmax(disorder_group, axis=0)
-            plt.plot(max_disorder, color='grey', alpha=0.25)
-            plt.plot(min_disorder, color='grey', alpha=0.25)
-            plt.plot(min_HC_group, color='cyan', alpha=0.25)
-            plt.plot(max_HC_group, color='cyan', alpha=0.25)
-            plt.fill_between(np.arange(0, 100), min_HC_group, max_HC_group, color='steelblue', alpha=0.25)
-            plt.fill_between(np.arange(0, 100), min_disorder, max_disorder, color='grey', alpha=0.25)
-        plt.plot(mean_HC_group, color=self.col[0])
-        plt.plot(mean_dis_group, color=self.col[1])
+        plt.figure()
+        plt.suptitle(f'Success rate function of the number of the trial for Lucifer Task')
+        plt.title(f'(Lucifer Arrangement = {type_lucifer})', fontsize=10)
+        self.all_success_plot(disorder='ocd', specific_type=specific_type, type=type_lucifer, border=border, max_len=200)
+        plt.legend(self.custom_lines,
+                   [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
+        plt.ylabel('Success rate (%)')
+        plt.xlabel("N trials")
         plt.grid(True)
-        plt.ylabel('success rate')
-        plt.xlabel('number of trials')
+        plt.tight_layout()
         plt.show()
 
     def boxplot_average(self, category='success_rate', disorder='ocd', type_lucifer='all'):
@@ -76,32 +46,18 @@ class lucifer_analysis(Template_Task_Statistics):
             stats = self.stats(specific_type=True, type=type_lucifer)
         else:
             stats = self.stats()
-        if disorder == 'all':
-            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    disorder: stats[stats['disorder'] != 0][
+        success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
+                                    f'{self.list_graph_name[self.list_disorder.index(disorder)]}': stats[stats['disorder'] == self.list_disorder.index(disorder)][
                                         category]})
-            mean_success = success.apply(np.mean, axis=0)
-        else:
-            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
-                                        category]})
-            mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
+        mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
                             np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
 
         plt.figure()
         sns.boxplot(data=success, palette ="PuBuGn")
-        #success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} '
-         #                                                             f'for the task lucifer (type_lucifer = {type_lucifer})',
-          #                                          colors=['blue','red'])
         plt.ylabel(f'{category}')
         plt.show()
 
-        plt.figure()
-        plt.title(f'Comparaison of {category} for the task lucifer (type_lucifer = {type_lucifer})')
-        plt.bar(range(len(mean_success)), mean_success, color=self.col)
-        plt.xticks(range(len(mean_success)), ["Healthy Control", disorder])
-        plt.ylabel(f'{category}')
-        plt.show()
+
 
     def scatter_pourcentage(self, category='success_rate', disorder='ocd', type_lucifer='all'):
         if type_lucifer != 'all':
@@ -117,4 +73,4 @@ class lucifer_analysis(Template_Task_Statistics):
 
 
 l = lucifer_analysis()
-l.boxplot_average(type_lucifer='special')
+l.boxplot_average()

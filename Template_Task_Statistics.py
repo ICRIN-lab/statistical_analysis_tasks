@@ -3,11 +3,13 @@ import pandas as pd
 import glob
 import os
 import scipy.stats as sps
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path to the correct one"""
-    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-09_1006.csv")
+    redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-02_1846.csv")
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -17,11 +19,12 @@ class Template_Task_Statistics:
     list_graph_name = ['All disorders', 'OCD', 'Unipolar Depression', 'Bipolar Depression', 'Anxiety Disorder',
                        'Substance Use Disorder', 'Schizophrenia']
 
-    """ Color for the graph, respectfully the color for no_disorder representation and the color for disorder 
-    representation"""
+    """ Color for the graph, respectfully the color for healthy control representation and the color for the considered 
+    disorder representation"""
     col = ['royalblue', 'crimson']
-    sub_col = ['royalblue', 'crimson']
 
+    """ Specific lines to get the color and the category to always match in the legend"""
+    custom_lines = [plt.Line2D([0], [0], color=col[0], lw=4), plt.Line2D([0], [0], color=col[1], lw=4)]
     """ Path of the file, which should be set in every class analysis"""
     path = ""
 
@@ -102,11 +105,45 @@ class Template_Task_Statistics:
         """ Get the numbers of trials within a certain category
         """
 
+    def all_success_plot(self, specific_type=False, border=False, type='all', disorder='ocd', max_len=200):
+        """
+        :return:
+        """
+        list_patients = self.get_list_patients(disorder)
+        HC_group = []
+        disorder_group = []
+        for df in self.df_files:
+            if specific_type:
+                numbers_trials = self.get_no_trials(type)
+                df = df[df['no_trial'].isin(numbers_trials)]
+            id = self.get_id(df)
+            i = int(list_patients[list_patients[0] == id][1])
+            if i != -1:
+                tab = self.success_rate_trials(df)
+                if len(tab) != max_len:
+                    size = len(tab)
+                    tab = np.resize(tab, (max_len))
+                    tab_empty_val = np.empty(tab[size:max_len].shape)
+                    tab_empty_val = tab_empty_val.fill(np.nan)
+                    tab[size:max_len] = tab_empty_val
+                if i == 0:
+                    HC_group.append(tab)
+                else:
+                    disorder_group.append(tab)
+        if border:
+            list_group = [HC_group, disorder_group]
+            for i in range(2):
+                plt.plot(np.nanmin(list_group[i], axis=0), self.col[i], alpha=0.25)
+                plt.plot(np.nanmax(list_group[i], axis=0), self.col[i], alpha=0.25)
+                plt.fill_between(np.arange(0, 100), np.nanmin(list_group[i], axis=0),
+                                 np.nanmax(list_group[i], axis=0),
+                                 color=self.col[i], alpha=0.25)
+        sns.lineplot(data=np.nanmean(HC_group, axis=0), color=self.col[0])
+        sns.lineplot(data=np.nanmean(disorder_group, axis=0), color=self.col[1])
+
     def plot_pourcentage(self, *args):
         """ Create a graph representing success rate depending on the number of trials
             """
-
-
 
     def boxplot_average(self, category='success_rate', *args):
         """
