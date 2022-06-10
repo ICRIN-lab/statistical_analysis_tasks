@@ -98,7 +98,7 @@ class Template_Task_Statistics:
             tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
                         int(disorder_id)])
         tab = pd.DataFrame(tab)
-        tab.columns = ['Id', 'success_rate', 'average_reaction_time', 'maximum_reaction_time', 'disorder']
+        tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'disorder']
         return tab
 
     def get_no_trials(self, *args):

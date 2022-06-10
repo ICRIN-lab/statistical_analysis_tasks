@@ -15,39 +15,36 @@ class symmetry_analysis(Template_Task_Statistics):
 
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Symmetry Task')
-        self.all_success_plot(disorder='ocd',border=border, max_len=100)
-        plt.legend(self.custom_lines,[f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
+        self.all_success_plot(disorder='ocd', border=border, max_len=100)
+        plt.legend(self.custom_lines,
+                   [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)
         plt.tight_layout()
         plt.show()
 
-    def boxplot_average(self, category='success_rate', disorder='ocd'):
+    def boxplot_average(self, category='Success rate', disorder='ocd'):
+        my_pal = {"Healthy Control": self.col[0],
+                  f'{self.list_graph_name[self.list_disorder.index(disorder)]}': self.col[1]}
         stats = self.stats()
+
         if disorder == 'all':
-            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    disorder: stats[stats['disorder'] != 0][
-                                        category]})
-            mean_success = success.apply(np.mean, axis=0)
+            tab = [stats[stats['disorder'] == 0][category], stats[stats['disorder'] != 0][
+                category]]
         else:
-            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
-                                        category]})
-            mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
-                            np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
-        plt.figure()
-        success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} for the task symmetry')
-        plt.ylabel(f'{category}')
-        plt.show()
+            tab = [stats[stats['disorder'] == 0][category],
+                   stats[stats['disorder'] == self.list_disorder.index(disorder)][
+                       category]]
+        success = pd.DataFrame({"Healthy Control": tab[0],
+                                f'{self.list_graph_name[self.list_disorder.index(disorder)]}': tab[1]
+                                })
 
         plt.figure()
-        plt.title(f'Comparaison of {category} for the task symmetry')
-        plt.bar(range(len(mean_success)), mean_success, color=self.col)
-        plt.xticks(range(len(mean_success)), ["Healthy Control", disorder])
-        plt.ylabel(f'{category}')
+        plt.title(f'{category} for Symmetry Task')
+        sns.boxplot(data=success, palette=my_pal)
+        if category == 'Success rate':
+            plt.ylabel(f'{category} (%)')
+        else:
+            plt.ylabel(f'{category}')
         plt.show()
-
-
-s = symmetry_analysis()
-s.plot_pourcentage(border=True)

@@ -5,4 +5,7 @@ from symmetry_analysis import symmetry_analysis
 
 
 result_seven =seven_diff_analysis()
-result_seven.plot_pourcentage()
+
+
+result_lucifer = lucifer_analysis()
+result_lucifer.boxplot_average(disorder='all',type_lucifer='messy')

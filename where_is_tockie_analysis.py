@@ -3,12 +3,13 @@ import pandas as pd
 from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 
 class where_is_tockie_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/where_is_tockie'
 
-    def stats(self,specific_type=False, type='all'):
+    def stats(self, specific_type=False, type='all'):
         tab = []
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
@@ -19,15 +20,11 @@ class where_is_tockie_analysis(Template_Task_Statistics):
                         np.mean(count_tot), np.max(count_tot), np.min(count_tot),
                         np.mean(df['result']) * 100 / np.mean(count_tot), int(disorder_id)])
         tab = pd.DataFrame(tab)
-        tab.columns = ['Id', 'success_rate', 'average_reaction_time', 'maximum_reaction_time', 'average_count_image',
-                       'maximum_count_image', 'minimum_count_image', 'success/average_count_image', 'disorder']
+        tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average count image',
+                       'Maximum count image', 'Minimum count image', 'Success/count image', 'disorder']
         return tab
 
-    def plot_pourcentage(self, disorder='ocd',border=False):
-        """
-
-        :param disorder: the disorder you are interested in
-        """
+    def plot_pourcentage(self, disorder='ocd', border=False):
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Where Is Tockie Task')
         self.all_success_plot(disorder='ocd', border=border, max_len=200)
@@ -39,34 +36,32 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         plt.tight_layout()
         plt.show()
 
-    def boxplot_average(self, category='success_rate', disorder='ocd'):
+    def boxplot_average(self, category='Success rate', disorder='ocd'):
+        my_pal = {"Healthy Control": self.col[0],
+                  f'{self.list_graph_name[self.list_disorder.index(disorder)]}': self.col[1]}
         stats = self.stats()
         if disorder == 'all':
-            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    disorder: stats[stats['disorder'] != 0][
-                                        category]})
-            mean_success = success.apply(np.mean, axis=0)
+            tab = [stats[stats['disorder'] == 0][category], stats[stats['disorder'] != 0][
+                category]]
         else:
-            success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
-                                        category]})
-            mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
-                            np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
+            tab = [stats[stats['disorder'] == 0][category],
+                   stats[stats['disorder'] == self.list_disorder.index(disorder)][
+                       category]]
+        success = pd.DataFrame({"Healthy Control": tab[0],
+                                f'{self.list_graph_name[self.list_disorder.index(disorder)]}': tab[1]
+                                })
 
         plt.figure()
-        success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} for the task where is tockie')
-        plt.ylabel(f'{category}')
-        plt.show()
-
-        plt.figure()
-        plt.title(f'Comparison of {category} for the task where is tockie')
-        plt.bar(range(len(mean_success)), mean_success, color=self.col)
-        plt.xticks(range(len(mean_success)), ["Healthy Control", disorder])
-        plt.ylabel(f'{category}')
+        plt.title(f'{category} for Where is Tockie Task')
+        if category == 'Success/count image':
+            category = 'Succes regarding the average count of image'
+        sns.boxplot(data=success, palette=my_pal)
+        if category == 'Success rate':
+            plt.ylabel(f'{category} (%)')
+        else:
+            plt.ylabel(f'{category}')
         plt.show()
 
     def count_image_analysis(self):
         """ More results regarding the variable count_image
     """
-
-

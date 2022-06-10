@@ -62,25 +62,24 @@ class seven_diff_analysis(Template_Task_Statistics):
             stats = self.stats(specific_type=True, type=block)
         else:
             stats = self.stats()
+        if disorder == 'all':
+            tab = [stats[stats['disorder'] == 0][category], stats[stats['disorder'] != 0][
+                category]]
+        else:
+            tab = [stats[stats['disorder'] == 0][category],
+                   stats[stats['disorder'] == self.list_disorder.index(disorder)][
+                       category]]
+        success = pd.DataFrame({"Healthy Control": tab[0],
+                                f'{self.list_graph_name[self.list_disorder.index(disorder)]}': tab[1]
+                                })
 
-        success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                disorder: stats[stats['disorder'] == self.list_disorder.index(disorder)][
-                                    category]})
-        mean_success = success.apply(np.mean, axis=0)
-        # mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
-        #                np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
-
+        my_pal = {"Healthy Control": self.col[0],
+                  f'{self.list_graph_name[self.list_disorder.index(disorder)]}': self.col[1]}
         plt.figure()
-        success[["Healthy Control", disorder]].plot(kind='box', title=f'Boxplot of {category} '
-                                                                      f'for the task seven diff (part = {block})')
-        plt.ylabel(f'{category}')
-        plt.tight_layout()
-        plt.show()
-
-        plt.figure()
-        plt.title(f'Comparaison of {category} for the task seven diff (block = {block})')
-        plt.bar(range(len(mean_success)), mean_success, color=self.col)
-        plt.xticks(range(len(mean_success)), ["Healthy Control", disorder])
-        plt.ylabel(f'{category}')
-        plt.tight_layout()
+        plt.suptitle(f'{category} for Seven Differences Task')
+        sns.boxplot(data=success, palette=my_pal)
+        if category == 'Success rate':
+            plt.ylabel(f'{category} (%)')
+        else:
+            plt.ylabel(f'{category}')
         plt.show()

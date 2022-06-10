@@ -4,6 +4,7 @@ from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import plotly.express as px
 
 csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
 
@@ -32,7 +33,8 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Lucifer Task')
         plt.title(f'(Lucifer Arrangement = {type_lucifer})', fontsize=10)
-        self.all_success_plot(disorder='ocd', specific_type=specific_type, type=type_lucifer, border=border, max_len=200)
+        self.all_success_plot(disorder='ocd', specific_type=specific_type, type=type_lucifer, border=border,
+                              max_len=200)
         plt.legend(self.custom_lines,
                    [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
         plt.ylabel('Success rate (%)')
@@ -41,25 +43,34 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.tight_layout()
         plt.show()
 
-    def boxplot_average(self, category='success_rate', disorder='ocd', type_lucifer='all'):
+    def boxplot_average(self, category='Success rate', disorder='ocd', type_lucifer='all'):
         if type_lucifer != 'all':
             stats = self.stats(specific_type=True, type=type_lucifer)
         else:
             stats = self.stats()
-        success = pd.DataFrame({"Healthy Control": stats[stats['disorder'] == 0][category],
-                                    f'{self.list_graph_name[self.list_disorder.index(disorder)]}': stats[stats['disorder'] == self.list_disorder.index(disorder)][
-                                        category]})
-        mean_success = [np.mean(stats[stats['disorder'] == 0][category]),
-                            np.mean(stats[stats['disorder'] == self.list_disorder.index(disorder)][category])]
-
+        if disorder == 'all':
+            tab = [stats[stats['disorder'] == 0][category], stats[stats['disorder'] != 0][
+                category]]
+        else:
+            tab = [stats[stats['disorder'] == 0][category],
+                   stats[stats['disorder'] == self.list_disorder.index(disorder)][
+                       category]]
+        success = pd.DataFrame({"Healthy Control": tab[0],
+                                f'{self.list_graph_name[self.list_disorder.index(disorder)]}': tab[1]
+                                })
+        my_pal = {"Healthy Control": self.col[0],
+                  f'{self.list_graph_name[self.list_disorder.index(disorder)]}': self.col[1]}
         plt.figure()
-        sns.boxplot(data=success, palette ="PuBuGn")
-        plt.ylabel(f'{category}')
+        plt.suptitle(f'{category} for Lucifer Task')
+        plt.title(f'(Lucifer Arrangement = {type_lucifer})', fontsize=10)
+        sns.boxplot(data=success, palette=my_pal)
+        if category == 'Success rate':
+            plt.ylabel(f'{category} (%)')
+        else:
+            plt.ylabel(f'{category}')
         plt.show()
 
-
-
-    def scatter_pourcentage(self, category='success_rate', disorder='ocd', type_lucifer='all'):
+    def scatter_pourcentage(self, category='Success rate', disorder='ocd', type_lucifer='all'):
         if type_lucifer != 'all':
             stats = self.stats(specific_type=True, type=type_lucifer)
         else:
@@ -70,7 +81,3 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.scatter(np.arange(0, len(stats2[category])), stats2[category], color=self.col[0])
         plt.grid(True)
         plt.show()
-
-
-l = lucifer_analysis()
-l.boxplot_average()
