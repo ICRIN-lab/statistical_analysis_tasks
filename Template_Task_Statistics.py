@@ -81,9 +81,9 @@ class Template_Task_Statistics:
         else:
             return self.get_list_patients(disorder)[1][self.get_list_patients(disorder)[1] == 1]
 
-    def stats(self, specific_type=False, type='all'):
+    def stats(self, type='all'):
         """
-        :param specific_type : Put True if you want to look at a specific type of trials (default = False)
+
         :param type : The type you are interested in, change regarding tasks (default = 'all')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
@@ -91,7 +91,7 @@ class Template_Task_Statistics:
         tab = []
 
         for df in self.df_files:
-            if specific_type:
+            if type != 'all':
                 df = df[df['no_trial'].isin(numbers_trials)]
             id = self.get_id(df)
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
@@ -105,7 +105,7 @@ class Template_Task_Statistics:
         """ Get the numbers of trials within a certain category
         """
 
-    def all_success_plot(self, specific_type=False, border=False, type='all', disorder='ocd', max_len=200):
+    def all_success_plot(self,border=False, type='all', disorder='ocd', max_len=200):
         """
         :return:
         """
@@ -113,7 +113,7 @@ class Template_Task_Statistics:
         HC_group = []
         disorder_group = []
         for df in self.df_files:
-            if specific_type:
+            if type != all:
                 numbers_trials = self.get_no_trials(type)
                 df = df[df['no_trial'].isin(numbers_trials)]
             id = self.get_id(df)
@@ -145,31 +145,32 @@ class Template_Task_Statistics:
         """ Create a graph representing success rate depending on the number of trials
             """
 
-    def boxplot_average(self, category='success_rate', *args):
+    def boxplot_average(self, category='Success rate', *args):
         """
         :param category: the category of the output of stats that you want to see
         :return: a boxplot and a barplot of the average success result of a certain category (choose among the columns
         of the output of stats()
         """
 
-    def group_comparison(self, specific_type=False, type='all', category='success_rate', disorder='ocd'):
+    def group_comparison(self, type='all', category='Success rate', disorder='ocd',print_status=True):
         """" Student test for considered criteria
-        :param specific_type : Put True if you want to look at a specific type of trials (default = False)
         :param type : The type you are interested in, change regarding tasks (default = 'ocd')
         :param category: the category of the output of stats that you want to see
         :param disorder: The disorder you want to compare with control group
         """
-        X = self.stats(specific_type=specific_type, type=type)
+        X = self.stats(type=type)
         X1 = np.array(X[X.disorder == 0][category])
         X2 = np.array(X[X.disorder == self.list_disorder.index(disorder)][category])
-        if specific_type:
-            print(f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
-                  f' pour le type {type} , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
-        else:
-            print(f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
-                  f' , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
+        if print_status:
+            if type != 'all':
+                print(f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
+                      f' pour le type {type} , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
+            else:
+                print(f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
+                      f' , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
 
-        if sps.ttest_ind(X1, X2)[1] > 0.05:
-            print("Il n'y a pas de différence significative entre les deux groupes comparés")
-        else:
-            print("Il y a une différence significative entre les deux groupes comparés")
+            if sps.ttest_ind(X1, X2)[1] > 0.05:
+                print("Il n'y a pas de différence significative entre les deux groupes comparés")
+            else:
+                print("Il y a une différence significative entre les deux groupes comparés")
+        return sps.ttest_ind(X1, X2)[1]

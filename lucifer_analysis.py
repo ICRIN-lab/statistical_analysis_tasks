@@ -25,15 +25,10 @@ class lucifer_analysis(Template_Task_Statistics):
         :param type_lucifer: the arrangement of lucifer you are interested in , between all, straight, messy and special
         :return:
         """
-        if type_lucifer != "all":
-            specific_type = True
-        else:
-            specific_type = False
-
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Lucifer Task')
         plt.title(f'(Lucifer Arrangement = {type_lucifer})', fontsize=10)
-        self.all_success_plot(disorder='ocd', specific_type=specific_type, type=type_lucifer, border=border,
+        self.all_success_plot(disorder='ocd', type=type_lucifer, border=border,
                               max_len=200)
         plt.legend(self.custom_lines,
                    [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
@@ -45,7 +40,7 @@ class lucifer_analysis(Template_Task_Statistics):
 
     def boxplot_average(self, category='Success rate', disorder='ocd', type_lucifer='all'):
         if type_lucifer != 'all':
-            stats = self.stats(specific_type=True, type=type_lucifer)
+            stats = self.stats(type=type_lucifer)
         else:
             stats = self.stats()
         if disorder == 'all':
@@ -72,7 +67,7 @@ class lucifer_analysis(Template_Task_Statistics):
 
     def scatter_pourcentage(self, category='Success rate', disorder='ocd', type_lucifer='all'):
         if type_lucifer != 'all':
-            stats = self.stats(specific_type=True, type=type_lucifer)
+            stats = self.stats(type=type_lucifer)
         else:
             stats = self.stats()
         stats1 = stats[stats.disorder == 1]

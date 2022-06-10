@@ -9,7 +9,7 @@ import seaborn as sns
 class where_is_tockie_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/where_is_tockie'
 
-    def stats(self, specific_type=False, type='all'):
+    def stats(self, type='all'):
         tab = []
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
@@ -52,7 +52,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
                                 })
 
         plt.figure()
-        plt.title(f'{category} for Where is Tockie Task')
+        plt.title(f'{category} for Where Is Tockie Task')
         if category == 'Success/count image':
             category = 'Succes regarding the average count of image'
         sns.boxplot(data=success, palette=my_pal)
@@ -62,6 +62,14 @@ class where_is_tockie_analysis(Template_Task_Statistics):
             plt.ylabel(f'{category}')
         plt.show()
 
-    def count_image_analysis(self):
+    def count_image_analysis(self,df):
         """ More results regarding the variable count_image
     """
+        count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
+        count_tot = count_tot[~np.isnan(count_tot)]
+        n_question = [len(df[df['no_trial'] == i]['count_image'])/count_tot[i] for i in range(0, 32)]
+
+        print(n_question)
+
+w=where_is_tockie_analysis()
+w.count_image_analysis(w.df_files[0])

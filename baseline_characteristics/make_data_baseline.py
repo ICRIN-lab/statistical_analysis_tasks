@@ -3,7 +3,7 @@ import pandas as pd
 import scipy.stats as sps
 from datetime import datetime, date
 
-redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-09_2132.csv")
+redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-10_1302.csv")
 
 
 def age(born):
@@ -77,7 +77,7 @@ def p_value_column():
     for name in names_list:
         tab.append(round(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1], 3))
     tab.append(round(sps.f_oneway(get_value('Satisfied with optical correction (yes)'),
-                                  get_value_opposite('Satisfied with optical correction (yes)'))[1], 3))
+                                          get_value_opposite('Satisfied with optical correction (yes)'))[1], 3))
     for name in ['Epilepsy antecedent', 'Brain stimulation']:
         tab.append(round(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1], 3))
 
@@ -97,7 +97,7 @@ def make_data_baseline():
     data_baseline = [['', "", f"(n = {len(redcap_csv['record_id'])})", f"(n = {len(hc)})", f"(n = {len(ocd)})",
                       f"(n = {len(other)})"],
                      ['Age', "",
-                      f"{round(np.mean(redcap_csv['ddn'].apply(age)), 2)} ({round(np.std(redcap_csv['ddn'].apply(age)), 2)})",
+                      f"{np.mean(redcap_csv['ddn'].apply(age))} ({round(np.std(redcap_csv['ddn'].apply(age)), 2)})",
                       f"{round(np.mean(hc.age), 2)} ({round(np.std(hc.age), 2)})",
                       f"{round(np.mean(ocd.age), 2)} ({round(np.std(ocd.age), 2)})",
                       f"{round(np.mean(other.age), 2)} ({round(np.std(other.age), 2)})"],

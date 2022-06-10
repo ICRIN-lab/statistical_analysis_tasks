@@ -35,15 +35,10 @@ class seven_diff_analysis(Template_Task_Statistics):
         :param disorder: the disorder you are interested in (default = 'ocd')
         :param block: the block of images you are interested in between all, shocking, non-shocking, calligraphy and chess
         """
-        if block != "all":
-            specific_type = True
-        else:
-            specific_type = False
-
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Seven Differences Task')
         plt.title(f'(Block = {block})', fontsize=10)
-        self.all_success_plot(disorder='ocd', specific_type=specific_type, type=block, border=border, max_len=200)
+        self.all_success_plot(disorder='ocd', type=block, border=border, max_len=200)
         plt.legend(self.custom_lines,
                    [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
         plt.ylabel('Success rate (%)')
@@ -52,14 +47,14 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.tight_layout()
         plt.show()
 
-    def boxplot_average(self, category='success_rate', disorder='ocd', block="all"):
+    def boxplot_average(self, category='Success rate', disorder='ocd', block="all"):
         """
             :param disorder:
             :param category:
             :param block: the type or image you are interested between all, various, calligraphy and chess
             """
         if block != 'all':
-            stats = self.stats(specific_type=True, type=block)
+            stats = self.stats(type=block)
         else:
             stats = self.stats()
         if disorder == 'all':
@@ -77,9 +72,13 @@ class seven_diff_analysis(Template_Task_Statistics):
                   f'{self.list_graph_name[self.list_disorder.index(disorder)]}': self.col[1]}
         plt.figure()
         plt.suptitle(f'{category} for Seven Differences Task')
+        plt.title(f'(Block = {block})', fontsize=10)
         sns.boxplot(data=success, palette=my_pal)
         if category == 'Success rate':
             plt.ylabel(f'{category} (%)')
         else:
             plt.ylabel(f'{category}')
         plt.show()
+
+s=seven_diff_analysis()
+print(s.df_files[0])

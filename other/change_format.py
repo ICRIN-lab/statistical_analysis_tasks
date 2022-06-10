@@ -17,4 +17,3 @@ def change_id_candidate(path_file, id_candidate):
     tab['id_candidate'] = id_candidate
     tab.to_csv(path_file, index=False)
 
-
