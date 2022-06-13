@@ -156,9 +156,11 @@ class Template_Task_Statistics:
     def group_comparison(self, type='all', category='Success rate', disorder='ocd', print_status=True):
         """" Student test for considered criteria
         :param print_status:
-        :param type : The type you are interested in, change regarding tasks (default = 'ocd')
-        :param category: the category of the output of stats that you want to see
-        :param disorder: The disorder you want to compare with control group
+        :param type: The specific block or type of lucifer you are interested in (default = 'all')
+        :param category: the category of the output of stats that you want to see between
+        'Success rate', 'Average reaction time', 'Maximum reaction time' for all task and 'Average count image',
+        'Maximum count image', 'Minimum count image', 'Success/count image' for where is tockie (default = 'Success rate')
+        :param disorder: The disorder you want to compare with control group (default = 'ocd')
         """
         X = self.stats(type=type)
         X1 = np.array(X[X.disorder == 0][category])

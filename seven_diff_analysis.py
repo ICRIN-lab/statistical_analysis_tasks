@@ -9,6 +9,11 @@ class seven_diff_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/seven_diff'
 
     def get_no_trials(self, block='all'):
+        """
+        :param block: The block of image you are interested in, between all, shocking, non-shocking, calligraphy and
+        chess
+        :return: numbers of corresponding trials
+        """
         if block == 'all':
             numbers_trials = np.arange(0, 201)
         elif block == 'shocking':
@@ -22,7 +27,6 @@ class seven_diff_analysis(Template_Task_Statistics):
         return numbers_trials
 
     def success_rate_trials(self, df):
-        """ Get the success_rate regarding trials from the column result of the dataframe"""
         diff = abs(df['ans_candidate'] - df['good_ans'])
         condlist = [diff == 0, diff == 1, diff == 4, diff == 5, diff == 6]
         choicelist = [1, 2 / 3, 2 / 3, 1 / 3, 0]
@@ -30,10 +34,12 @@ class seven_diff_analysis(Template_Task_Statistics):
         success = [np.mean(resultat[:n]) * 100 for n in range(1, len(resultat) + 1)]
         return np.array(success)
 
-    def plot_pourcentage(self, disorder='ocd', block="all", border=False):
-        """
+    def plot_pourcentage(self, disorder='ocd', block="all", border=False, save_fig=False):
+        """ Create a graph representing success rate depending on the number of trials
         :param disorder: the disorder you are interested in (default = 'ocd')
         :param block: the block of images you are interested in between all, shocking, non-shocking, calligraphy and chess
+        :param border: True, if you want margins of the result for each group, False otherwise (default = False)
+        :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
         """
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Seven Differences Task')
@@ -45,13 +51,17 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.xlabel("N trials")
         plt.grid(True)
         plt.tight_layout()
+        if save_fig:
+            print('Done')
+            plt.savefig(f'Success rate_number trials Seven Differences Task (Block = {block}).jpg')
         plt.show()
 
-    def boxplot_average(self, category='Success rate', disorder='ocd', block="all"):
-        """
-            :param disorder:
-            :param category:
-            :param block: the type or image you are interested between all, various, calligraphy and chess
+    def boxplot_average(self, category='Success rate', disorder='ocd', block='all', save_fig=False):
+        """Create boxplot of the average result from a specific category for HC group and considered disorder group
+        :param category: the category of the output of stats that you want to see
+        :param disorder: the disorder you are interested in (default = 'ocd')
+        :param block: the block of images you are interested in between all, shocking, non-shocking, calligraphy and chess
+        :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
             """
         if block != 'all':
             stats = self.stats(type=block)
@@ -78,7 +88,7 @@ class seven_diff_analysis(Template_Task_Statistics):
             plt.ylabel(f'{category} (%)')
         else:
             plt.ylabel(f'{category}')
+        if save_fig:
+            plt.savefig(f'Boxplot :{category} for Seven Differences Task (Block = {block}).png')
         plt.show()
 
-s=seven_diff_analysis()
-print(s.df_files[0])

@@ -77,10 +77,22 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         plt.show()
 
     def count_image_analysis(self, df):
-        """ More results regarding the variable count_image
+        """ More results regarding the variable count_image _ in progress
     """
         count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
         count_tot = count_tot[~np.isnan(count_tot)]
         n_question = [len(df[df['no_trial'] == i]['count_image']) / count_tot[i] for i in range(0, 32)]
+        res = []
+        first_res = []
+        last_res = []
+        for i in range(0,2):
+            df = df[df['no_trial'] == i]
+            result = np.array(df['result'])
+            if count_tot[i] == 1:
+                res.append(np.mean(result))
+            else:
+                first_res.append(result)
+                last_res.append(np.mean(result[:-int(n_question[i])]))
 
-        print(n_question)
+
+
