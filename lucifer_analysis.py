@@ -2,9 +2,7 @@ import pandas as pd
 
 from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
-import plotly.express as px
 
 csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
 
@@ -19,12 +17,14 @@ class lucifer_analysis(Template_Task_Statistics):
         else:
             return self.csv_type_lucifer[self.csv_type_lucifer['type'] == type]['no_trial']
 
-    def plot_pourcentage(self, disorder='ocd', type_lucifer='all', group='all', border=False):
-        """
-        :param disorder:
+    def plot_pourcentage(self, disorder='ocd', type_lucifer='all', border=False, save_fig=False):
+        """ Create a graph representing success rate depending on the number of trials
+        :param disorder: the disorder you are interested in (default = 'ocd')
         :param type_lucifer: the arrangement of lucifer you are interested in , between all, straight, messy and special
-        :return:
+        :param border: True, if you want margins of the result for each group, False otherwise (default = False)
+        :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
         """
+
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Lucifer Task')
         plt.title(f'(Lucifer Arrangement = {type_lucifer})', fontsize=10)
@@ -36,9 +36,17 @@ class lucifer_analysis(Template_Task_Statistics):
         plt.xlabel("N trials")
         plt.grid(True)
         plt.tight_layout()
+        if save_fig:
+            plt.savefig(f'Success rate_number trials Lucifer Task (Lucifer Arrangement = {type_lucifer}).png')
         plt.show()
 
-    def boxplot_average(self, category='Success rate', disorder='ocd', type_lucifer='all'):
+    def boxplot_average(self, category='Success rate', disorder='ocd', type_lucifer='all', save_fig=False):
+        """Create boxplot of the average result from a specific category for HC group and considered disorder group
+        :param category: the category of the output of stats that you want to see
+        :param disorder: the disorder you are interested in (default = 'ocd')
+        :param type_lucifer: the arrangement of lucifer you are interested in , between all, straight, messy and special
+        :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
+         """
         if type_lucifer != 'all':
             stats = self.stats(type=type_lucifer)
         else:
@@ -63,16 +71,6 @@ class lucifer_analysis(Template_Task_Statistics):
             plt.ylabel(f'{category} (%)')
         else:
             plt.ylabel(f'{category}')
-        plt.show()
-
-    def scatter_pourcentage(self, category='Success rate', disorder='ocd', type_lucifer='all'):
-        if type_lucifer != 'all':
-            stats = self.stats(type=type_lucifer)
-        else:
-            stats = self.stats()
-        stats1 = stats[stats.disorder == 1]
-        plt.scatter(np.arange(0, len(stats1[category]), stats1[category], color=self.col[1]))
-        stats2 = stats[stats.disorder == 0]
-        plt.scatter(np.arange(0, len(stats2[category])), stats2[category], color=self.col[0])
-        plt.grid(True)
+        if save_fig:
+            plt.savefig(f'Boxplot: {category} for Lucifer Task.png')
         plt.show()

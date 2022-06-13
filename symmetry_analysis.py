@@ -8,9 +8,11 @@ import seaborn as sns
 class symmetry_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/symmetry'
 
-    def plot_pourcentage(self, disorder='ocd', border=False):
-        """
-        :param disorder: the disorder you are interested in
+    def plot_pourcentage(self, disorder='ocd', border=False, save_fig=False):
+        """ Create a graph representing success rate depending on the number of trials
+        :param disorder: the disorder you are interested in (default = 'ocd')
+        :param border: True, if you want margins of the result for each group, False otherwise (default = False)
+        :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
         """
 
         plt.figure()
@@ -22,9 +24,16 @@ class symmetry_analysis(Template_Task_Statistics):
         plt.xlabel("N trials")
         plt.grid(True)
         plt.tight_layout()
+        if save_fig:
+            plt.savefig(f'Success rate_number trials Symmetry Task.png')
         plt.show()
 
-    def boxplot_average(self, category='Success rate', disorder='ocd'):
+    def boxplot_average(self, category='Success rate', disorder='ocd', save_fig=False):
+        """Create boxplot of the average result from a specific category for HC group and considered disorder group
+        :param category: the category of the output of stats that you want to see
+        :param disorder: the disorder you are interested in (default = 'ocd')
+        :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
+        """
         my_pal = {"Healthy Control": self.col[0],
                   f'{self.list_graph_name[self.list_disorder.index(disorder)]}': self.col[1]}
         stats = self.stats()
@@ -47,4 +56,6 @@ class symmetry_analysis(Template_Task_Statistics):
             plt.ylabel(f'{category} (%)')
         else:
             plt.ylabel(f'{category}')
+        if save_fig:
+            plt.savefig(f'Boxplot: {category} for Symmetry Task.png')
         plt.show()
