@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import scipy.stats as sps
+import seaborn as sns
 from datetime import datetime, date
 from seven_diff_analysis import seven_diff_analysis
 from lucifer_analysis import lucifer_analysis
@@ -13,6 +13,9 @@ redcap_csv = task.redcap_csv
 
 
 def age(born):
+    """
+    Determine age from a date of birth
+    """
     born = datetime.strptime(born, "%Y-%m-%d").date()
     today = date.today()
     return today.year - born.year - ((today.month,
@@ -39,21 +42,13 @@ resume = pd.DataFrame(
 
 
 def repartition_age():
-    # Age moyen selon les groupes
-    plt.title("Age moyen pour selon les groupes")
-    plt.boxplot([hc.age, ocd.age, other.age])
-    plt.xticks(np.array([1, 2, 3]), ["Healthy Control", "OCD", "Other disorder"])
+    plt.title("Age regarding group")
+    df = pd.DataFrame({"Healthy Control": hc.age, "OCD": ocd.age, "Other disorder": other.age})
+    sns.boxplot(data=df)
     plt.show()
 
 
 def repartition_sexe():
-    # Répartition du sexe dans l'échantillion entier
-    plt.title("Répartition du sexe pour l'échantillon en entier")
-    plt.pie([len(resume.sexe[resume.sexe == 0]) / len(resume.sexe) * 100,
-             len(resume.sexe[resume.sexe == 1]) / len(resume.sexe) * 100], labels=['Femme', 'Homme'], autopct='%1.1f%%')
-    plt.show()
-
-    # Répartition selon les groupes
     group = [hc, ocd, other]
     men_means = [repart_sex(df)[1] for df in group]
     women_means = [repart_sex(df)[0] for df in group]
@@ -61,12 +56,17 @@ def repartition_sexe():
     x = np.arange(len(labels))
     width = 0.35
 
+    plt.title("Sex distribution of our data")
+    plt.pie([len(resume.gender[resume.gender == 0]) / len(resume.gender) * 100,
+             len(resume.gender[resume.gender == 1]) / len(resume.gender) * 100], labels=['Women', 'Men'],
+            autopct='%1.1f%%')
+    plt.show()
     fig, ax = plt.subplots()
     rects1 = ax.bar(x - width / 2, men_means, width, label='Men')
     rects2 = ax.bar(x + width / 2, women_means, width, label='Women')
 
     ax.set_ylabel('')
-    ax.set_title('Répartition du sexe selon les groupes')
+    ax.set_title('Sex distribution regarding group')
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
@@ -87,16 +87,6 @@ def repartition_sexe():
     plt.show()
 
 
-plt.title('Répartition des sujets')
-plt.pie([len(hc), len(ocd), len(other)],
-        labels=["Healthy control", 'Other disorder', 'Toc'],
-        autopct='%1.1f%%')
-
-
-# plt.show()
-
-
-# Analyse des données manquantes
 def all_missing_csv():
     task = [seven_diff_analysis, lucifer_analysis, where_is_tockie_analysis, symmetry_analysis]
     task_name = ['seven_diff', 'lucifer', 'where_is_tockie', 'symmetry']
@@ -114,5 +104,15 @@ def all_missing_csv():
         print(f"Il n'y a pas de csv pour la tâche {name} pour les individus", missing_csv_id)
 
 
+def exact_value(x):
+    return round(x,2)
 
 
+plt.title('Distribution of our data')
+plt.pie([len(hc), len(ocd), len(other)],
+        labels=["Healthy control", 'Other disorder', 'Toc'], autopct=exact_value)
+plt.show()
+
+repartition_age()
+repartition_sexe()
+all_missing_csv()

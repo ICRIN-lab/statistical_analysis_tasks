@@ -3,7 +3,7 @@ import pandas as pd
 import scipy.stats as sps
 from datetime import datetime, date
 
-redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-10_1302.csv")
+redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-13_1201.csv")
 
 
 def age(born):
@@ -67,7 +67,7 @@ def p_value_column():
     [tab_study.remove(t) for t in tab_study if t == [0, 0, 0]]
 
     tab = [" ", round(sps.f_oneway(hc.age, ocd.age, other.age)[1], 3),
-           round(sps.ttest_ind(get_value('Men'), get_value('Women'))[1], 3), "",
+           round(sps.chi2_contingency([get_value('Men'), get_value('Women')])[1], 3), "",
            "", round(sps.chi2_contingency(tab_study)[1], 3), "", "", "", "", "", "", "", "",
            round(sps.chi2_contingency(
                [get_value('Single'), get_value('In relationship'), get_value('Maried'), get_value('Divorced'),
@@ -75,11 +75,17 @@ def p_value_column():
 
     names_list = ['Current Smoker', 'Current Alcohol Drinker', 'Caffeine consumer', 'Poor visual acuity']
     for name in names_list:
-        tab.append(round(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1], 3))
-    tab.append(round(sps.f_oneway(get_value('Satisfied with optical correction (yes)'),
-                                          get_value_opposite('Satisfied with optical correction (yes)'))[1], 3))
-    for name in ['Epilepsy antecedent', 'Brain stimulation']:
-        tab.append(round(sps.f_oneway(get_value(name, variable=True), get_value_opposite(name, variable=True))[1], 3))
+        tab.append(
+            round(sps.chi2_contingency([get_value(name, variable=True), get_value_opposite(name, variable=True)])[1],
+                  3))
+    tab.append(round(sps.chi2_contingency([get_value('Satisfied with optical correction (yes)'),
+                                           get_value_opposite('Satisfied with optical correction (yes)')])[1], 3))
+    tab.append(
+        round(sps.chi2_contingency([get_value('Epilepsy antecedent', variable=True),
+                                    get_value_opposite('Epilepsy antecedent', variable=True)])[1],
+              3))
+    tab.append(round(sps.chi2_contingency([[len(ocd[ocd['stimulation'] == 0]), len(ocd[ocd['stimulation'] == 1])], [
+        len(other[other['stimulation'] == 0]), len(other[other['stimulation'] == 0])]])[1], 3))
 
     tab.extend([""] * 5)
 
@@ -97,7 +103,7 @@ def make_data_baseline():
     data_baseline = [['', "", f"(n = {len(redcap_csv['record_id'])})", f"(n = {len(hc)})", f"(n = {len(ocd)})",
                       f"(n = {len(other)})"],
                      ['Age', "",
-                      f"{np.mean(redcap_csv['ddn'].apply(age))} ({round(np.std(redcap_csv['ddn'].apply(age)), 2)})",
+                      f"{np.mean(redcap_csv['ddn'].apply(age))} ({np.round(np.std(redcap_csv['ddn'].apply(age)), 2)})",
                       f"{round(np.mean(hc.age), 2)} ({round(np.std(hc.age), 2)})",
                       f"{round(np.mean(ocd.age), 2)} ({round(np.std(ocd.age), 2)})",
                       f"{round(np.mean(other.age), 2)} ({round(np.std(other.age), 2)})"],
@@ -123,11 +129,15 @@ def make_data_baseline():
     data_baseline.append(fill_column('Satisfied with optical correction (yes)', 'correction', 1))
     # data_baseline.append(fill_column('No', 'correction', 0))
     data_baseline.append(fill_column('Epilepsy antecedent', 'epilepsie', 1, variable=True))
-    data_baseline.append(fill_column('Brain stimulation', 'stimulation', 1, variable=True))
+    data_baseline.append(['Brain stimulation', "", len(redcap_csv[redcap_csv['stimulation'] == 1]), "",
+                          len(ocd[ocd['stimulation'] == 1]),
+                          len(other[other['stimulation'] == 1])])
     data_baseline.append(['Brain stimulation techniques', "", "", "", "", ""])
     technique_name = ['rTMS', 'tDCS', 'deep TMS', 'TCES']
     for i in np.arange(0, 4):
-        data_baseline.append(fill_column(f'{technique_name[i]}', 'technique_stimulation_ni', i))
+        data_baseline.append([technique_name[i], "", len(redcap_csv[redcap_csv['technique_stimulation_ni'] == i]), "",
+                              len(ocd[ocd['technique_stimulation_ni'] == i]),
+                              len(other[other['technique_stimulation_ni'] == i])])
     data_baseline.append(
         ['Resistance score (Maudsley)', "", "", "",
          f"{round(np.mean(ocd.maudsley_score), 2)} ({round(np.std(ocd.maudsley_score), 2)})",
