@@ -3,7 +3,7 @@ import pandas as pd
 import scipy.stats as sps
 from datetime import datetime, date
 
-redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-13_1201.csv")
+redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-14_1411.csv")
 
 
 def age(born):

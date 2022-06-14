@@ -41,5 +41,5 @@ def significative_group(disorder='ocd'):
 
 
 significative_group()
-result_lucifer.plot_pourcentage(disorder='all')
+result_seven.plot_pourcentage(block='shocking')
 

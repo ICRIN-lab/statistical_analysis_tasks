@@ -7,6 +7,7 @@ import seaborn as sns
 
 class seven_diff_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/seven_diff'
+    csv_block_shocking = pd.read_csv('../statistical_analysis/other/csv_block_shocking.csv')
 
     def get_no_trials(self, block='all'):
         """
@@ -16,10 +17,8 @@ class seven_diff_analysis(Template_Task_Statistics):
         """
         if block == 'all':
             numbers_trials = np.arange(0, 201)
-        elif block == 'shocking':
-            numbers_trials = np.arange(0, 50)
-        elif block == 'non-shocking':
-            numbers_trials = np.arange(51, 101)
+        elif block == 'shocking' or block == 'non-shocking':
+            numbers_trials = self.csv_block_shocking[self.csv_block_shocking['type'] == block]['no_trial']
         elif block == 'calligraphy':
             numbers_trials = np.arange(101, 151)
         elif block == 'chess':
@@ -46,7 +45,8 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.title(f'(Block = {block})', fontsize=10)
         self.all_success_plot(disorder='ocd', type=block, border=border, max_len=200)
         plt.legend(self.custom_lines,
-                   [f'Healthy Control (n={self.total_people(disorder)[0]})', f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
+                   [f'Healthy Control (n={self.total_people(disorder)[0]})',
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)
@@ -91,4 +91,3 @@ class seven_diff_analysis(Template_Task_Statistics):
         if save_fig:
             plt.savefig(f'Boxplot :{category} for Seven Differences Task (Block = {block}).png')
         plt.show()
-
