@@ -85,18 +85,26 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         disorder_count = []
         for df in self.df_files:
             count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
-            count_tot = count_tot[~np.isnan(count_tot)]
+
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
+
             if int(disorder_id) == 0:
                 HC_count.append(count_tot)
-            if disorder == 'all' and int(disorder_id) != 0:
+            elif disorder == 'all':
                 disorder_count.append(count_tot)
-            if disorder != 'all' and int(disorder_id) == self.get_disorder_stats(disorder):
+            elif int(disorder_id) == self.list_disorder.index(disorder):
                 disorder_count.append(count_tot)
-        return count_tot
+        mean_HC = np.nanmean(HC_count, axis=0)
+        mean_disorder = np.nanmean(disorder_count, axis=0)
+        return np.sort(mean_HC), np.sort(mean_disorder)
 
     def count_image_plot(self, disorder='ocd'):
-        plt.plot(np.sort(self.get_disorder_stats('none')['Average count image'])[0:9],
-                 np.sort(self.get_disorder_stats(disorder)['Average count image']))
+        mean_HC, mean_disorder = self.count_image_analysis(disorder)
+        data = pd.DataFrame({'Average count image for each trial (Healthy control)':mean_HC,
+                             f'Average count image for each trial ({self.list_graph_name[self.list_disorder.index(disorder)]} group)' :mean_disorder})
+        sns.lmplot(x='Average count image for each trial (Healthy control)',
+                   y='Average count image for each trial '
+                     f'({self.list_graph_name[self.list_disorder.index(disorder)]} group)',
+                   data=data)
         plt.show()

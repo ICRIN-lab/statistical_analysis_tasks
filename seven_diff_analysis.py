@@ -7,7 +7,7 @@ import seaborn as sns
 
 class seven_diff_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/seven_diff'
-    csv_block_shocking = pd.read_csv('../statistical_analysis/other/csv_block_shocking.csv')
+    csv_block_shocking = pd.read_csv('../statistical_analysis_tasks/other/csv_block_shocking.csv')
 
     def get_no_trials(self, block='all'):
         """
@@ -32,6 +32,31 @@ class seven_diff_analysis(Template_Task_Statistics):
         resultat = np.select(condlist, choicelist)
         success = [np.mean(resultat[:n]) * 100 for n in range(1, len(resultat) + 1)]
         return np.array(success)
+
+    def stats(self, type='all'):
+        """
+
+        :param type : The type you are interested in, change regarding tasks (default = 'all')
+        :return: dataframe containing descriptive statistics of the data for every subjects
+        """
+        numbers_trials = self.get_no_trials(type)
+        tab = []
+        choicelist = [0, 1, 2, 3]
+        for df in self.df_files:
+            ans = df['ans_candidate']
+            condlist = [ans == 0, ans == 1, ans == 5, ans == 6]
+            res = np.select(condlist, choicelist)
+            if type != 'all':
+                df = df[df['no_trial'].isin(numbers_trials)]
+            id = self.get_id(df)
+            disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
+            tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
+                        np.mean(res), int(disorder_id)])
+
+        tab = pd.DataFrame(tab)
+        tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average difference',
+                       'disorder']
+        return tab
 
     def plot_pourcentage(self, disorder='ocd', block="all", border=False, save_fig=False):
         """ Create a graph representing success rate depending on the number of trials
@@ -91,31 +116,6 @@ class seven_diff_analysis(Template_Task_Statistics):
         if save_fig:
             plt.savefig(f'Boxplot :{category} for Seven Differences Task (Block = {block}).png')
         plt.show()
-
-    def stats(self, type='all'):
-        """
-
-        :param type : The type you are interested in, change regarding tasks (default = 'all')
-        :return: dataframe containing descriptive statistics of the data for every subjects
-        """
-        numbers_trials = self.get_no_trials(type)
-        tab = []
-        choicelist = [0, 1, 2, 3]
-        for df in self.df_files:
-            ans = df['ans_candidate']
-            condlist = [ans == 0, ans == 1, ans == 5, ans == 6]
-            res = np.select(condlist, choicelist)
-            if type != 'all':
-                df = df[df['no_trial'].isin(numbers_trials)]
-            id = self.get_id(df)
-            disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-            tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                        np.mean(res), int(disorder_id)])
-
-        tab = pd.DataFrame(tab)
-        tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average difference',
-                       'disorder']
-        return tab
 
     def average_diff(self):
         df = self.df_files[0]

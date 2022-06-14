@@ -29,18 +29,24 @@ def significative_group(disorder='ocd'):
         p = result_symmetry.group_comparison(category=category, disorder=disorder, print_status=False)
         p_val.append(p)
         task_feature.append(['symmetry', category])
+    for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
+        p = result_seven.group_comparison(type=block, category='Average difference', disorder=disorder,
+                                          print_status=False)
+        p_val.append(p)
+        task_feature.append(['seven',block, 'Average difference'])
 
     for category in ['Success rate', 'Average reaction time', 'Maximum reaction time', 'Average count image',
                      'Maximum count image', 'Minimum count image', 'Success/count image']:
         p = result_where_is_tockie.group_comparison(category=category, disorder=disorder, print_status=False)
         p_val.append(p)
         task_feature.append(['where is tockie', category])
+
     significative_feature = [[task_feature[p_val.index(p)], p] for p in p_val if p < 0.05]
     print(significative_feature)
     return significative_feature
 
 
-#significative_group()
+significative_group()
 result_where_is_tockie.count_image_plot()
 
 
