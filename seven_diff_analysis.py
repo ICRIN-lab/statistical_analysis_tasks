@@ -46,7 +46,7 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.title(f'(Block = {block})', fontsize=10)
         self.all_success_plot(disorder='ocd', type=block, border=border, max_len=200)
         plt.legend(self.custom_lines,
-                   [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
+                   [f'Healthy Control (n={self.total_people(disorder)[0]})', f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)

@@ -14,12 +14,11 @@ class symmetry_analysis(Template_Task_Statistics):
         :param border: True, if you want margins of the result for each group, False otherwise (default = False)
         :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
         """
-
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Symmetry Task')
-        self.all_success_plot(disorder='ocd', border=border, max_len=100)
+        self.all_success_plot(disorder='ocd', border=border, max_len=100, type='all')
         plt.legend(self.custom_lines,
-                   [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
+                   [f'Healthy Control (n={self.total_people(disorder)[0]})', f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)

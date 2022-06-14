@@ -30,11 +30,12 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         :param border: True, if you want margins of the result for each group, False otherwise (default = False)
         :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
         """
+
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Where Is Tockie Task')
-        self.all_success_plot(disorder='ocd', border=border, max_len=200)
+        self.all_success_plot(disorder='ocd', border=border, max_len=200, type='all')
         plt.legend(self.custom_lines,
-                   [f'Healthy Control', f'{self.list_graph_name[self.list_disorder.index(disorder)]}'])
+                   [f'Healthy Control (n={self.total_people(disorder)[0]})', f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)
@@ -85,7 +86,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         res = []
         first_res = []
         last_res = []
-        for i in range(0,2):
+        for i in range(0, 2):
             df = df[df['no_trial'] == i]
             result = np.array(df['result'])
             if count_tot[i] == 1:
@@ -93,6 +94,3 @@ class where_is_tockie_analysis(Template_Task_Statistics):
             else:
                 first_res.append(result)
                 last_res.append(np.mean(result[:-int(n_question[i])]))
-
-
-

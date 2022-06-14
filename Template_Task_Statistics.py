@@ -100,7 +100,10 @@ class Template_Task_Statistics:
         :return: size of HC group, size of disorder group
         """
         stats = self.stats()
-        return len(stats[stats.disorder == 0]), len(stats[stats.disorder == self.list_disorder.index(disorder)])
+        if disorder != 'all':
+            return len(stats[stats.disorder == 0]), len(stats[stats.disorder == self.list_disorder.index(disorder)])
+        else:
+            return len(stats[stats.disorder == 0]), len(stats[stats.disorder != 0])
 
     def get_no_trials(self, *args):
         """ Get the numbers of trials within a certain category
@@ -117,7 +120,7 @@ class Template_Task_Statistics:
         HC_group = []
         disorder_group = []
         for df in self.df_files:
-            if type != all:
+            if type != 'all':
                 numbers_trials = self.get_no_trials(type)
                 df = df[df['no_trial'].isin(numbers_trials)]
             id = self.get_id(df)
