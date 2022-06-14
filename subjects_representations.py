@@ -113,6 +113,4 @@ plt.pie([len(hc), len(ocd), len(other)],
         labels=["Healthy control", 'Other disorder', 'Toc'], autopct=exact_value)
 plt.show()
 
-repartition_age()
-repartition_sexe()
 all_missing_csv()

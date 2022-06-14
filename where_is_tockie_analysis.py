@@ -35,7 +35,8 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         plt.suptitle(f'Success rate function of the number of the trial for Where Is Tockie Task')
         self.all_success_plot(disorder='ocd', border=border, max_len=200, type='all')
         plt.legend(self.custom_lines,
-                   [f'Healthy Control (n={self.total_people(disorder)[0]})', f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
+                   [f'Healthy Control (n={self.total_people(disorder)[0]})',
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)
@@ -77,20 +78,25 @@ class where_is_tockie_analysis(Template_Task_Statistics):
             plt.savefig(f'Boxplot: {category} for Where Is Tockie Task.png')
         plt.show()
 
-    def count_image_analysis(self, df):
+    def count_image_analysis(self, disorder='ocd'):
         """ More results regarding the variable count_image _ in progress
     """
-        count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
-        count_tot = count_tot[~np.isnan(count_tot)]
-        n_question = [len(df[df['no_trial'] == i]['count_image']) / count_tot[i] for i in range(0, 32)]
-        res = []
-        first_res = []
-        last_res = []
-        for i in range(0, 2):
-            df = df[df['no_trial'] == i]
-            result = np.array(df['result'])
-            if count_tot[i] == 1:
-                res.append(np.mean(result))
-            else:
-                first_res.append(result)
-                last_res.append(np.mean(result[:-int(n_question[i])]))
+        HC_count = []
+        disorder_count = []
+        for df in self.df_files:
+            count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
+            count_tot = count_tot[~np.isnan(count_tot)]
+            id = int(str(df['id_candidate'].tail(1).item())[8:11])
+            disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
+            if int(disorder_id) == 0:
+                HC_count.append(count_tot)
+            if disorder == 'all' and int(disorder_id) != 0:
+                disorder_count.append(count_tot)
+            if disorder != 'all' and int(disorder_id) == self.get_disorder_stats(disorder):
+                disorder_count.append(count_tot)
+        return count_tot
+
+    def count_image_plot(self, disorder='ocd'):
+        plt.plot(np.sort(self.get_disorder_stats('none')['Average count image'])[0:9],
+                 np.sort(self.get_disorder_stats(disorder)['Average count image']))
+        plt.show()

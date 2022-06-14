@@ -183,3 +183,15 @@ class Template_Task_Statistics:
             else:
                 print("Il y a une différence significative entre les deux groupes comparés")
         return sps.ttest_ind(X1, X2)[1]
+
+    def get_disorder_stats(self, disorder='ocd'):
+        """ Get the dataframe stats for a specific disorder
+        :param disorder: The specific disorder you are interested in (default = 'ocd'),
+        if you want HC control group put 'none'
+        """
+        if disorder == 'all':
+            return self.stats()[self.stats().disorder != 0]
+        elif disorder == 'none':
+            return self.stats()[self.stats().disorder == 0]
+        else:
+            return self.stats()[self.stats().disorder == self.list_disorder.index(disorder)]

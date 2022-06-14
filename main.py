@@ -40,6 +40,7 @@ def significative_group(disorder='ocd'):
     return significative_feature
 
 
-significative_group()
-result_seven.plot_pourcentage(block='shocking')
+#significative_group()
+result_where_is_tockie.count_image_plot()
+
 
