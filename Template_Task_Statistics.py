@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path every time with the correct one"""
-    redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-10_1302.csv")
+    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-15_1339.csv",sep=',')
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -51,6 +51,7 @@ class Template_Task_Statistics:
         :param df : resulting dataframe from a task
         :return : number of their id
         """
+        print(str(df['id_candidate'].tail(1).item())[8:11])
         return int(str(df['id_candidate'].tail(1).item())[8:11])
 
     def get_list_patients(self, disorder="ocd"):
@@ -184,14 +185,14 @@ class Template_Task_Statistics:
                 print("Il y a une différence significative entre les deux groupes comparés")
         return sps.ttest_ind(X1, X2)[1]
 
-    def get_disorder_stats(self, disorder='ocd'):
+    def get_disorder_stats(self,type='all', disorder='ocd'):
         """ Get the dataframe stats for a specific disorder
         :param disorder: The specific disorder you are interested in (default = 'ocd'),
         if you want HC control group put 'none'
         """
         if disorder == 'all':
-            return self.stats()[self.stats().disorder != 0]
+            return self.stats(type=type)[self.stats().disorder != 0]
         elif disorder == 'none':
-            return self.stats()[self.stats().disorder == 0]
+            return self.stats(type=type)[self.stats().disorder == 0]
         else:
-            return self.stats()[self.stats().disorder == self.list_disorder.index(disorder)]
+            return self.stats(type=type)[self.stats().disorder == self.list_disorder.index(disorder)]

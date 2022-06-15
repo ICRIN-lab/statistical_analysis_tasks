@@ -58,3 +58,4 @@ class symmetry_analysis(Template_Task_Statistics):
         if save_fig:
             plt.savefig(f'Boxplot: {category} for Symmetry Task.png')
         plt.show()
+

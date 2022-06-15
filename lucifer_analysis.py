@@ -72,5 +72,5 @@ class lucifer_analysis(Template_Task_Statistics):
         else:
             plt.ylabel(f'{category}')
         if save_fig:
-            plt.savefig(f'Boxplot: {category} for Lucifer Task.png')
+            plt.savefig(f'Boxplot: {category} for Lucifer Task type = {type_lucifer}.png')
         plt.show()

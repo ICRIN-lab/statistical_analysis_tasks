@@ -43,11 +43,11 @@ class seven_diff_analysis(Template_Task_Statistics):
         tab = []
         choicelist = [0, 1, 2, 3]
         for df in self.df_files:
+            if type != 'all':
+                df = df[df['no_trial'].isin(numbers_trials)]
             ans = df['ans_candidate']
             condlist = [ans == 0, ans == 1, ans == 5, ans == 6]
             res = np.select(condlist, choicelist)
-            if type != 'all':
-                df = df[df['no_trial'].isin(numbers_trials)]
             id = self.get_id(df)
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
             tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
@@ -124,3 +124,40 @@ class seven_diff_analysis(Template_Task_Statistics):
         choicelist = [0, 1, 2, 3]
         df['good_ans'] = np.select(condlist, choicelist)
         return np.mean(df['good_ans'])
+
+
+    def plot_reaction_time(self,type='all',disorder='ocd',border=False,max_len=200):
+        list_patients = self.get_list_patients(disorder)
+        HC_group = []
+        disorder_group = []
+        for df in self.df_files:
+            if type != 'all':
+                numbers_trials = self.get_no_trials(type)
+                df = df[df['no_trial'].isin(numbers_trials)]
+            id = self.get_id(df)
+            i = int(list_patients[list_patients[0] == id][1])
+            if i != -1:
+                tab = df['reaction_time']
+                if len(tab) != max_len:
+                    size = len(tab)
+                    tab = np.resize(tab, max_len)
+                    tab_empty_val = np.empty(tab[size:max_len].shape)
+                    tab_empty_val = tab_empty_val.fill(np.nan)
+                    tab[size:max_len] = tab_empty_val
+                if i == 0:
+                    HC_group.append(tab)
+                else:
+                    disorder_group.append(tab)
+        if border:
+            list_group = [HC_group, disorder_group]
+            for i in range(2):
+                plt.plot(np.nanmin(list_group[i], axis=0), self.col[i], alpha=0.25)
+                plt.plot(np.nanmax(list_group[i], axis=0), self.col[i], alpha=0.25)
+                plt.fill_between(np.arange(0, max_len), np.nanmin(list_group[i], axis=0),
+                                 np.nanmax(list_group[i], axis=0),
+                                 color=self.col[i], alpha=0.25)
+        sns.lineplot(data=np.nanmean(HC_group, axis=0), color=self.col[0])
+        sns.lineplot(data=np.nanmean(disorder_group, axis=0), color=self.col[1])
+        plt.show()
+
+

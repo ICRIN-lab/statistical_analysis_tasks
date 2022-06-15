@@ -97,14 +97,29 @@ class where_is_tockie_analysis(Template_Task_Statistics):
                 disorder_count.append(count_tot)
         mean_HC = np.nanmean(HC_count, axis=0)
         mean_disorder = np.nanmean(disorder_count, axis=0)
-        return np.sort(mean_HC), np.sort(mean_disorder)
+        return mean_HC, mean_disorder
 
-    def count_image_plot(self, disorder='ocd'):
+    def count_image_plot(self, disorder='ocd', save_fig=False):
         mean_HC, mean_disorder = self.count_image_analysis(disorder)
-        data = pd.DataFrame({'Average count image for each trial (Healthy control)':mean_HC,
-                             f'Average count image for each trial ({self.list_graph_name[self.list_disorder.index(disorder)]} group)' :mean_disorder})
-        sns.lmplot(x='Average count image for each trial (Healthy control)',
-                   y='Average count image for each trial '
+
+        data = pd.DataFrame({'Average count image per trial (Healthy control)': mean_HC,
+                             f'Average count image per trial ({self.list_graph_name[self.list_disorder.index(disorder)]} group)': mean_disorder})
+        sns.lmplot(x='Average count image per trial (Healthy control)',
+                   y='Average count image per trial '
                      f'({self.list_graph_name[self.list_disorder.index(disorder)]} group)',
-                   data=data)
+                   data=data, markers='x').fig.suptitle(
+            "Correlation of the mean count of image per trial between OCD patients and Healthy control group",fontsize=10)
+        if save_fig:
+            plt.savefig('mean count plot.png')
         plt.show()
+
+    def count_image_plot2(self, disorder='ocd', save_fig=False):
+        mean_HC, mean_disorder = self.count_image_analysis(disorder)
+        mean_HC = np.sort(mean_HC)
+        mean_disorder = np.sort(mean_disorder)
+        plt.plot(mean_HC,'*',color=self.col[0])
+        plt.plot(mean_disorder,'*',color=self.col[1])
+        if save_fig:
+            plt.savefig('mean count plot.png')
+        plt.show()
+
