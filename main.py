@@ -44,35 +44,26 @@ def significative_group(disorder='ocd'):
     print(significative_feature)
     return significative_feature
 
-
+def line_tab(task_result,type='all',category1='Success rate',category2 ='Average reaction time'):
+    mean_ocd1 = np.round(np.mean(task_result.get_disorder_stats(type=type)[category1]), 3)
+    mean_hc1 = np.round(np.mean(task_result.get_disorder_stats(type=type, disorder='none')[category1]), 3)
+    p_value1 = np.round(task_result.group_comparison(type=type, category=category1, print_status=False), 3)
+    mean_ocd2 = np.round(np.mean(task_result.get_disorder_stats(type=type)[category2]), 3)
+    mean_hc2 = np.round(np.mean(task_result.get_disorder_stats(type=type, disorder='none')[category2]), 3)
+    p_value2 = np.round(task_result.group_comparison(type=type, category=category2, print_status=False), 3)
+    if type == 'all':
+        type=""
+    return [type, mean_ocd1, mean_hc1, p_value1, mean_ocd2, mean_hc2, p_value2]
 def recap_tab():
     tab = []
     tab.append(["", 'OCD', 'Healthy Control', "", 'OCD', 'Healthy Control', ""])
-    tab.append(['Seven_diff', 'Mean', 'Mean', "", 'Mean', 'Mean', ""])
+    tab.append(['Seven_diff', 'Mean', 'Mean', "p-value", 'Mean', 'Mean', "p-value"])
     for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
-        category1 = 'Success rate'
-        category2 = 'Average reaction time'
-        mean_ocd1 = np.round(np.mean(result_seven.get_disorder_stats(type=block)[category1]), 3)
-        mean_hc1 = np.round(np.mean(result_seven.get_disorder_stats(type=block, disorder='none')[category1]), 3)
-        p_value1 = np.round(result_seven.group_comparison(type=block, category=category1, print_status=False), 3)
-        mean_ocd2 = np.round(np.mean(result_seven.get_disorder_stats(type=block)[category2]), 3)
-        mean_hc2 = np.round(np.mean(result_seven.get_disorder_stats(type=block, disorder='none')[category2]), 3)
-        p_value2 = np.round(result_seven.group_comparison(type=block, category=category2, print_status=False), 3)
-        tab.append(["", block, mean_ocd1, mean_hc1, p_value1, mean_ocd2, mean_hc2, p_value2])
-    tab.append(['Lucifer', '', '', "", '', '', ""])
-    for type_lucifer in ['all', 'straight', 'messy', 'special']:
-        category1 = 'Success rate'
-        category2 = 'Average reaction time'
-        mean_ocd1 = np.round(np.mean(result_lucifer.get_disorder_stats(type=type_lucifer)[category1]), 3)
-        mean_hc1 = np.round(np.mean(result_lucifer.get_disorder_stats(type=type_lucifer, disorder='none')[category1]),
-                            3)
-        p_value1 = np.round(result_lucifer.group_comparison(type=type_lucifer, category=category1, print_status=False),
-                            3)
-        mean_ocd2 = np.round(np.mean(result_lucifer.get_disorder_stats(type=type_lucifer)[category2]), 3)
-        mean_hc2 = np.round(np.mean(result_lucifer.get_disorder_stats(type=type_lucifer, disorder='none')[category2]),
-                            3)
-        p_value2 = np.round(result_lucifer.group_comparison(type=block, category=category2, print_status=False), 3)
-        tab.append(["", block, mean_ocd1, mean_hc1, p_value1, mean_ocd2, mean_hc2, p_value2])
+        tab.append(line_tab(task_result=result_seven,type=block))
+    tab.append(['Symmetry', '', '', "", '', '', ""])
+    tab.append(line_tab(task_result=result_symmetry))
+    tab.append(['Where Is Tockie', '', '', "", '', '', ""])
+    tab.append(line_tab(task_result=result_where_is_tockie))
     print(pd.DataFrame(tab))
 
 
