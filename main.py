@@ -60,6 +60,9 @@ def recap_tab():
     tab.append(['Seven_diff', 'Mean', 'Mean', "p-value", 'Mean', 'Mean', "p-value"])
     for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
         tab.append(line_tab(task_result=result_seven,type=block))
+    tab.append(['Lucifer', '', '', "", '', '', ""])
+    for type_lucifer in ['all', 'straight', 'messy', 'special']:
+        tab.append(line_tab(task_result=result_lucifer,type=type_lucifer))
     tab.append(['Symmetry', '', '', "", '', '', ""])
     tab.append(line_tab(task_result=result_symmetry))
     tab.append(['Where Is Tockie', '', '', "", '', '', ""])
@@ -68,4 +71,5 @@ def recap_tab():
 
 
 recap_tab()
+print(line_tab(type='straight',task_result=result_lucifer))
 # significative_group()
