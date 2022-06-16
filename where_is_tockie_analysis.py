@@ -9,7 +9,7 @@ import seaborn as sns
 class where_is_tockie_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/where_is_tockie'
 
-    def stats(self, type='all',save_tab=False,title='stats_where_is_tockie.csv'):
+    def stats(self, type='all', save_tab=False):
         tab = []
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
@@ -23,7 +23,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average count image',
                        'Maximum count image', 'Minimum count image', 'Success/count image', 'disorder']
         if save_tab:
-            tab.to_csv(title)
+            tab.to_csv('../statistical_analysis_tasks/stats_jpg/where_is_tockie/stats_where_is_tockie.csv')
         return tab
 
     def plot_pourcentage(self, disorder='ocd', border=False, save_fig=False):
@@ -37,14 +37,14 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         plt.suptitle(f'Success rate function of the number of the trial for Where Is Tockie Task')
         self.all_success_plot(disorder='ocd', border=border, max_len=200, type='all')
         plt.legend(self.custom_lines,
-                   [f'Healthy Control (n={self.total_people(disorder)[0]})',
-                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
+                   [f"Healthy Control (n={self.total_people('none')})",
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)
         plt.tight_layout()
         if save_fig:
-            plt.savefig(f'Success rate_number trials Where is tockie Task.png')
+            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/Success_rate_trials_wit.png')
         plt.show()
 
     def boxplot_average(self, category='Success rate', disorder='ocd', save_fig=False):
@@ -77,7 +77,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         else:
             plt.ylabel(f'{category}')
         if save_fig:
-            plt.savefig(f'Boxplot: {category} for Where Is Tockie Task.png')
+            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/Boxplot:{category}_wit.png')
         plt.show()
 
     def count_image_analysis(self, disorder='ocd'):
@@ -111,16 +111,15 @@ class where_is_tockie_analysis(Template_Task_Statistics):
                      f'({self.list_graph_name[self.list_disorder.index(disorder)]} group)',
                    data=data, markers='x').fig.suptitle("")
         if save_fig:
-            plt.savefig('mean count plot.png')
+            plt.savefig('../statistical_analysis_tasks/stats_jpg/where_is_tockie/mean_count_plot.png')
         plt.show()
 
     def count_image_plot2(self, disorder='ocd', save_fig=False):
         mean_HC, mean_disorder = self.count_image_analysis(disorder)
         mean_HC = np.sort(mean_HC)
         mean_disorder = np.sort(mean_disorder)
-        plt.plot(mean_HC,'*',color=self.col[0])
-        plt.plot(mean_disorder,'*',color=self.col[1])
+        plt.plot(mean_HC, '*', color=self.col[0])
+        plt.plot(mean_disorder, '*', color=self.col[1])
         if save_fig:
-            plt.savefig('mean count plot.png')
+            plt.savefig('../statistical_analysis_tasks/stats_jpg/where_is_tockie/mean_count_plot2.png')
         plt.show()
-

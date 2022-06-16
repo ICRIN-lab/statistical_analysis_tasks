@@ -18,6 +18,23 @@ class lucifer_analysis(Template_Task_Statistics):
         else:
             return self.csv_type_lucifer[self.csv_type_lucifer['type'] == type]['no_trial']
 
+    def stats(self, type='all', save_tab=False):
+        tab1 = self.base_stats(type=type)
+        numbers_trials = self.get_no_trials(type)
+        new_column = []
+        for df in self.df_files:
+            group = df['group'][102]
+            if type != 'all':
+                df = df[df['no_trial'].isin(numbers_trials)]
+            if group == 'pro':
+                new_column.append(1)
+            else:
+                new_column.append(0)
+        tab1['group'] = new_column
+        if save_tab:
+            tab1.to_csv('../statistical_analysis_tasks/stats_jpg/lucifer/stats_lucifer.csv', index=False)
+        return tab1
+
     def plot_pourcentage(self, disorder='ocd', type_lucifer='all', border=False, save_fig=False):
         """ Create a graph representing success rate depending on the number of trials
         :param disorder: the disorder you are interested in (default = 'ocd')
@@ -25,21 +42,20 @@ class lucifer_analysis(Template_Task_Statistics):
         :param border: True, if you want margins of the result for each group, False otherwise (default = False)
         :param save_fig: True, if you want to save the graphic as a picture, False otherwise (default = False)
         """
-
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Lucifer Task')
         plt.title(f'(Lucifer Arrangement = {type_lucifer})', fontsize=10)
         self.all_success_plot(disorder='ocd', type=type_lucifer, border=border,
                               max_len=200)
         plt.legend(self.custom_lines,
-                   [f'Healthy Control (n={self.total_people(disorder)[0]})',
-                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
+                   [f"Healthy Control (n={self.total_people('none')})",
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)
         plt.tight_layout()
         if save_fig:
-            plt.savefig(f'Success rate_number trials Lucifer Task (Lucifer Arrangement = {type_lucifer}).png')
+            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/lucifer/Success_rate_trials(Lucifer Arrangement = {type_lucifer}).png')
         plt.show()
 
     def boxplot_average(self, category='Success rate', disorder='ocd', type_lucifer='all', save_fig=False):
@@ -74,25 +90,10 @@ class lucifer_analysis(Template_Task_Statistics):
         else:
             plt.ylabel(f'{category}')
         if save_fig:
-            plt.savefig(f'Boxplot: {category} for Lucifer Task type = {type_lucifer}.png')
+            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/lucifer/Boxplot:{category}(type = {type_lucifer}).png')
         plt.show()
 
     def pourcentage_pro(self, disorder='ocd'):
-        pourcent_HC = 0
-        pourcent_disorder = 0
-        for df in self.df_files:
-            disorder_id = np.array(self.redcap_csv[self.redcap_csv.record_id == self.get_id(df)]['diagnostic_principal'])
-            group = df['group'][102]
-            if group == 'pro':
-                if disorder_id == 0:
-                    pourcent_HC += 1
-                elif disorder_id == self.list_disorder.index(disorder):
-                    pourcent_disorder += 1
-        result_HC = round((pourcent_HC / self.total_people(disorder='none')) * 100)
-        result_disorder = round((pourcent_disorder / self.total_people(disorder=disorder)) * 100)
-        print('People in the group pro for Healthy Control :', result_HC, '%')
-        print('\n')
-        print(
-            f'People in the group pro for {self.list_graph_name[self.list_disorder.index(disorder)]} :',
-            result_disorder, '%')
-        return result_HC, result_disorder
+        """
+
+        """

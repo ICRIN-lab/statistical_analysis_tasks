@@ -44,7 +44,8 @@ def significative_group(disorder='ocd'):
     print(significative_feature)
     return significative_feature
 
-def line_tab(task_result,type='all',category1='Success rate',category2 ='Average reaction time'):
+
+def line_tab(task_result, type='all', category1='Success rate', category2='Average reaction time'):
     mean_ocd1 = np.round(np.mean(task_result.get_disorder_stats(type=type)[category1]), 3)
     mean_hc1 = np.round(np.mean(task_result.get_disorder_stats(type=type, disorder='none')[category1]), 3)
     p_value1 = np.round(task_result.group_comparison(type=type, category=category1, print_status=False), 3)
@@ -52,25 +53,26 @@ def line_tab(task_result,type='all',category1='Success rate',category2 ='Average
     mean_hc2 = np.round(np.mean(task_result.get_disorder_stats(type=type, disorder='none')[category2]), 3)
     p_value2 = np.round(task_result.group_comparison(type=type, category=category2, print_status=False), 3)
     if type == 'all':
-        type=""
+        type = ""
     return [type, mean_ocd1, mean_hc1, p_value1, mean_ocd2, mean_hc2, p_value2]
+
+
 def recap_tab():
-    tab = []
+    tab = [["", 'Success rate', "", "", 'Average reaction time', "", ""]]
     tab.append(["", 'OCD', 'Healthy Control', "", 'OCD', 'Healthy Control', ""])
     tab.append(['Seven_diff', 'Mean', 'Mean', "p-value", 'Mean', 'Mean', "p-value"])
     for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
-        tab.append(line_tab(task_result=result_seven,type=block))
+        tab.append(line_tab(task_result=result_seven, type=block))
     tab.append(['Lucifer', '', '', "", '', '', ""])
     for type_lucifer in ['all', 'straight', 'messy', 'special']:
-        tab.append(line_tab(task_result=result_lucifer,type=type_lucifer))
+        tab.append(line_tab(task_result=result_lucifer, type=type_lucifer))
     tab.append(['Symmetry', '', '', "", '', '', ""])
     tab.append(line_tab(task_result=result_symmetry))
     tab.append(['Where Is Tockie', '', '', "", '', '', ""])
     tab.append(line_tab(task_result=result_where_is_tockie))
-    tab=pd.DataFrame(tab)
+    tab = pd.DataFrame(tab)
+    tab.to_csv('../statistical_analysis_tasks/other/overview_tab.csv', index=False)
     return tab
 
 
-
-
-result_lucifer.pourcentage_pro()
+result_lucifer.get_disorder_stats(save_tab=True)

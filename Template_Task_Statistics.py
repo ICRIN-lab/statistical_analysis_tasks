@@ -73,9 +73,8 @@ class Template_Task_Statistics:
         success = [np.mean(df["result"][:n]) * 100 for n in range(1, len(df['result']) + 1)]
         return np.array(success)
 
-    def stats(self, type='all', save_tab=False, title='stats.csv'):
-        """
-
+    def base_stats(self, type='all'):
+        """ Standard statistical result for all tasks
         :param type : The type you are interested in, change regarding tasks (default = 'all')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
@@ -87,13 +86,17 @@ class Template_Task_Statistics:
                 df = df[df['no_trial'].isin(numbers_trials)]
             id = self.get_id(df)
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-            tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                        int(disorder_id)])
+            tab.append([id, int(disorder_id), np.mean(df['result']) * 100, np.mean(df['reaction_time']),
+                        np.max(df['reaction_time'])])
         tab = pd.DataFrame(tab)
-        tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'disorder']
-        if save_tab:
-            tab.to_csv(title,index=False)
+        tab.columns = ['Id', 'disorder', 'Success rate', 'Average reaction time', 'Maximum reaction time']
         return tab
+
+    def stats(self):
+        """
+        :param type : The type you are interested in, change regarding tasks (default = 'all')
+        :return: dataframe containing descriptive statistics of the data for every subjects
+        """
 
     def total_people(self, disorder='ocd'):
         """ Get the number of person in the healthy control group and the considered disorder group in our data (using
@@ -194,12 +197,21 @@ class Template_Task_Statistics:
         if you want HC control group put 'none'
         """
         if disorder == 'all':
-            tab= self.stats(type=type)[self.stats(type=type).disorder != 0]
+            tab = self.stats(type=type)[self.stats(type=type).disorder != 0]
         elif disorder == 'none':
             tab = self.stats(type=type)[self.stats(type=type).disorder == 0]
         else:
             tab = self.stats(type=type)[self.stats(type=type).disorder == self.list_disorder.index(disorder)]
         if save_tab:
-            title = f'stats_{disorder}.csv'
-            tab.to_csv(title,index=False)
+            if len(tab.columns) == 5:
+                path = f'../statistical_analysis_tasks/stats_jpg/symmetry/stats_symmetry_{disorder}.csv'
+            elif len(tab.columns)>7:
+                path = f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/stats_wit_{disorder}.csv'
+            elif len(tab.columns) == 6:
+                if tab.columns[5] == 'group':
+                    path = f'../statistical_analysis_tasks/stats_jpg/lucifer/stats_lucifer_{disorder}.csv'
+                if tab.columns[5] == 'Average Difference':
+                    path = f'../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff_{disorder}.csv'
+
+            tab.to_csv(path, index=False)
         return tab

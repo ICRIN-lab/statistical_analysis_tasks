@@ -33,14 +33,15 @@ class seven_diff_analysis(Template_Task_Statistics):
         success = [np.mean(resultat[:n]) * 100 for n in range(1, len(resultat) + 1)]
         return np.array(success)
 
-    def stats(self, type='all',save_tab=False, title='stats_seven_diff'):
+    def stats(self, type='all',save_tab=False):
         """
 
         :param type : The type you are interested in, change regarding tasks (default = 'all')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
+        tab1 = self.base_stats(type=type)
         numbers_trials = self.get_no_trials(type)
-        tab = []
+        average_diff = []
         choicelist = [0, 1, 2, 3]
         for df in self.df_files:
             if type != 'all':
@@ -48,17 +49,11 @@ class seven_diff_analysis(Template_Task_Statistics):
             ans = df['ans_candidate']
             condlist = [ans == 0, ans == 1, ans == 5, ans == 6]
             res = np.select(condlist, choicelist)
-            id = self.get_id(df)
-            disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-            tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                        np.mean(res), int(disorder_id)])
-
-        tab = pd.DataFrame(tab)
-        tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average difference',
-                       'disorder']
+            average_diff.append(np.mean(res))
+        tab1['Average Difference'] = average_diff
         if save_tab:
-            tab.to_csv(title)
-        return tab
+            tab1.to_csv('../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff.csv')
+        return tab1
 
     def plot_pourcentage(self, disorder='ocd', block="all", border=False, save_fig=False):
         """ Create a graph representing success rate depending on the number of trials
@@ -72,15 +67,15 @@ class seven_diff_analysis(Template_Task_Statistics):
         plt.title(f'(Block = {block})', fontsize=10)
         self.all_success_plot(disorder='ocd', type=block, border=border, max_len=200)
         plt.legend(self.custom_lines,
-                   [f'Healthy Control (n={self.total_people(disorder)[0]})',
-                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
+                   [f"Healthy Control (n={self.total_people('none')})",
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)
         plt.tight_layout()
         if save_fig:
             print('Done')
-            plt.savefig(f'Success rate_number trials Seven Differences Task (Block = {block}).jpg')
+            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/seven_diff/Success_rate_trials(Block = {block}).jpg')
         plt.show()
 
     def boxplot_average(self, category='Success rate', disorder='ocd', block='all', save_fig=False):
@@ -116,7 +111,7 @@ class seven_diff_analysis(Template_Task_Statistics):
         else:
             plt.ylabel(f'{category}')
         if save_fig:
-            plt.savefig(f'Boxplot :{category} for Seven Differences Task (Block = {block}).png')
+            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/seven_diff/Boxplot:{category} Task (Block = {block}).png')
         plt.show()
 
     def average_diff(self):
@@ -162,4 +157,6 @@ class seven_diff_analysis(Template_Task_Statistics):
         sns.lineplot(data=np.nanmean(disorder_group, axis=0), color=self.col[1])
         plt.show()
 
+
+    #def difference_plot(self):
 
