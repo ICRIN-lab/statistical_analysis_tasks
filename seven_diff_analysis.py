@@ -33,7 +33,7 @@ class seven_diff_analysis(Template_Task_Statistics):
         success = [np.mean(resultat[:n]) * 100 for n in range(1, len(resultat) + 1)]
         return np.array(success)
 
-    def stats(self, type='all'):
+    def stats(self, type='all',save_tab=False, title='stats_seven_diff'):
         """
 
         :param type : The type you are interested in, change regarding tasks (default = 'all')
@@ -56,6 +56,8 @@ class seven_diff_analysis(Template_Task_Statistics):
         tab = pd.DataFrame(tab)
         tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average difference',
                        'disorder']
+        if save_tab:
+            tab.to_csv(title)
         return tab
 
     def plot_pourcentage(self, disorder='ocd', block="all", border=False, save_fig=False):

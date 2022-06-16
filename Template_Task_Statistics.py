@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path every time with the correct one"""
-    redcap_csv = pd.read_csv("D:\Telechargement\STOCADPinelfollowup_DATA_2022-06-10_1302.csv",sep=',')
+    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-15_1339.csv", sep=',')
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -73,7 +73,7 @@ class Template_Task_Statistics:
         success = [np.mean(df["result"][:n]) * 100 for n in range(1, len(df['result']) + 1)]
         return np.array(success)
 
-    def stats(self, type='all'):
+    def stats(self, type='all', save_tab=False, title='stats.csv'):
         """
 
         :param type : The type you are interested in, change regarding tasks (default = 'all')
@@ -91,19 +91,23 @@ class Template_Task_Statistics:
                         int(disorder_id)])
         tab = pd.DataFrame(tab)
         tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'disorder']
+        if save_tab:
+            tab.to_csv(title,index=False)
         return tab
 
     def total_people(self, disorder='ocd'):
         """ Get the number of person in the healthy control group and the considered disorder group in our data (using
         stats, so you can have the number for a specific task without taking in consideration empty csv)
-        :param disorder: the specific disorder you which to look at between the list_disorder (default= 'ocd')
-        :return: size of HC group, size of disorder group
+        :param disorder: the specific disorder you which to look at between the list_disorder, if you want healthey control group put 'none' (default= 'ocd')
+        :return: size of disorder group
         """
         stats = self.stats()
-        if disorder != 'all':
-            return len(stats[stats.disorder == 0]), len(stats[stats.disorder == self.list_disorder.index(disorder)])
+        if disorder == 'none':
+            return len(stats[stats.disorder == 0])
+        elif disorder == 'all':
+            return len(stats[stats.disorder != 0])
         else:
-            return len(stats[stats.disorder == 0]), len(stats[stats.disorder != 0])
+            return len(stats[stats.disorder == self.list_disorder.index(disorder)])
 
     def get_no_trials(self, *args):
         """ Get the numbers of trials within a certain category
@@ -184,14 +188,18 @@ class Template_Task_Statistics:
                 print("Il y a une différence significative entre les deux groupes comparés")
         return sps.ttest_ind(X1, X2)[1]
 
-    def get_disorder_stats(self,type='all', disorder='ocd'):
+    def get_disorder_stats(self, type='all', disorder='ocd', save_tab=False):
         """ Get the dataframe stats for a specific disorder
         :param disorder: The specific disorder you are interested in (default = 'ocd'),
         if you want HC control group put 'none'
         """
         if disorder == 'all':
-            return self.stats(type=type)[self.stats().disorder != 0]
+            tab= self.stats(type=type)[self.stats(type=type).disorder != 0]
         elif disorder == 'none':
-            return self.stats(type=type)[self.stats().disorder == 0]
+            tab = self.stats(type=type)[self.stats(type=type).disorder == 0]
         else:
-            return self.stats(type=type)[self.stats().disorder == self.list_disorder.index(disorder)]
+            tab = self.stats(type=type)[self.stats(type=type).disorder == self.list_disorder.index(disorder)]
+        if save_tab:
+            title = f'stats_{disorder}.csv'
+            tab.to_csv(title,index=False)
+        return tab

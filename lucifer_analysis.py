@@ -3,6 +3,7 @@ import pandas as pd
 from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 csv_type_lucifer = pd.read_csv('csv_type_lucifer.csv')
 
@@ -31,7 +32,8 @@ class lucifer_analysis(Template_Task_Statistics):
         self.all_success_plot(disorder='ocd', type=type_lucifer, border=border,
                               max_len=200)
         plt.legend(self.custom_lines,
-                   [f'Healthy Control (n={self.total_people(disorder)[0]})', f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
+                   [f'Healthy Control (n={self.total_people(disorder)[0]})',
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)[1]})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(True)
@@ -74,3 +76,23 @@ class lucifer_analysis(Template_Task_Statistics):
         if save_fig:
             plt.savefig(f'Boxplot: {category} for Lucifer Task type = {type_lucifer}.png')
         plt.show()
+
+    def pourcentage_pro(self, disorder='ocd'):
+        pourcent_HC = 0
+        pourcent_disorder = 0
+        for df in self.df_files:
+            disorder_id = np.array(self.redcap_csv[self.redcap_csv.record_id == self.get_id(df)]['diagnostic_principal'])
+            group = df['group'][102]
+            if group == 'pro':
+                if disorder_id == 0:
+                    pourcent_HC += 1
+                elif disorder_id == self.list_disorder.index(disorder):
+                    pourcent_disorder += 1
+        result_HC = round((pourcent_HC / self.total_people(disorder='none')) * 100)
+        result_disorder = round((pourcent_disorder / self.total_people(disorder=disorder)) * 100)
+        print('People in the group pro for Healthy Control :', result_HC, '%')
+        print('\n')
+        print(
+            f'People in the group pro for {self.list_graph_name[self.list_disorder.index(disorder)]} :',
+            result_disorder, '%')
+        return result_HC, result_disorder

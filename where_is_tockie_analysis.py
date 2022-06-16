@@ -9,7 +9,7 @@ import seaborn as sns
 class where_is_tockie_analysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/where_is_tockie'
 
-    def stats(self, type='all'):
+    def stats(self, type='all',save_tab=False,title='stats_where_is_tockie.csv'):
         tab = []
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
@@ -22,6 +22,8 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         tab = pd.DataFrame(tab)
         tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average count image',
                        'Maximum count image', 'Minimum count image', 'Success/count image', 'disorder']
+        if save_tab:
+            tab.to_csv(title)
         return tab
 
     def plot_pourcentage(self, disorder='ocd', border=False, save_fig=False):
@@ -107,8 +109,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         sns.lmplot(x='Average count image per trial (Healthy control)',
                    y='Average count image per trial '
                      f'({self.list_graph_name[self.list_disorder.index(disorder)]} group)',
-                   data=data, markers='x').fig.suptitle(
-            "Correlation of the mean count of image per trial between OCD patients and Healthy control group",fontsize=10)
+                   data=data, markers='x').fig.suptitle("")
         if save_fig:
             plt.savefig('mean count plot.png')
         plt.show()

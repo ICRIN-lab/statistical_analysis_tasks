@@ -67,9 +67,10 @@ def recap_tab():
     tab.append(line_tab(task_result=result_symmetry))
     tab.append(['Where Is Tockie', '', '', "", '', '', ""])
     tab.append(line_tab(task_result=result_where_is_tockie))
-    print(pd.DataFrame(tab))
+    tab=pd.DataFrame(tab)
+    return tab
 
 
-recap_tab()
-print(line_tab(type='straight',task_result=result_lucifer))
-# significative_group()
+
+
+result_lucifer.pourcentage_pro()
