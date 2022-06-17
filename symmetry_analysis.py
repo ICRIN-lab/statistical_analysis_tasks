@@ -11,7 +11,7 @@ class symmetry_analysis(Template_Task_Statistics):
     def stats(self, type='all', save_tab=False):
         tab = self.base_stats()
         if save_tab:
-            tab.to_csv('../statistical_analysis_task/other/symmetry/stats_symmetry.csv',index=False)
+            tab.to_csv('../statistical_analysis_tasks/stats_jpg/symmetry/stats_symmetry.csv',index=False)
         return tab
 
     def plot_pourcentage(self, disorder='ocd', border=False, save_fig=False):

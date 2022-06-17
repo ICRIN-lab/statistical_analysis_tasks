@@ -52,7 +52,7 @@ class seven_diff_analysis(Template_Task_Statistics):
             average_diff.append(np.mean(res))
         tab1['Average Difference'] = average_diff
         if save_tab:
-            tab1.to_csv('../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff.csv')
+            tab1.to_csv(f'../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff_{type}.csv')
         return tab1
 
     def plot_pourcentage(self, disorder='ocd', block="all", border=False, save_fig=False):

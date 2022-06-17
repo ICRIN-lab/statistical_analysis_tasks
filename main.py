@@ -81,5 +81,4 @@ def recap_tab():
     tab.to_csv('../statistical_analysis_tasks/other/overview_tab.csv', index=False)
     return tab
 
-
-
+result_seven.stats(save_tab=True)
