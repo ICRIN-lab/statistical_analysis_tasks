@@ -3,6 +3,7 @@ import pandas as pd
 import scipy.stats as sps
 from datetime import datetime, date
 
+""" The redcap export in csv, change the path every time with the correct one"""
 redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-14_1411.csv")
 
 
@@ -89,7 +90,7 @@ def p_value_column():
 
     tab.extend([""] * 5)
 
-    for name2 in ['maudsley_score', 'eq5d5l_score_tot', 'eq5d5l_sore_valid_sante']:
+    for name2 in ['maudsley_score', 'eq5d5l_sore_valid_sante']:
         ocd_name = np.array(ocd[name2])
         ocd_tab = ocd_name[~np.isnan(ocd_name)]
         other_name = np.array(other[name2])
@@ -98,6 +99,8 @@ def p_value_column():
     tab.extend([""] * 8)
     return tab
 
+def check_score(tab):
+    return list(filter(lambda x: x!=999,tab['eq5d5l_sore_valid_sante']))
 
 def make_data_baseline():
     data_baseline = [['', "", f"(n = {len(redcap_csv['record_id'])})", f"(n = {len(hc)})", f"(n = {len(ocd)})",
@@ -142,18 +145,19 @@ def make_data_baseline():
         ['Resistance score (Maudsley)', "", "", "",
          f"{round(np.mean(ocd.maudsley_score), 2)} ({round(np.std(ocd.maudsley_score), 2)})",
          f"{round(np.mean(other.maudsley_score), 2)} ({round(np.std(other.maudsley_score), 2)})"])
-    data_baseline.append(
-        ['Health state score', "", "", "",
-         f"{round(np.mean(ocd.eq5d5l_score_tot), 2)} ({round(np.std(ocd.eq5d5l_score_tot), 2)})",
-         f"{round(np.mean(other.eq5d5l_score_tot), 2)} ({round(np.std(other.eq5d5l_score_tot), 2)})"])
+    #data_baseline.append(
+     #   ['Health state score', "", "", "",
+      #   f"{round(np.mean(ocd.eq5d5l_score_tot), 2)} ({round(np.std(ocd.eq5d5l_score_tot), 2)})",
+      #   f"{round(np.mean(other.eq5d5l_score_tot), 2)} ({round(np.std(other.eq5d5l_score_tot), 2)})"])
+
     data_baseline.append(
         ['VAS score', "", "", "",
-         f"{round(np.mean(ocd.eq5d5l_sore_valid_sante), 2)} ({round(np.std(ocd.eq5d5l_sore_valid_sante), 2)})",
-         f"{round(np.mean(other.eq5d5l_sore_valid_sante), 2)} ({round(np.std(other.eq5d5l_sore_valid_sante), 2)})"])
+         f"{round(np.nanmean(check_score(ocd)), 2)} ({round(np.nanstd(check_score(ocd)), 2)})",
+         f"{round(np.nanmean(check_score(other)), 2)} ({round(np.nanstd(check_score(other)), 2)})"])
     data_baseline.append(['HAD anxiety score', "", "", "", "",
-                          f"{round(np.mean(other.score_had_anx), 2)} ({round(np.std(other.score_had_anx), 2)})"])
+                          f"{round(np.nanmean(other.score_had_anx), 2)} ({round(np.nanstd(other.score_had_anx), 2)})"])
     data_baseline.append(['HAD depression score', "", "", "", "",
-                          f"{round(np.mean(other.score_had_dep), 2)} ({round(np.std(other.score_had_dep), 2)})"])
+                          f"{round(np.nanmean(other.score_had_dep), 2)} ({round(np.nanstd(other.score_had_dep), 2)})"])
     data_baseline.append(['Ybocs score', "", "", "", "", ""])
     data_baseline.append(["", "< 7", "", "", len(ocd[ocd.ybocs_score_tot < 7]), ""])
     data_baseline.append(["", "8 - 15", "", "", len(ocd[(ocd.ybocs_score_tot >= 8) & (ocd.ybocs_score_tot <= 15)]), ""])
@@ -172,3 +176,4 @@ def make_data_baseline():
 
 
 make_data_baseline()
+print(check_score(ocd))

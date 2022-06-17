@@ -28,11 +28,11 @@ def significative_group(disorder='ocd'):
         p = result_symmetry.group_comparison(category=category, disorder=disorder, print_status=False)
         p_val.append(p)
         task_feature.append(['symmetry', category])
-    for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
-        p = result_seven.group_comparison(type=block, category='Average difference', disorder=disorder,
-                                          print_status=False)
-        p_val.append(p)
-        task_feature.append(['seven', block, 'Average difference'])
+    #for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
+        #p = result_seven.group_comparison(type=block, category='Average difference', disorder=disorder,
+                                          #print_status)
+        #p_val.append(p)
+        #task_feature.append(['seven', block, 'Average difference'])
 
     for category in ['Success rate', 'Average reaction time', 'Maximum reaction time', 'Average count image',
                      'Maximum count image', 'Minimum count image', 'Success/count image']:
@@ -40,8 +40,15 @@ def significative_group(disorder='ocd'):
         p_val.append(p)
         task_feature.append(['where is tockie', category])
 
-    significative_feature = [[task_feature[p_val.index(p)], p] for p in p_val if p < 0.05]
-    print(significative_feature)
+    significative_feature = [[task_feature[p_val.index(p)], round(p,3)] for p in p_val if p < 0.05]
+    print('On obtient un p-valeur <0.05 pour les categories suivantes :')
+    for i in range(len(significative_feature)):
+        tab=significative_feature[i]
+        if len(tab[0]) == 3:
+             print('Pour la tâche ', tab[0][0], ',block =', tab[0][1], '(category =', tab[0][2], ') avec p=',
+                      tab[1])
+        if len(tab[0]) == 2:
+            print('Pour la tâche ', tab[0][0], '(category =', tab[0][1], ') avec p=', tab[1])
     return significative_feature
 
 
@@ -75,4 +82,4 @@ def recap_tab():
     return tab
 
 
-result_lucifer.get_disorder_stats(save_tab=True)
+

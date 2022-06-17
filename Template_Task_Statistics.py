@@ -209,9 +209,9 @@ class Template_Task_Statistics:
                 path = f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/stats_wit_{disorder}.csv'
             elif len(tab.columns) == 6:
                 if tab.columns[5] == 'group':
-                    path = f'../statistical_analysis_tasks/stats_jpg/lucifer/stats_lucifer_{disorder}.csv'
+                    path = f'../statistical_analysis_tasks/stats_jpg/lucifer/stats_lucifer_{disorder}_{type}.csv'
                 if tab.columns[5] == 'Average Difference':
-                    path = f'../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff_{disorder}.csv'
+                    path = f'../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff_{disorder}_{type}.csv'
 
             tab.to_csv(path, index=False)
         return tab

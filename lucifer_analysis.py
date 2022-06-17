@@ -32,7 +32,7 @@ class lucifer_analysis(Template_Task_Statistics):
                 new_column.append(0)
         tab1['group'] = new_column
         if save_tab:
-            tab1.to_csv('../statistical_analysis_tasks/stats_jpg/lucifer/stats_lucifer.csv', index=False)
+            tab1.to_csv(f'../statistical_analysis_tasks/stats_jpg/lucifer/stats_lucifer_{type}.csv', index=False)
         return tab1
 
     def plot_pourcentage(self, disorder='ocd', type_lucifer='all', border=False, save_fig=False):
