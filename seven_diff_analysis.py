@@ -35,7 +35,6 @@ class seven_diff_analysis(Template_Task_Statistics):
 
     def stats(self, type='all',save_tab=False):
         """
-
         :param type : The type you are interested in, change regarding tasks (default = 'all')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """

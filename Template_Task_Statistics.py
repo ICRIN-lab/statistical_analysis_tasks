@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path every time with the correct one"""
-    redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-15_1339.csv", sep=',')
+    redcap_csv = pd.read_csv("STOCADPinelfollowup_DATA_2022-07-12_1247.csv", sep=',')
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
