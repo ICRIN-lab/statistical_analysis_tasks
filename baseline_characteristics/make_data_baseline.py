@@ -4,7 +4,7 @@ import scipy.stats as sps
 from datetime import datetime, date
 
 """ The redcap export in csv, change the path every time with the correct one"""
-redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-14_1411.csv")
+redcap_csv = pd.read_csv("/Users/jeannespiteri/Downloads/STOCADPinelfollowup_DATA_2022-07-12_1201.csv")
 
 
 def age(born):
@@ -72,7 +72,7 @@ def p_value_column():
            "", round(sps.chi2_contingency(tab_study)[1], 3), "", "", "", "", "", "", "", "",
            round(sps.chi2_contingency(
                [get_value('Single'), get_value('In relationship'), get_value('Maried'), get_value('Divorced'),
-                get_value('Widowed')])[1], 3), "", "", "", "", ""]
+                get_value('W owed')])[1], 3), "", "", "", "", ""]
 
     names_list = ['Current Smoker', 'Current Alcohol Drinker', 'Caffeine consumer', 'Poor visual acuity']
     for name in names_list:
