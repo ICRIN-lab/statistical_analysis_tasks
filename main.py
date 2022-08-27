@@ -1,15 +1,15 @@
 import pandas as pd
 
-from seven_diff_analysis import seven_diff_analysis
-from lucifer_analysis import lucifer_analysis
-from where_is_tockie_analysis import where_is_tockie_analysis
-from symmetry_analysis import symmetry_analysis
+from seven_diff_analysis import SevenDiffAnalysis
+from lucifer_analysis import LuciferAnalysis
+from where_is_tockie_analysis import WhereIsTockieAnalysis
+from symmetry_analysis import SymmetryAnalysis
 import numpy as np
 
-result_seven = seven_diff_analysis()
-result_lucifer = lucifer_analysis()
-result_where_is_tockie = where_is_tockie_analysis()
-result_symmetry = symmetry_analysis()
+result_seven = SevenDiffAnalysis()
+result_lucifer = LuciferAnalysis()
+result_where_is_tockie = WhereIsTockieAnalysis()
+result_symmetry = SymmetryAnalysis()
 
 
 def significative_group(disorder='ocd'):
@@ -17,19 +17,19 @@ def significative_group(disorder='ocd'):
     p_val = []
     for category in ['Success rate', 'Average reaction time', 'Maximum reaction time']:
         for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
-            p = result_seven.group_comparison(type=block, category=category, disorder=disorder, print_status=False)
+            p = result_seven.group_comparison(block=block, category=category, disorder=disorder, print_status=False)
             p_val.append(p)
             task_feature.append(['seven_diff', block, category])
-        for type_lucifer in ['all', 'straight', 'messy']:
-            p = result_lucifer.group_comparison(type=type_lucifer, category=category, disorder=disorder,
+        for block_lucifer in ['all', 'straight', 'messy']:
+            p = result_lucifer.group_comparison(block=block_lucifer, category=category, disorder=disorder,
                                                 print_status=False)
             p_val.append(p)
-            task_feature.append(['lucifer', type_lucifer, category])
+            task_feature.append(['lucifer', block_lucifer, category])
         p = result_symmetry.group_comparison(category=category, disorder=disorder, print_status=False)
         p_val.append(p)
         task_feature.append(['symmetry', category])
     # for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
-    # p = result_seven.group_comparison(type=block, category='Average difference', disorder=disorder,
+    # p = result_seven.group_comparison(block=block, category='Average difference', disorder=disorder,
     # print_status)
     # p_val.append(p)
     # task_feature.append(['seven', block, 'Average difference'])
@@ -52,27 +52,27 @@ def significative_group(disorder='ocd'):
     return significative_feature
 
 
-def line_tab(task_result, type='all', category1='Success rate', category2='Average reaction time'):
-    mean_ocd1 = np.round(np.mean(task_result.get_disorder_stats(type=type)[category1]), 3)
-    mean_hc1 = np.round(np.mean(task_result.get_disorder_stats(type=type, disorder='none')[category1]), 3)
-    p_value1 = np.round(task_result.group_comparison(type=type, category=category1, print_status=False), 3)
-    mean_ocd2 = np.round(np.mean(task_result.get_disorder_stats(type=type)[category2]), 3)
-    mean_hc2 = np.round(np.mean(task_result.get_disorder_stats(type=type, disorder='none')[category2]), 3)
-    p_value2 = np.round(task_result.group_comparison(type=type, category=category2, print_status=False), 3)
-    if type == 'all':
-        type = ""
-    return [type, mean_ocd1, mean_hc1, p_value1, mean_ocd2, mean_hc2, p_value2]
+def line_tab(task_result, block='all', category1='Success rate', category2='Average reaction time'):
+    mean_ocd1 = np.round(np.mean(task_result.get_disorder_stats(block=block)[category1]), 3)
+    mean_hc1 = np.round(np.mean(task_result.get_disorder_stats(block=block, disorder='none')[category1]), 3)
+    p_value1 = np.round(task_result.group_comparison(block=block, category=category1, print_status=False), 3)
+    mean_ocd2 = np.round(np.mean(task_result.get_disorder_stats(block=block)[category2]), 3)
+    mean_hc2 = np.round(np.mean(task_result.get_disorder_stats(block=block, disorder='none')[category2]), 3)
+    p_value2 = np.round(task_result.group_comparison(block=block, category=category2, print_status=False), 3)
+    if block == 'all':
+        block = ""
+    return [block, mean_ocd1, mean_hc1, p_value1, mean_ocd2, mean_hc2, p_value2]
 
 
-def recap_tab():
-    tab = [["", 'Success rate', "", "", 'Average reaction time', "", ""]]
-    tab.append(["", 'OCD', 'Healthy Control', "", 'OCD', 'Healthy Control', ""])
-    tab.append(['Seven_diff', 'Mean', 'Mean', "p-value", 'Mean', 'Mean', "p-value"])
+def redcap_tab():
+    tab = [["", 'Success rate', "", "", 'Average reaction time', "", ""],
+           ["", 'OCD', 'Healthy Control', "", 'OCD', 'Healthy Control', ""],
+           ['Seven_diff', 'Mean', 'Mean', "p-value", 'Mean', 'Mean', "p-value"]]
     for block in ['all', 'shocking', 'non-shocking', 'calligraphy', 'chess']:
-        tab.append(line_tab(task_result=result_seven, type=block))
+        tab.append(line_tab(task_result=result_seven, block=block))
     tab.append(['Lucifer', '', '', "", '', '', ""])
-    for type_lucifer in ['all', 'straight', 'messy', 'special']:
-        tab.append(line_tab(task_result=result_lucifer, type=type_lucifer))
+    for block_lucifer in ['all', 'straight', 'messy', 'special']:
+        tab.append(line_tab(task_result=result_lucifer, block=block_lucifer))
     tab.append(['Symmetry', '', '', "", '', '', ""])
     tab.append(line_tab(task_result=result_symmetry))
     tab.append(['Where Is Tockie', '', '', "", '', '', ""])
@@ -82,4 +82,12 @@ def recap_tab():
     return tab
 
 
+# list_patients_eeg = result_seven.get_eeg_patient()
+# print("list patients = ", list_patients_eeg)
 result_seven.stats(save_tab=True)
+result_seven.plot_pourcentage(save_fig=True)
+result_seven.plot_pourcentage(block="chess")
+result_seven.plot_pourcentage(block="calligraphy")
+result_seven.plot_pourcentage(block="shocking")
+result_seven.plot_pourcentage(block="non-shocking")
+significative_group()

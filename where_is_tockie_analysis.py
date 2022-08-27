@@ -6,10 +6,10 @@ import numpy as np
 import seaborn as sns
 
 
-class where_is_tockie_analysis(Template_Task_Statistics):
+class WhereIsTockieAnalysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/where_is_tockie'
 
-    def stats(self, type='all', save_tab=False):
+    def stats(self, block='all', save_tab=True):
         tab = []
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
@@ -26,7 +26,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
             tab.to_csv('../statistical_analysis_tasks/stats_jpg/where_is_tockie/stats_where_is_tockie.csv')
         return tab
 
-    def plot_pourcentage(self, disorder='ocd', border=False, save_fig=False):
+    def plot_pourcentage(self, disorder='ocd', border=False, save_fig=True):
         """ Create a graph representing success rate depending on the number of trials
         :param disorder: the disorder you are interested in (default = 'ocd')
         :param border: True, if you want margins of the result for each group, False otherwise (default = False)
@@ -35,7 +35,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
 
         plt.figure()
         plt.suptitle(f'Success rate function of the number of the trial for Where Is Tockie Task')
-        self.all_success_plot(disorder='ocd', border=border, max_len=200, type='all')
+        self.all_success_plot(disorder='ocd', border=border, max_len=200, block='all')
         plt.legend(self.custom_lines,
                    [f"Healthy Control (n={self.total_people('none')})",
                     f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
@@ -47,7 +47,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
             plt.savefig(f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/Success_rate_trials_wit.png')
         plt.show()
 
-    def boxplot_average(self, category='Success rate', disorder='ocd', save_fig=False):
+    def boxplot_average(self, category='Success rate', disorder='ocd', save_fig=True):
         """Create boxplot of the average result from a specific category for HC group and considered disorder group
         :param category: the category of the output of stats that you want to see
         :param disorder: the disorder you are interested in (default = 'ocd')
@@ -101,7 +101,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
         mean_disorder = np.nanmean(disorder_count, axis=0)
         return mean_HC, mean_disorder
 
-    def count_image_plot(self, disorder='ocd', save_fig=False):
+    def count_image_plot(self, disorder='ocd', save_fig=True):
         mean_HC, mean_disorder = self.count_image_analysis(disorder)
 
         data = pd.DataFrame({'Average count image per trial (Healthy control)': mean_HC,
@@ -114,7 +114,7 @@ class where_is_tockie_analysis(Template_Task_Statistics):
             plt.savefig('../statistical_analysis_tasks/stats_jpg/where_is_tockie/mean_count_plot.png')
         plt.show()
 
-    def count_image_plot2(self, disorder='ocd', save_fig=False):
+    def count_image_plot2(self, disorder='ocd', save_fig=True):
         mean_HC, mean_disorder = self.count_image_analysis(disorder)
         mean_HC = np.sort(mean_HC)
         mean_disorder = np.sort(mean_disorder)

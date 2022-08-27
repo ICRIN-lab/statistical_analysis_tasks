@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path every time with the correct one"""
-    redcap_csv = pd.read_csv("STOCADPinelfollowup_DATA_2022-07-12_1247.csv", sep=',')
+    redcap_csv = pd.read_csv("STOCADPinelfollowup_DATA_2022-08-26_1656.csv", sep=',')
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -31,7 +31,7 @@ class Template_Task_Statistics:
 
     def __init__(self, pratice=False):
         """
-        :param pratice: if you want to keep to the pratice in the analysis put pratice=True
+        :param pratice: if you want to keep to the practice in the analysis put pratice=True
         """
 
         self.csv_files = glob.glob(os.path.join(self.path, "*.csv"))
@@ -65,6 +65,10 @@ class Template_Task_Statistics:
                                       [0, 1], -1)
         return pd.DataFrame(np.array([np.array(self.redcap_csv.record_id), list_patients]).T)
 
+    def get_eeg_patient(self):
+        return [raw[0] for raw in self.redcap_csv.values if (raw[32] == 1 or raw[34] == 1)]
+
+
     def success_rate_trials(self, df):
         """ Get the success_rate regarding trials from the column result of the dataframe
         :param df: resulting dataframe from a task
@@ -73,17 +77,19 @@ class Template_Task_Statistics:
         success = [np.mean(df["result"][:n]) * 100 for n in range(1, len(df['result']) + 1)]
         return np.array(success)
 
-    def base_stats(self, type='all'):
+    def base_stats(self, block='all'):
         """ Standard statistical result for all tasks
-        :param type : The type you are interested in, change regarding tasks (default = 'all')
+        :param block : The block you are interested in, change regarding tasks (default = 'all')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
-        numbers_trials = self.get_no_trials(type)
+        numbers_trials = self.get_no_trials(block)
         tab = []
-
         for df in self.df_files:
-            if type != 'all':
+            if block != 'all':
                 df = df[df['no_trial'].isin(numbers_trials)]
+                if len(df) == 0:
+                    print(f"No {block} data for this patient")
+                    continue
             id = self.get_id(df)
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
             tab.append([id, int(disorder_id), np.mean(df['result']) * 100, np.mean(df['reaction_time']),
@@ -94,7 +100,7 @@ class Template_Task_Statistics:
 
     def stats(self):
         """
-        :param type : The type you are interested in, change regarding tasks (default = 'all')
+        :param block : The block you are interested in, change regarding tasks (default = 'all')
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
 
@@ -116,10 +122,10 @@ class Template_Task_Statistics:
         """ Get the numbers of trials within a certain category
         """
 
-    def all_success_plot(self, border=False, type='all', disorder='ocd', max_len=200):
+    def all_success_plot(self, border=False, block='all', disorder='ocd', max_len=200):
         """ Baseline to plot the success rate regarding trials without title and legends
         :param border: True, if you want margins of the result for each group (default = False)
-        :param type: The specific block or type of lucifer you are interested in (default = 'all')
+        :param block: The specific block or block of lucifer you are interested in (default = 'all')
         :param disorder: The specific disorder you are interested in (default = 'ocd')
         :param max_len: The maximum size of trial for the considered task
         """
@@ -127,11 +133,15 @@ class Template_Task_Statistics:
         HC_group = []
         disorder_group = []
         for df in self.df_files:
-            if type != 'all':
-                numbers_trials = self.get_no_trials(type)
-                df = df[df['no_trial'].isin(numbers_trials)]
             id = self.get_id(df)
             i = int(list_patients[list_patients[0] == id][1])
+            if block != 'all':
+                numbers_trials = self.get_no_trials(block)
+                df = df[df['no_trial'].isin(numbers_trials)]
+                print(f"{id}, len(df) = {len(df)}")
+                if len(df) == 0:
+                    print(f"No {block} data for this patient")
+                    continue
             if i != -1:
                 tab = self.success_rate_trials(df)
                 if len(tab) != max_len:
@@ -163,23 +173,23 @@ class Template_Task_Statistics:
         """ Create boxplot of the average result from a specific category for HC group and considered disorder group
         """
 
-    def group_comparison(self, type='all', category='Success rate', disorder='ocd', print_status=True):
+    def group_comparison(self, block='all', category='Success rate', disorder='ocd', print_status=True):
         """" Student test for considered criteria
         :param print_status:
-        :param type: The specific block or type of lucifer you are interested in (default = 'all')
+        :param block: The specific block or block of lucifer you are interested in (default = 'all')
         :param category: the category of the output of stats that you want to see between
         'Success rate', 'Average reaction time', 'Maximum reaction time' for all task and 'Average count image',
         'Maximum count image', 'Minimum count image', 'Success/count image' for where is tockie (default = 'Success rate')
         :param disorder: The disorder you want to compare with control group (default = 'ocd')
         """
-        X = self.stats(type=type)
+        X = self.stats(block=block)
         X1 = np.array(X[X.disorder == 0][category])
         X2 = np.array(X[X.disorder == self.list_disorder.index(disorder)][category])
         if print_status:
-            if type != 'all':
+            if block != 'all':
                 print(
                     f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
-                    f' pour le type {type} , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
+                    f' pour le block {block} , on obtient une p-value de ', sps.ttest_ind(X1, X2)[1])
             else:
                 print(
                     f'Pour le test de student sur la catégorie {category} entre les sujets sains et les sujets {disorder}'
@@ -191,27 +201,27 @@ class Template_Task_Statistics:
                 print("Il y a une différence significative entre les deux groupes comparés")
         return sps.ttest_ind(X1, X2)[1]
 
-    def get_disorder_stats(self, type='all', disorder='ocd', save_tab=False):
+    def get_disorder_stats(self, block='all', disorder='ocd', save_tab=False):
         """ Get the dataframe stats for a specific disorder
         :param disorder: The specific disorder you are interested in (default = 'ocd'),
         if you want HC control group put 'none'
         """
         if disorder == 'all':
-            tab = self.stats(type=type)[self.stats(type=type).disorder != 0]
+            tab = self.stats(block=block)[self.stats(block=block).disorder != 0]
         elif disorder == 'none':
-            tab = self.stats(type=type)[self.stats(type=type).disorder == 0]
+            tab = self.stats(block=block)[self.stats(block=block).disorder == 0]
         else:
-            tab = self.stats(type=type)[self.stats(type=type).disorder == self.list_disorder.index(disorder)]
+            tab = self.stats(block=block)[self.stats(block=block).disorder == self.list_disorder.index(disorder)]
         if save_tab:
             if len(tab.columns) == 5:
                 path = f'../statistical_analysis_tasks/stats_jpg/symmetry/stats_symmetry_{disorder}.csv'
-            elif len(tab.columns)>7:
+            elif len(tab.columns) > 7:
                 path = f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/stats_wit_{disorder}.csv'
             elif len(tab.columns) == 6:
                 if tab.columns[5] == 'group':
-                    path = f'../statistical_analysis_tasks/stats_jpg/lucifer/stats_lucifer_{disorder}_{type}.csv'
+                    path = f'../statistical_analysis_tasks/stats_jpg/lucifer/stats_lucifer_{disorder}_{block}.csv'
                 if tab.columns[5] == 'Average Difference':
-                    path = f'../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff_{disorder}_{type}.csv'
+                    path = f'../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff_{disorder}_{block}.csv'
 
             tab.to_csv(path, index=False)
         return tab

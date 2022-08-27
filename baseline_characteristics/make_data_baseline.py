@@ -4,7 +4,7 @@ import scipy.stats as sps
 from datetime import datetime, date
 
 """ The redcap export in csv, change the path every time with the correct one"""
-redcap_csv = pd.read_csv("/Users/melissamarius/Downloads/STOCADPinelfollowup_DATA_2022-06-14_1411.csv")
+redcap_csv = pd.read_csv("../STOCADPinelfollowup_DATA_2022-08-23_1013.csv")
 
 
 def age(born):
