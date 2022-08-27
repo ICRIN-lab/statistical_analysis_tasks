@@ -36,7 +36,7 @@ class SevenDiffAnalysis(Template_Task_Statistics):
     def stats(self, block='all', save_tab=True):
         """
         :param block : The block you are interested in, change regarding tasks (default = 'all')
-        :param save_tab : whether or not you wanna save the output in a csv file
+        :param save_tab : whether you want to save the output in a csv file
         :return: dataframe containing descriptive statistics of the data for every subjects
         """
         tab1 = self.base_stats(block=block)
@@ -46,6 +46,8 @@ class SevenDiffAnalysis(Template_Task_Statistics):
         for df in self.df_files:
             if block != 'all':
                 df = df[df['no_trial'].isin(numbers_trials)]
+                if len(df) == 0:
+                    continue
             ans = df['ans_candidate']
             condlist = [ans == 0, ans == 1, ans == 5, ans == 6]
             res = np.select(condlist, choicelist)
@@ -110,7 +112,8 @@ class SevenDiffAnalysis(Template_Task_Statistics):
         else:
             plt.ylabel(f'{category}')
         if save_fig:
-            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/seven_diff/Boxplot:{category} Task (Block = {block}).png')
+            plt.savefig(
+                f'../statistical_analysis_tasks/stats_jpg/seven_diff/Boxplot:{category} Task (Block = {block}).png')
         plt.show()
 
     def average_diff(self):
@@ -118,11 +121,10 @@ class SevenDiffAnalysis(Template_Task_Statistics):
         good_ans = df['good_ans']
         condlist = [good_ans == 0, good_ans == 1, good_ans == 5, good_ans == 6]
         choicelist = [0, 1, 2, 3]
-        df['good_ans'] = np.select(condlist, choicelist)  #replace 5 and 6 values by 3 and 4
+        df['good_ans'] = np.select(condlist, choicelist)  # replace 5 and 6 values by 3 and 4
         return np.mean(df['good_ans'])
 
-
-    def plot_reaction_time(self,block='all',disorder='ocd',border=False,max_len=200):
+    def plot_reaction_time(self, block='all', disorder='ocd', border=False, max_len=200):
         list_patients = self.get_list_patients(disorder)
         HC_group = []
         disorder_group = []
@@ -156,6 +158,4 @@ class SevenDiffAnalysis(Template_Task_Statistics):
         sns.lineplot(data=np.nanmean(disorder_group, axis=0), color=self.col[1])
         plt.show()
 
-
-    #def difference_plot(self):
-
+    # def difference_plot(self):

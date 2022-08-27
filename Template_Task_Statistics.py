@@ -88,7 +88,6 @@ class Template_Task_Statistics:
             if block != 'all':
                 df = df[df['no_trial'].isin(numbers_trials)]
                 if len(df) == 0:
-                    print(f"No {block} data for this patient")
                     continue
             id = self.get_id(df)
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
@@ -138,9 +137,7 @@ class Template_Task_Statistics:
             if block != 'all':
                 numbers_trials = self.get_no_trials(block)
                 df = df[df['no_trial'].isin(numbers_trials)]
-                print(f"{id}, len(df) = {len(df)}")
                 if len(df) == 0:
-                    print(f"No {block} data for this patient")
                     continue
             if i != -1:
                 tab = self.success_rate_trials(df)

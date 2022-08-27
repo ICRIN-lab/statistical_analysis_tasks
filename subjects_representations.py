@@ -3,24 +3,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime, date
-from seven_diff_analysis import seven_diff_analysis
-from lucifer_analysis import lucifer_analysis
-from where_is_tockie_analysis import where_is_tockie_analysis
-from symmetry_analysis import symmetry_analysis
+from seven_diff_analysis import SevenDiffAnalysis
+from lucifer_analysis import LuciferAnalysis
+from where_is_tockie_analysis import WhereIsTockieAnalysis
+from symmetry_analysis import SymmetryAnalysis
 
-task = seven_diff_analysis()
+task = SevenDiffAnalysis()
 redcap_csv = task.redcap_csv
 
 
-def age(born):
+def age(birth):
     """
     Determine age from a date of birth
     """
-    born = datetime.strptime(born, "%Y-%m-%d").date()
+    birth = datetime.strptime(birth, "%Y-%m-%d").date()
     today = date.today()
-    return today.year - born.year - ((today.month,
-                                      today.day) < (born.month,
-                                                    born.day))
+    return today.year - birth.year - ((today.month,
+                                      today.day) < (birth.month,
+                                                    birth.day))
 
 
 def repart_sex(df):
@@ -88,7 +88,7 @@ def repartition_sexe():
 
 
 def all_missing_csv():
-    task = [seven_diff_analysis, lucifer_analysis, where_is_tockie_analysis, symmetry_analysis]
+    task = [SevenDiffAnalysis, LuciferAnalysis, WhereIsTockieAnalysis, SymmetryAnalysis]
     task_name = ['seven_diff', 'lucifer', 'where_is_tockie', 'symmetry']
     for analysis, name in zip(task, task_name):
         task_analysis = analysis()
