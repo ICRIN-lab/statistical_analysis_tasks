@@ -1,17 +1,20 @@
+from scipy.stats import stats
+
 from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from scipy import stats
 
 
 class SymmetryAnalysis(Template_Task_Statistics):
     path = '../data_ocd_metacognition/tasks_data/symmetry'
 
-    def stats(self, block='all', save_tab=False):
+    def stats(self, block='all', save_tab=True):
         tab = self.base_stats()
         if save_tab:
-            tab.to_csv('../statistical_analysis_tasks/stats_jpg/symmetry/stats_symmetry.csv',index=False)
+            tab.to_csv('../statistical_analysis_tasks/stats_jpg/symmetry/stats_symmetry.csv', index=False)
         return tab
 
     def plot_pourcentage(self, disorder='ocd', border=False, save_fig=True):
@@ -27,11 +30,20 @@ class SymmetryAnalysis(Template_Task_Statistics):
                    [f"Healthy Control (n={self.total_people('none')})", f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
-        plt.grid(True)
+        plt.ylim(0, 100)  # change here to change the scale
+        plt.grid(False)
         plt.tight_layout()
         if save_fig:
             plt.savefig(f'../statistical_analysis_tasks/stats_jpg/symmetry/Success_rate_trials_symmetry.png')
         plt.show()
+
+    def test_success_rate(self, *args):
+        HC_group, disorder_group = self.all_success_plot(max_len=100)
+        # print(HC_group)
+        # print(disorder_group)
+        print(np.mean(HC_group), np.mean(disorder_group))  # 86% vs 80%
+        print("t-test symmetry : ", stats.ttest_ind(HC_group, disorder_group))  # t = 20, p = 1.52e-50
+
 
     def boxplot_average(self, category='Success rate', disorder='ocd', save_fig=True):
         """Create boxplot of the average result from a specific category for HC group and considered disorder group

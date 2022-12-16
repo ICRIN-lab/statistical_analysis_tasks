@@ -1,0 +1,49 @@
+Variable,Characteristic,All subjects,Healthy control,OCD patients,t,p
+,,(n = 61),(n = 36),(n = 25), , 
+Age,,35 (12),31 (10),41 (10),-3.42,0.001
+Gender,,,,,-1.18,0.359
+,Men,24,12,12,,
+,Women,37,24,13,,
+Educational level,,,,,14.46,0.025
+,Primary education,0,0,0,,
+,Secondary education,4,1,3,,
+,High school diploma,9,3,6,,
+,Vocational training,2,0,2,,
+,BTEC Higher National Diploma,2,1,1,,
+,Bachelor,12,7,5,,
+,Master,22,14,8,,
+,PhD,10,10,0,,
+Marital Status,,,,,4.24,0.374
+,Single,31,15,16,,
+,In relationship,18,14,4,,
+,Maried,8,5,3,,
+,Divorced,2,1,1,,
+,Widowed,2,1,1,,
+Psycho active drugs,,,,,,
+,Tobacco,15,10,5,0.69,0.496
+,Alcohol,24,14,10,-0.09,0.932
+,Caffeine,47,28,19,0.16,0.874
+Laterality,,53,31,22,4.88,0.04
+BMI,,24.15,23.075,25.7,2.66,0.117
+Poor visual acuity,,32,15,17,0.23,0.84
+,Satisfied with optical correction (yes),28,14,14,-0.45,0.694
+Amateur,,,,,1.88,0.17
+,jeu d'échecs,8,7,1,,
+,art,16,9,7,,
+,cinéma,17,9,8,,
+,histoire,15,9,6,,
+History of epilepsy,,3,2,1,-5.47,0.032
+Brain stimulation,,16,,16,,
+Brain stimulation techniques,,,,,,
+,rTMS,12,,11,,
+,tDCS,0,,0,,
+,deep TMS,3,,3,,
+,TCES,0,,0,,
+Maudsley score,,,,5 (2),,
+VAS score,,,,37 (24),,
+Y-BOCS score,,,,,,
+,< 7,,,0,,
+,8 - 15,,,1,,
+,16 - 23,,,3,,
+,24 - 31,,,12,,
+,32 - 40,,,8,,

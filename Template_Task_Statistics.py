@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class Template_Task_Statistics:
     """ The redcap export in csv, change the path every time with the correct one"""
-    redcap_csv = pd.read_csv("STOCADPinelfollowup_DATA_2022-08-26_1656.csv", sep=',')
+    redcap_csv = pd.read_csv("STOCADPinelfollowup_DATA_2022-12-05_1143.csv", sep=',')
 
     """ List of diminutives of the disorder with index corresponding to the number in the redcap, 
     names can be change except 'all' but the order cannot be changed """
@@ -28,6 +28,10 @@ class Template_Task_Statistics:
 
     """ Path of the file, which is set in every class analysis"""
     path = ""
+    """list des patients, 0 = HC ; 1 = TOC ; 2 = Other diseases"""
+    list_patients = [1, 1, 0, 0, 0, 0, 1, 1, 0, 2, 1, 2, 0, 0, 2, 1, 0, 2, 0, 0, 1, 0, 2, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0,
+                     0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 2, 0, 0, 0,
+                     0, 0, 0]
 
     def __init__(self, pratice=False):
         """
@@ -35,6 +39,7 @@ class Template_Task_Statistics:
         """
 
         self.csv_files = glob.glob(os.path.join(self.path, "*.csv"))
+        self.csv_files.sort(key=lambda x: x.split("_")[5])
         self.df_files = [pd.read_csv(f, encoding='ISO-8859-1') for f in self.csv_files]
 
         """ Deleting all the lines corresponding to the pratice from all the csv
@@ -75,6 +80,7 @@ class Template_Task_Statistics:
         :return: an array with the success rate regarding no_trial for considered dataframe
         """
         success = [np.mean(df["result"][:n]) * 100 for n in range(1, len(df['result']) + 1)]
+        print("np.mean(success) = ", success)
         return np.array(success)
 
     def base_stats(self, block='all'):
@@ -91,9 +97,10 @@ class Template_Task_Statistics:
                     continue
             id = self.get_id(df)
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-            tab.append([id, int(disorder_id), np.mean(df['result']) * 100, np.mean(df['reaction_time']),
+            tab.append([id, disorder_id.iloc[0], round(np.mean(df['result']) * 100, 2), round(float(np.mean(df['reaction_time'])), 2),
                         np.max(df['reaction_time'])])
         tab = pd.DataFrame(tab)
+        print(tab)
         tab.columns = ['Id', 'disorder', 'Success rate', 'Average reaction time', 'Maximum reaction time']
         return tab
 
@@ -133,7 +140,7 @@ class Template_Task_Statistics:
         disorder_group = []
         for df in self.df_files:
             id = self.get_id(df)
-            i = int(list_patients[list_patients[0] == id][1])
+            i = list_patients[list_patients[0] == id][1].iloc[0]
             if block != 'all':
                 numbers_trials = self.get_no_trials(block)
                 df = df[df['no_trial'].isin(numbers_trials)]
@@ -151,6 +158,7 @@ class Template_Task_Statistics:
                     HC_group.append(tab)
                 else:
                     disorder_group.append(tab)
+
         if border:
             list_group = [HC_group, disorder_group]
             for i in range(2):
@@ -159,12 +167,20 @@ class Template_Task_Statistics:
                 plt.fill_between(np.arange(0, max_len), np.nanmin(list_group[i], axis=0),
                                  np.nanmax(list_group[i], axis=0),
                                  color=self.col[i], alpha=0.25)
+        print(np.nanmean(HC_group, axis=0))
+        print(np.nanmean(disorder_group, axis=0))
         sns.lineplot(data=np.nanmean(HC_group, axis=0), color=self.col[0])
         sns.lineplot(data=np.nanmean(disorder_group, axis=0), color=self.col[1])
+        return np.nanmean(HC_group, axis=0), np.nanmean(disorder_group, axis=0)
 
     def plot_pourcentage(self, *args):
         """ Create a graph representing success rate depending on the number of trials
             """
+    def test_success_rate(self, *args):
+        """
+        Perform t-tests on results tab for each task
+        """
+
 
     def boxplot_average(self, *args):
         """ Create boxplot of the average result from a specific category for HC group and considered disorder group

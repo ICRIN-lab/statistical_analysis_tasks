@@ -13,18 +13,57 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
         tab = []
         for df in self.df_files:
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
-            disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
             count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
             count_tot = count_tot[~np.isnan(count_tot)]
-            tab.append([id, np.mean(df['result']) * 100, np.mean(df['reaction_time']), np.max(df['reaction_time']),
-                        np.mean(count_tot), np.max(count_tot), np.min(count_tot),
-                        np.mean(df['result']) * 100 / np.mean(count_tot), int(disorder_id)])
+            disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
+            tab.append([id, disorder_id.iloc[0], round(float(np.mean(df['result'])) * 100, 1), round(float(np.mean(df['reaction_time'])), 2),
+                        float(np.max(df['reaction_time'])),
+                        round(float(np.mean(count_tot)), 2), int(np.max(count_tot)), int(np.min(count_tot)),
+                        round(float(np.mean(df['result'])) * 100 / float(np.mean(count_tot)), 2)])
         tab = pd.DataFrame(tab)
-        tab.columns = ['Id', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average count image',
-                       'Maximum count image', 'Minimum count image', 'Success/count image', 'disorder']
+        tab.columns = ['Id', 'disorder', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average count image',
+                       'Maximum count image', 'Minimum count image', 'Success/count image']
+        tab = tab.sort_values(by="Id")
         if save_tab:
             tab.to_csv('../statistical_analysis_tasks/stats_jpg/where_is_tockie/stats_where_is_tockie.csv')
         return tab
+
+    def all_success_plot(self, border=False, block='all', disorder='ocd', max_len=63):
+        list_patients = self.get_list_patients(disorder)
+        HC_group = []
+        disorder_group = []
+        HC_group = []
+        disease_group = []
+        other_group = []
+        for df in self.df_files:
+            id = self.get_id(df)
+            disease = list_patients[list_patients[0] == id][1].iloc[0]
+            tab_patient = []
+            # print(df[(df['no_trial'] == 0) & (df['count_image'] == np.max(df[df['no_trial'] == 0][
+            # 'count_image']))]) tab_results = np.array(df[(df['no_trial'] == i) & (df['count_image'] == np.max(df[
+            # df['no_trial'] == i]['count_image']))] for i in range(0, 32))
+            for i in range(32):
+                for j in df[(df['no_trial'] == i) & (df['count_image'] == np.max(df[df['no_trial'] == i]['count_image']))]["result"]:
+                    tab_patient.append(j)
+            if disease == 0:
+                HC_group.append(tab_patient)
+            elif disease == 1:
+                disease_group.append(tab_patient)
+            else:
+                other_group.append(tab_patient)
+
+        plt.plot(np.mean(HC_group, axis=0), 'royalblue', alpha=0.25)
+        plt.plot(np.mean(HC_group, axis=0), 'royalblue', alpha=0.25)
+
+        plt.plot(np.mean(disease_group, axis=0), 'crimson', alpha=0.25)
+        plt.plot(np.mean(disease_group, axis=0), 'crimson', alpha=0.25)
+
+        return HC_group, disorder_group
+
+
+
+
+
 
     def plot_pourcentage(self, disorder='ocd', border=False, save_fig=True):
         """ Create a graph representing success rate depending on the number of trials
@@ -34,14 +73,18 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
         """
 
         plt.figure()
-        plt.suptitle(f'Success rate function of the number of the trial for Where Is Tockie Task')
-        self.all_success_plot(disorder='ocd', border=border, max_len=200, block='all')
+        plt.suptitle(f'WIT - Average of good final answer per trial')
+        self.all_success_plot(disorder='ocd', border=border, max_len=63, block='all')
         plt.legend(self.custom_lines,
                    [f"Healthy Control (n={self.total_people('none')})",
                     f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
+
+        plt.legend(self.custom_lines,
+                   [f"Healthy Control (n=37)",
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n=24)'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
-        plt.grid(True)
+        plt.grid(False)
         plt.tight_layout()
         if save_fig:
             plt.savefig(f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/Success_rate_trials_wit.png')
@@ -77,7 +120,7 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
         else:
             plt.ylabel(f'{category}')
         if save_fig:
-            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/Boxplot:{category}_wit.png')
+            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/Boxplot:{category}_wit_new.png')
         plt.show()
 
     def count_image_analysis(self, disorder='ocd'):
@@ -87,10 +130,9 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
         disorder_count = []
         for df in self.df_files:
             count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
-
+            # contient un vecteur de longueur 32 contenant le max de recheck par essai
             id = int(str(df['id_candidate'].tail(1).item())[8:11])
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-
             if int(disorder_id) == 0:
                 HC_count.append(count_tot)
             elif disorder == 'all':
@@ -99,7 +141,76 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
                 disorder_count.append(count_tot)
         mean_HC = np.nanmean(HC_count, axis=0)
         mean_disorder = np.nanmean(disorder_count, axis=0)
+        # print(mean_HC, mean_disorder)
         return mean_HC, mean_disorder
+
+    def count_image_analysis_ilyass(self, disorder='ocd'):
+        """ More results regarding the variable count_image _ in progress"""
+        HC_count = [0] * 32
+        disorder_count = [0] * 32
+        other_count = [0] * 32
+        for df in self.df_files:
+            count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
+            # contient un vecteur de longueur 32 contenant le max de recheck par essai
+            id = int(str(df['id_candidate'].tail(1).item())[8:11])
+            if self.list_patients[id - 1] == 0:
+                for i in range(len(HC_count)):
+                    HC_count[i] = HC_count[i] + count_tot[i]
+            elif self.list_patients[id - 1] == 1:
+                for i in range(len(HC_count)):
+                    disorder_count[i] = disorder_count[i] + count_tot[i]
+            else:
+                for i in range(len(HC_count)):
+                    other_count[i] = other_count[i] + count_tot[i]
+        for i in range(len(HC_count)):
+            HC_count[i] = round(HC_count[i] / self.list_patients.count(0), 2)
+            disorder_count[i] = round(disorder_count[i] / self.list_patients.count(1), 2)
+            other_count[i] = round(other_count[i] / self.list_patients.count(2), 2)
+        df_count = pd.DataFrame({'HC': HC_count, 'OCD': disorder_count, 'Others': other_count}, index=range(32))
+        return df_count
+
+    def get_success(self, disorder="ocd"):
+        HC_success = [0] * 32
+        OCD_success = [0] * 32
+        Others_success = [0] * 32
+
+        for df in self.df_files:
+            id = int(str(df['id_candidate'].tail(1).item())[8:11])
+            for i in range(32):
+                # print(df[df['no_trial'] == i]['count_image'])
+                if np.max(df[df['no_trial'] == i]['count_image']) == 1:
+                    # print(df[df['no_trial'] == i]["result"])
+                    # print(np.mean(df[df['no_trial'] == i]["result"]))
+                    if self.list_patients[id - 1] == 0:
+                        HC_success[i] += int(np.mean(df[df['no_trial'] == i]["result"]))
+                    elif self.list_patients[id - 1] == 1:
+                        OCD_success[i] += int(np.mean(df[df['no_trial'] == i]["result"]))
+                    else:
+                        Others_success[i] += int(np.mean(df[df['no_trial'] == i]["result"]))
+                else:
+                    if self.list_patients[id - 1] == 0:
+                        HC_success[i] += np.mean(df[df['no_trial'] == i]["result"].iloc[-(
+                            int(len(df[df['no_trial'] == i]['count_image']) / (
+                                np.max(df[df['no_trial'] == i]['count_image'])))):])
+                    elif self.list_patients[id - 1] == 1:
+                        OCD_success[i] += np.mean(df[df['no_trial'] == i]["result"].iloc[-(
+                            int(len(df[df['no_trial'] == i]['count_image']) / (
+                                np.max(df[df['no_trial'] == i]['count_image'])))):])
+                    else:
+                        Others_success[i] += np.mean(df[df['no_trial'] == i]["result"].iloc[-(
+                            int(len(df[df['no_trial'] == i]['count_image']) / (
+                                np.max(df[df['no_trial'] == i]['count_image'])))):])
+
+                    # print(df[df['no_trial'] == i]["result"].iloc[-(int(len(df[df['no_trial'] == i][
+                    # 'count_image'])/(np.max(df[df['no_trial'] == i]['count_image'])))):])
+                    # print(np.mean(df[df['no_trial'] == i]["result"].iloc[-(int(len(df[df['no_trial'] == i]['count_image'])/(np.max(df[df['no_trial'] == i]['count_image'])))):]))
+        for i in range(32):
+            HC_success[i] = round(HC_success[i] / self.list_patients.count(0), 2)
+            OCD_success[i] = round(OCD_success[i] / self.list_patients.count(1), 2)
+            Others_success[i] = round(Others_success[i] / self.list_patients.count(2), 2)
+        df_success = pd.DataFrame({'HC': HC_success, 'OCD': OCD_success, 'Others': Others_success}, index=range(32))
+        # print(df_success)
+        return df_success
 
     def count_image_plot(self, disorder='ocd', save_fig=True):
         mean_HC, mean_disorder = self.count_image_analysis(disorder)

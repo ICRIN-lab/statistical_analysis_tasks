@@ -46,13 +46,14 @@ class LuciferAnalysis(Template_Task_Statistics):
         plt.suptitle(f'Success rate function of the number of the trial for Lucifer Task')
         plt.title(f'(Lucifer Arrangement = {block_lucifer})', fontsize=10)
         self.all_success_plot(disorder='ocd', block=block_lucifer, border=border,
-                              max_len=200)
+                              max_len=100)
         plt.legend(self.custom_lines,
                    [f"Healthy Control (n={self.total_people('none')})",
                     f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
-        plt.grid(True)
+        plt.grid(False)
+        plt.ylim(0, 100)  # change here to change the scale
         plt.tight_layout()
         if save_fig:
             plt.savefig(f'../statistical_analysis_tasks/stats_jpg/lucifer/Success_rate_trials(Lucifer Arrangement = {block_lucifer}).png')

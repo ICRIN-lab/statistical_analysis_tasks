@@ -28,8 +28,10 @@ class SevenDiffAnalysis(Template_Task_Statistics):
     def success_rate_trials(self, df):
         diff = abs(df['ans_candidate'] - df['good_ans'])
         condlist = [diff == 0, diff == 1, diff == 4, diff == 5, diff == 6]
-        choicelist = [1, 2 / 3, 2 / 3, 1 / 3, 0]
+        # choicelist = [1, 2 / 3, 2 / 3, 1 / 3, 0] SI ON VEUT PONDERER
+        choicelist = [1, 0, 0, 0, 0]
         resultat = np.select(condlist, choicelist)
+
         success = [np.mean(resultat[:n]) * 100 for n in range(1, len(resultat) + 1)]
         return np.array(success)
 
@@ -53,8 +55,9 @@ class SevenDiffAnalysis(Template_Task_Statistics):
             res = np.select(condlist, choicelist)
             average_diff.append(np.mean(res))  # something weird here
         tab1['Average Difference'] = average_diff
+        print(tab1)
         if save_tab:
-            tab1.to_csv(f'../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff_{block}.csv')
+            tab1.to_csv(f'../statistical_analysis_tasks/stats_jpg/seven_diff/stats_seven_diff_{block}.csv', index=False)
         return tab1
 
     def plot_pourcentage(self, disorder='ocd', block="all", border=False, save_fig=True):
@@ -73,7 +76,8 @@ class SevenDiffAnalysis(Template_Task_Statistics):
                     f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
-        # plt.grid(True)
+        plt.grid(False)
+        plt.ylim(0, 100)
         plt.tight_layout()
         if save_fig:
             plt.savefig(f'../statistical_analysis_tasks/stats_jpg/seven_diff/Success_rate_trials(Block = {block}).jpg')
