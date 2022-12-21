@@ -80,7 +80,6 @@ class Template_Task_Statistics:
         :return: an array with the success rate regarding no_trial for considered dataframe
         """
         success = [np.mean(df["result"][:n]) * 100 for n in range(1, len(df['result']) + 1)]
-        print("np.mean(success) = ", success)
         return np.array(success)
 
     def base_stats(self, block='all'):
@@ -100,7 +99,6 @@ class Template_Task_Statistics:
             tab.append([id, disorder_id.iloc[0], round(np.mean(df['result']) * 100, 2), round(float(np.mean(df['reaction_time'])), 2),
                         np.max(df['reaction_time'])])
         tab = pd.DataFrame(tab)
-        print(tab)
         tab.columns = ['Id', 'disorder', 'Success rate', 'Average reaction time', 'Maximum reaction time']
         return tab
 
@@ -167,8 +165,6 @@ class Template_Task_Statistics:
                 plt.fill_between(np.arange(0, max_len), np.nanmin(list_group[i], axis=0),
                                  np.nanmax(list_group[i], axis=0),
                                  color=self.col[i], alpha=0.25)
-        print(np.nanmean(HC_group, axis=0))
-        print(np.nanmean(disorder_group, axis=0))
         sns.lineplot(data=np.nanmean(HC_group, axis=0), color=self.col[0])
         sns.lineplot(data=np.nanmean(disorder_group, axis=0), color=self.col[1])
         return np.nanmean(HC_group, axis=0), np.nanmean(disorder_group, axis=0)

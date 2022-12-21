@@ -15,7 +15,6 @@ result_lucifer = LuciferAnalysis()
 result_where_is_tockie = WhereIsTockieAnalysis()
 
 
-
 def significative_group(disorder='ocd'):
     task_feature = []
     p_val = []
@@ -85,6 +84,7 @@ def redcap_tab():
     tab.to_csv('../statistical_analysis_tasks/other/overview_tab.csv', index=False)
     return tab
 
+
 def summary_stats():
     lucifer_all = pd.read_csv('stats_jpg/lucifer/stats_lucifer_all.csv')
     lucifer_messy = pd.read_csv('stats_jpg/lucifer/stats_lucifer_messy.csv')
@@ -99,36 +99,123 @@ def summary_stats():
     where_is_tockie_all = pd.read_csv('stats_jpg/where_is_tockie/stats_where_is_tockie.csv')
 
     summary_data = [["Lucifer", "", "", "", "", ""],
-                    ["", "Success rate all (%)", round(float(np.mean(lucifer_all[lucifer_all.disorder == 1]["Success rate"])), 2), round(float(np.mean(lucifer_all[lucifer_all.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(lucifer_all[lucifer_all.disorder == 1]["Success rate"], lucifer_all[lucifer_all.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(lucifer_all[lucifer_all.disorder == 1]["Success rate"], lucifer_all[lucifer_all.disorder == 0]["Success rate"])[1], 3)],
-                    ["", "Success rate messy (%)", round(float(np.mean(lucifer_messy[lucifer_messy.disorder == 1]["Success rate"])), 2), round(float(np.mean(lucifer_messy[lucifer_messy.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(lucifer_messy[lucifer_messy.disorder == 1]["Success rate"], lucifer_messy[lucifer_messy.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(lucifer_messy[lucifer_messy.disorder == 1]["Success rate"], lucifer_messy[lucifer_messy.disorder == 0]["Success rate"])[1], 3)],
-                    ["", "Success rate special (%)", round(float(np.mean(lucifer_special[lucifer_special.disorder == 1]["Success rate"])), 2), round(float(np.mean(lucifer_special[lucifer_special.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(lucifer_special[lucifer_special.disorder == 1]["Success rate"], lucifer_special[lucifer_special.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(lucifer_special[lucifer_special.disorder == 1]["Success rate"], lucifer_special[lucifer_special.disorder == 0]["Success rate"])[1], 3)],
-                    ["", "Success rate straight (%)", round(float(np.mean(lucifer_straight[lucifer_straight.disorder == 1]["Success rate"])), 2), round(float(np.mean(lucifer_straight[lucifer_straight.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(lucifer_straight[lucifer_straight.disorder == 1]["Success rate"], lucifer_straight[lucifer_straight.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(lucifer_straight[lucifer_straight.disorder == 1]["Success rate"], lucifer_straight[lucifer_straight.disorder == 0]["Success rate"])[1], 3)],
-                    ["", "", "", "", "", "",],
+                    ["", "Success rate all (%)",
+                     round(float(np.mean(lucifer_all[lucifer_all.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(lucifer_all[lucifer_all.disorder == 0]["Success rate"])), 2), round(
+                        stats.ttest_ind(lucifer_all[lucifer_all.disorder == 1]["Success rate"],
+                                        lucifer_all[lucifer_all.disorder == 0]["Success rate"])[0], 2), round(
+                        stats.ttest_ind(lucifer_all[lucifer_all.disorder == 1]["Success rate"],
+                                        lucifer_all[lucifer_all.disorder == 0]["Success rate"])[1], 3)],
+                    ["", "Success rate messy (%)",
+                     round(float(np.mean(lucifer_messy[lucifer_messy.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(lucifer_messy[lucifer_messy.disorder == 0]["Success rate"])), 2), round(
+                        stats.ttest_ind(lucifer_messy[lucifer_messy.disorder == 1]["Success rate"],
+                                        lucifer_messy[lucifer_messy.disorder == 0]["Success rate"])[0], 2), round(
+                        stats.ttest_ind(lucifer_messy[lucifer_messy.disorder == 1]["Success rate"],
+                                        lucifer_messy[lucifer_messy.disorder == 0]["Success rate"])[1], 3)],
+                    ["", "Success rate special (%)",
+                     round(float(np.mean(lucifer_special[lucifer_special.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(lucifer_special[lucifer_special.disorder == 0]["Success rate"])), 2), round(
+                        stats.ttest_ind(lucifer_special[lucifer_special.disorder == 1]["Success rate"],
+                                        lucifer_special[lucifer_special.disorder == 0]["Success rate"])[0], 2), round(
+                        stats.ttest_ind(lucifer_special[lucifer_special.disorder == 1]["Success rate"],
+                                        lucifer_special[lucifer_special.disorder == 0]["Success rate"])[1], 3)],
+                    ["", "Success rate straight (%)",
+                     round(float(np.mean(lucifer_straight[lucifer_straight.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(lucifer_straight[lucifer_straight.disorder == 0]["Success rate"])), 2), round(
+                        stats.ttest_ind(lucifer_straight[lucifer_straight.disorder == 1]["Success rate"],
+                                        lucifer_straight[lucifer_straight.disorder == 0]["Success rate"])[0], 2), round(
+                        stats.ttest_ind(lucifer_straight[lucifer_straight.disorder == 1]["Success rate"],
+                                        lucifer_straight[lucifer_straight.disorder == 0]["Success rate"])[1], 3)],
+                    ["", "", "", "", "", "", ],
                     ["Symmetry", "", "", "", "", ""],
-                    ["", "Success rate symmetry (%)", round(float(np.mean(symmetry[symmetry.disorder == 1]["Success rate"])), 2), round(float(np.mean(symmetry[symmetry.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(symmetry[symmetry.disorder == 1]["Success rate"], symmetry[symmetry.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(symmetry[symmetry.disorder == 1]["Success rate"], symmetry[symmetry.disorder == 0]["Success rate"])[1], 3)],
+                    ["", "Success rate symmetry (%)",
+                     round(float(np.mean(symmetry[symmetry.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(symmetry[symmetry.disorder == 0]["Success rate"])), 2), round(
+                        stats.ttest_ind(symmetry[symmetry.disorder == 1]["Success rate"],
+                                        symmetry[symmetry.disorder == 0]["Success rate"])[0], 2), round(
+                        stats.ttest_ind(symmetry[symmetry.disorder == 1]["Success rate"],
+                                        symmetry[symmetry.disorder == 0]["Success rate"])[1], 3)],
                     ["", "", "", "", "", ""],
                     ["Seven Diff", "", "", "", "", ""],
-                    ["", "Success rate all (%)", round(float(np.mean(seven_diff_all[seven_diff_all.disorder == 1]["Success rate"])), 2), round(float(np.mean(seven_diff_all[seven_diff_all.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(seven_diff_all[seven_diff_all.disorder == 1]["Success rate"], seven_diff_all[seven_diff_all.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(seven_diff_all[seven_diff_all.disorder == 1]["Success rate"], seven_diff_all[seven_diff_all.disorder == 0]["Success rate"])[1], 5)],
-                    ["", "Success rate shocking (%)", round(float(np.mean(seven_diff_shocking[seven_diff_shocking.disorder == 1]["Success rate"])), 2), round(float(np.mean(seven_diff_shocking[seven_diff_shocking.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(seven_diff_shocking[seven_diff_shocking.disorder == 1]["Success rate"], seven_diff_shocking[seven_diff_shocking.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(seven_diff_shocking[seven_diff_shocking.disorder == 1]["Success rate"], seven_diff_shocking[seven_diff_shocking.disorder == 0]["Success rate"])[1], 3)],
-                    ["", "Success rate non-shocking (%)", round(float(np.mean(seven_diff_non_shocking[seven_diff_non_shocking.disorder == 1]["Success rate"])), 2), round(float(np.mean(seven_diff_non_shocking[seven_diff_non_shocking.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(seven_diff_non_shocking[seven_diff_non_shocking.disorder == 1]["Success rate"], seven_diff_non_shocking[seven_diff_non_shocking.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(seven_diff_non_shocking[seven_diff_non_shocking.disorder == 1]["Success rate"], seven_diff_non_shocking[seven_diff_non_shocking.disorder == 0]["Success rate"])[1], 3)],
-                    ["", "Success rate calligraphy (%)", round(float(np.mean(seven_diff_calligraphy[seven_diff_calligraphy.disorder == 1]["Success rate"])), 2), round(float(np.mean(seven_diff_calligraphy[seven_diff_calligraphy.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(seven_diff_calligraphy[seven_diff_calligraphy.disorder == 1]["Success rate"], seven_diff_calligraphy[seven_diff_calligraphy.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(seven_diff_calligraphy[seven_diff_calligraphy.disorder == 1]["Success rate"], seven_diff_calligraphy[seven_diff_calligraphy.disorder == 0]["Success rate"])[1], 3)],
-                    ["", "Success rate chess (%)", round(float(np.mean(seven_diff_chess[seven_diff_chess.disorder == 1]["Success rate"])), 2), round(float(np.mean(seven_diff_chess[seven_diff_chess.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(seven_diff_chess[seven_diff_chess.disorder == 1]["Success rate"], seven_diff_chess[seven_diff_chess.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(seven_diff_chess[seven_diff_chess.disorder == 1]["Success rate"], seven_diff_chess[seven_diff_chess.disorder == 0]["Success rate"])[1], 3)],
+                    ["", "Success rate all (%)",
+                     round(float(np.mean(seven_diff_all[seven_diff_all.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(seven_diff_all[seven_diff_all.disorder == 0]["Success rate"])), 2), round(
+                        stats.ttest_ind(seven_diff_all[seven_diff_all.disorder == 1]["Success rate"],
+                                        seven_diff_all[seven_diff_all.disorder == 0]["Success rate"])[0], 2), round(
+                        stats.ttest_ind(seven_diff_all[seven_diff_all.disorder == 1]["Success rate"],
+                                        seven_diff_all[seven_diff_all.disorder == 0]["Success rate"])[1], 5)],
+                    ["", "Success rate shocking (%)",
+                     round(float(np.mean(seven_diff_shocking[seven_diff_shocking.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(seven_diff_shocking[seven_diff_shocking.disorder == 0]["Success rate"])), 2),
+                     round(stats.ttest_ind(seven_diff_shocking[seven_diff_shocking.disorder == 1]["Success rate"],
+                                           seven_diff_shocking[seven_diff_shocking.disorder == 0]["Success rate"])[0],
+                           2), round(
+                        stats.ttest_ind(seven_diff_shocking[seven_diff_shocking.disorder == 1]["Success rate"],
+                                        seven_diff_shocking[seven_diff_shocking.disorder == 0]["Success rate"])[1], 3)],
+                    ["", "Success rate non-shocking (%)", round(
+                        float(np.mean(seven_diff_non_shocking[seven_diff_non_shocking.disorder == 1]["Success rate"])),
+                        2), round(
+                        float(np.mean(seven_diff_non_shocking[seven_diff_non_shocking.disorder == 0]["Success rate"])),
+                        2), round(
+                        stats.ttest_ind(seven_diff_non_shocking[seven_diff_non_shocking.disorder == 1]["Success rate"],
+                                        seven_diff_non_shocking[seven_diff_non_shocking.disorder == 0]["Success rate"])[
+                            0], 2), round(
+                        stats.ttest_ind(seven_diff_non_shocking[seven_diff_non_shocking.disorder == 1]["Success rate"],
+                                        seven_diff_non_shocking[seven_diff_non_shocking.disorder == 0]["Success rate"])[
+                            1], 3)],
+                    ["", "Success rate calligraphy (%)",
+                     round(float(np.mean(seven_diff_calligraphy[seven_diff_calligraphy.disorder == 1]["Success rate"])),
+                           2),
+                     round(float(np.mean(seven_diff_calligraphy[seven_diff_calligraphy.disorder == 0]["Success rate"])),
+                           2), round(
+                        stats.ttest_ind(seven_diff_calligraphy[seven_diff_calligraphy.disorder == 1]["Success rate"],
+                                        seven_diff_calligraphy[seven_diff_calligraphy.disorder == 0]["Success rate"])[
+                            0], 2), round(
+                        stats.ttest_ind(seven_diff_calligraphy[seven_diff_calligraphy.disorder == 1]["Success rate"],
+                                        seven_diff_calligraphy[seven_diff_calligraphy.disorder == 0]["Success rate"])[
+                            1], 3)],
+                    ["", "Success rate chess (%)",
+                     round(float(np.mean(seven_diff_chess[seven_diff_chess.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(seven_diff_chess[seven_diff_chess.disorder == 0]["Success rate"])), 2), round(
+                        stats.ttest_ind(seven_diff_chess[seven_diff_chess.disorder == 1]["Success rate"],
+                                        seven_diff_chess[seven_diff_chess.disorder == 0]["Success rate"])[0], 2), round(
+                        stats.ttest_ind(seven_diff_chess[seven_diff_chess.disorder == 1]["Success rate"],
+                                        seven_diff_chess[seven_diff_chess.disorder == 0]["Success rate"])[1], 3)],
                     ["", "", "", "", "", ""],
                     ["Where Is Tockie", "", "", "", "", ""],
-                    ["", "Success rate (%)", round(float(np.mean(where_is_tockie_all[where_is_tockie_all.disorder ==1]["Success rate"])), 2), round(float(np.mean(where_is_tockie_all[where_is_tockie_all.disorder == 0]["Success rate"])), 2), round(stats.ttest_ind(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Success rate"], where_is_tockie_all[where_is_tockie_all.disorder == 0]["Success rate"])[0], 2), round(stats.ttest_ind(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Success rate"], where_is_tockie_all[where_is_tockie_all.disorder == 0]["Success rate"])[1], 3)],
-                    ["", "Average count image", round(float(np.mean(where_is_tockie_all[where_is_tockie_all.disorder ==1]["Average count image"])), 2), round(float(np.mean(where_is_tockie_all[where_is_tockie_all.disorder == 0]["Average count image"])), 2), round(stats.ttest_ind(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Average count image"], where_is_tockie_all[where_is_tockie_all.disorder == 0]["Average count image"])[0], 2), round(stats.ttest_ind(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Average count image"], where_is_tockie_all[where_is_tockie_all.disorder == 0]["Average count image"])[1], 3)]
+                    ["", "Success rate (%)",
+                     round(float(np.mean(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Success rate"])), 2),
+                     round(float(np.mean(where_is_tockie_all[where_is_tockie_all.disorder == 0]["Success rate"])), 2),
+                     round(stats.ttest_ind(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Success rate"],
+                                           where_is_tockie_all[where_is_tockie_all.disorder == 0]["Success rate"])[0],
+                           2), round(
+                        stats.ttest_ind(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Success rate"],
+                                        where_is_tockie_all[where_is_tockie_all.disorder == 0]["Success rate"])[1], 3)],
+                    ["", "Average count image", round(
+                        float(np.mean(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Average count image"])),
+                        2), round(
+                        float(np.mean(where_is_tockie_all[where_is_tockie_all.disorder == 0]["Average count image"])),
+                        2), round(
+                        stats.ttest_ind(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Average count image"],
+                                        where_is_tockie_all[where_is_tockie_all.disorder == 0]["Average count image"])[
+                            0], 2), round(
+                        stats.ttest_ind(where_is_tockie_all[where_is_tockie_all.disorder == 1]["Average count image"],
+                                        where_is_tockie_all[where_is_tockie_all.disorder == 0]["Average count image"])[
+                            1], 3)]
                     ]
     summary_data = pd.DataFrame(summary_data)
     summary_data.columns = ['', '', 'OCD', 'HC', "t", "p"]
     summary_data.to_csv('summary_stats.csv', index=False)
     return summary_data
 
+
 summary_stats()
 # list_patients_eeg = result_seven.get_eeg_patient()
 # print("list patients = ", list_patients_eeg)
 # result_seven.stats(save_tab=True)
 # result_seven.plot_pourcentage(save_fig=True)
-#result_seven.plot_pourcentage(block="non-shocking")
+# result_seven.plot_pourcentage(block="non-shocking")
 # result_seven.plot_pourcentage(block="calligraphy")
 # result_seven.plot_pourcentage(block="shocking")
 # result_seven.plot_pourcentage(block="non-shocking")
@@ -155,23 +242,27 @@ summary_stats()
 # print(norm_test_anderson)
 # print(levene_test)
 
-# stats_WIT = result_where_is_tockie.plot_pourcentage()
-# result_where_is_tockie.plot_pourcentage() good
-# result_symmetry.plot_pourcentage() good
-# result_lucifer.plot_pourcentage() good
+'''
+WHERE IS TOCKIE
+'''
+# result_where_is_tockie.plot_pourcentage(first_try_analysis=False)
+#result_where_is_tockie.count_image_analysis_ilyass()
+
+'''
+LUCIFER
+'''
+result_lucifer.average_rt() # + success rate t test
+# result_lucifer.plot_pourcentage()
+
+'''
+Seven Diff
+'''
 # result_seven.plot_pourcentage()
-# result_where_is_tockie.count_image_analysis_ilyass() ood
-# print(stats_WIT.columns)
-# print(stats_WIT.to_string())
-# df_success = result_where_is_tockie.get_success()
-# result_where_is_tockie.boxplot_average()
-# result_where_is_tockie.plot_pourcentage()
-# y_success = stats.ttest_ind(df_success["HC"], df_success["OCD"])
-# print(y_success)
-# df_count.drop('Others', inplace=True, axis=1)
-# df_count.plot()
-# plt.show()
-# print(y)
+# result_seven.tests_seven_diff()
+'''
+Symmetry
+'''
+# result_symmetry.plot_pourcentage()
+# result_symmetry.test_success_rate()
 
 
-# checker si apprentissage dans WIT

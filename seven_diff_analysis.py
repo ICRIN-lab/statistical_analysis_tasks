@@ -1,5 +1,6 @@
 from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
+from scipy import stats
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -162,4 +163,60 @@ class SevenDiffAnalysis(Template_Task_Statistics):
         sns.lineplot(data=np.nanmean(disorder_group, axis=0), color=self.col[1])
         plt.show()
 
-    # def difference_plot(self):
+    def tests_seven_diff(self):
+        stats_seven_diff_all = pd.read_csv('stats_jpg/seven_diff/stats_seven_diff_all.csv')
+        stats_seven_diff_shocking = pd.read_csv('stats_jpg/seven_diff/stats_seven_diff_shocking.csv')
+        stats_seven_diff_nonshocking = pd.read_csv('stats_jpg/seven_diff/stats_seven_diff_non-shocking.csv')
+        stats_seven_diff_calligraphy = pd.read_csv('stats_jpg/seven_diff/stats_seven_diff_calligraphy.csv')
+        stats_seven_diff_chess = pd.read_csv('stats_jpg/seven_diff/stats_seven_diff_chess.csv')
+
+        print("All \n --------------------\n")
+        print(np.mean(stats_seven_diff_all[stats_seven_diff_all["disorder"] == 0]["Success rate"]))
+        print(np.mean(stats_seven_diff_all[stats_seven_diff_all["disorder"] == 0]["Average reaction time"]))
+        print(np.mean(stats_seven_diff_all[stats_seven_diff_all["disorder"] == 1]["Success rate"]))
+        print(np.mean(stats_seven_diff_all[stats_seven_diff_all["disorder"] == 1]["Average reaction time"]))
+        print(stats.ttest_ind(stats_seven_diff_all[stats_seven_diff_all["disorder"] == 0]["Success rate"],
+              stats_seven_diff_all[stats_seven_diff_all["disorder"] == 1]["Success rate"]))
+        print(stats.ttest_ind(stats_seven_diff_all[stats_seven_diff_all["disorder"] == 0]["Average reaction time"],
+              stats_seven_diff_all[stats_seven_diff_all["disorder"] == 1]["Average reaction time"]))
+
+        print("Shocking \n --------------------\n")
+        print(np.mean(stats_seven_diff_shocking[stats_seven_diff_shocking["disorder"] == 0]["Success rate"]))
+        print(np.mean(stats_seven_diff_shocking[stats_seven_diff_shocking["disorder"] == 0]["Average reaction time"]))
+        print(np.mean(stats_seven_diff_shocking[stats_seven_diff_shocking["disorder"] == 1]["Success rate"]))
+        print(np.mean(stats_seven_diff_shocking[stats_seven_diff_shocking["disorder"] == 1]["Average reaction time"]))
+        print(stats.ttest_ind(stats_seven_diff_shocking[stats_seven_diff_shocking["disorder"] == 0]["Success rate"],
+              stats_seven_diff_shocking[stats_seven_diff_shocking["disorder"] == 1]["Success rate"]))
+        print(stats.ttest_ind(stats_seven_diff_shocking[stats_seven_diff_shocking["disorder"] == 0]["Average reaction time"],
+              stats_seven_diff_shocking[stats_seven_diff_shocking["disorder"] == 1]["Average reaction time"]))
+
+
+        print("Non-shocking \n --------------------\n")
+        print(np.mean(stats_seven_diff_nonshocking[stats_seven_diff_nonshocking["disorder"] == 0]["Success rate"]))
+        print(np.mean(stats_seven_diff_nonshocking[stats_seven_diff_nonshocking["disorder"] == 0]["Average reaction time"]))
+        print(np.mean(stats_seven_diff_nonshocking[stats_seven_diff_nonshocking["disorder"] == 1]["Success rate"]))
+        print(np.mean(stats_seven_diff_nonshocking[stats_seven_diff_nonshocking["disorder"] == 1]["Average reaction time"]))
+        print(stats.ttest_ind(stats_seven_diff_nonshocking[stats_seven_diff_nonshocking["disorder"] == 0]["Success rate"],
+                              stats_seven_diff_nonshocking[stats_seven_diff_nonshocking["disorder"] == 1]["Success rate"]))
+        print(stats.ttest_ind(stats_seven_diff_nonshocking[stats_seven_diff_nonshocking["disorder"] == 0]["Average reaction time"],
+                              stats_seven_diff_nonshocking[stats_seven_diff_nonshocking["disorder"] == 1]["Average reaction time"]))
+
+        print("Calligraphy \n --------------------\n")
+        print(np.mean(stats_seven_diff_calligraphy[stats_seven_diff_calligraphy["disorder"] == 0]["Success rate"]))
+        print(np.mean(stats_seven_diff_calligraphy[stats_seven_diff_calligraphy["disorder"] == 0]["Average reaction time"]))
+        print(np.mean(stats_seven_diff_calligraphy[stats_seven_diff_calligraphy["disorder"] == 1]["Success rate"]))
+        print(np.mean(stats_seven_diff_calligraphy[stats_seven_diff_calligraphy["disorder"] == 1]["Average reaction time"]))
+        print(stats.ttest_ind(stats_seven_diff_calligraphy[stats_seven_diff_calligraphy["disorder"] == 0]["Success rate"],
+                              stats_seven_diff_calligraphy[stats_seven_diff_calligraphy["disorder"] == 1]["Success rate"]))
+        print(stats.ttest_ind(stats_seven_diff_calligraphy[stats_seven_diff_calligraphy["disorder"] == 0]["Average reaction time"],
+                              stats_seven_diff_calligraphy[stats_seven_diff_calligraphy["disorder"] == 1]["Average reaction time"]))
+
+        print("Chess \n --------------------\n")
+        print(np.mean(stats_seven_diff_chess[stats_seven_diff_chess["disorder"] == 0]["Success rate"]))
+        print(np.mean(stats_seven_diff_chess[stats_seven_diff_chess["disorder"] == 0]["Average reaction time"]))
+        print(np.mean(stats_seven_diff_chess[stats_seven_diff_chess["disorder"] == 1]["Success rate"]))
+        print(np.mean(stats_seven_diff_chess[stats_seven_diff_chess["disorder"] == 1]["Average reaction time"]))
+        print(stats.ttest_ind(stats_seven_diff_chess[stats_seven_diff_chess["disorder"] == 0]["Success rate"],
+                            stats_seven_diff_chess[stats_seven_diff_chess["disorder"] == 1]["Success rate"]))
+        print(stats.ttest_ind(stats_seven_diff_chess[stats_seven_diff_chess["disorder"] == 0]["Average reaction time"],
+                            stats_seven_diff_chess[stats_seven_diff_chess["disorder"] == 1]["Average reaction time"]))

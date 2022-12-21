@@ -41,8 +41,18 @@ class SymmetryAnalysis(Template_Task_Statistics):
         HC_group, disorder_group = self.all_success_plot(max_len=100)
         # print(HC_group)
         # print(disorder_group)
-        print(np.mean(HC_group), np.mean(disorder_group))  # 86% vs 80%
-        print("t-test symmetry : ", stats.ttest_ind(HC_group, disorder_group))  # t = 20, p = 1.52e-50
+        stats_symmetry = pd.read_csv('stats_jpg/symmetry/stats_symmetry.csv')
+        print(np.mean((stats_symmetry[stats_symmetry["disorder"] == 1]["Average reaction time"])))
+        print(np.mean((stats_symmetry[stats_symmetry["disorder"] == 0]["Average reaction time"])))
+        print(np.mean((stats_symmetry[stats_symmetry["disorder"] == 1]["Success rate"])))
+        print(np.mean((stats_symmetry[stats_symmetry["disorder"] == 0]["Success rate"])))
+        print(stats.ttest_ind(stats_symmetry[stats_symmetry["disorder"] == 0]["Average reaction time"],
+                              stats_symmetry[stats_symmetry["disorder"] == 1]["Average reaction time"]))
+        print(stats.ttest_ind(stats_symmetry[stats_symmetry["disorder"] == 0]["Success rate"],
+              stats_symmetry[stats_symmetry["disorder"] == 1]["Success rate"]))
+
+        # print(np.mean(HC_group, axis=0), np.mean(disorder_group, axis=0))  # 86% vs 80%
+        # print("t-test symmetry : ", stats.ttest_ind(HC_group, disorder_group))  # t = 20, p = 1.52e-50
 
 
     def boxplot_average(self, category='Success rate', disorder='ocd', save_fig=True):

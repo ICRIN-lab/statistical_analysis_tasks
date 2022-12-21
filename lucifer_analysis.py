@@ -1,4 +1,5 @@
 import pandas as pd
+from scipy import stats
 
 from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
@@ -98,3 +99,14 @@ class LuciferAnalysis(Template_Task_Statistics):
         """
 
         """
+    def average_rt(self, disorder="ocd"):
+        stats_lucifer = pd.read_csv('stats_jpg/lucifer/stats_lucifer_all.csv')
+        print(np.mean((stats_lucifer[stats_lucifer["disorder"] == 1]["Average reaction time"])))
+        print(np.mean((stats_lucifer[stats_lucifer["disorder"] == 0]["Average reaction time"])))
+        print(np.mean((stats_lucifer[stats_lucifer["disorder"] == 1]["Success rate"])))
+        print(np.mean((stats_lucifer[stats_lucifer["disorder"] == 0]["Success rate"])))
+        print(stats.ttest_ind(stats_lucifer[stats_lucifer["disorder"] == 0]["Average reaction time"],
+                              stats_lucifer[stats_lucifer["disorder"] == 1]["Average reaction time"]))
+        print(stats.ttest_ind(stats_lucifer[stats_lucifer["disorder"] == 0]["Success rate"],
+              stats_lucifer[stats_lucifer["disorder"] == 1]["Success rate"]))
+

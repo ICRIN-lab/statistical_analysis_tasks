@@ -1,4 +1,5 @@
 import pandas as pd
+from scipy import stats
 
 from Template_Task_Statistics import Template_Task_Statistics
 import matplotlib.pyplot as plt
@@ -16,56 +17,80 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
             count_tot = np.array([np.max(df[df['no_trial'] == i]['count_image']) for i in range(0, 32)])
             count_tot = count_tot[~np.isnan(count_tot)]
             disorder_id = self.redcap_csv[self.redcap_csv.record_id == id]['diagnostic_principal']
-            tab.append([id, disorder_id.iloc[0], round(float(np.mean(df['result'])) * 100, 1), round(float(np.mean(df['reaction_time'])), 2),
+            tab.append([id, disorder_id.iloc[0], round(float(np.mean(df['result'])) * 100, 1),
+                        round(float(np.mean(df['reaction_time'])), 2),
                         float(np.max(df['reaction_time'])),
                         round(float(np.mean(count_tot)), 2), int(np.max(count_tot)), int(np.min(count_tot)),
                         round(float(np.mean(df['result'])) * 100 / float(np.mean(count_tot)), 2)])
         tab = pd.DataFrame(tab)
-        tab.columns = ['Id', 'disorder', 'Success rate', 'Average reaction time', 'Maximum reaction time', 'Average count image',
+        tab.columns = ['Id', 'disorder', 'Success rate', 'Average reaction time', 'Maximum reaction time',
+                       'Average count image',
                        'Maximum count image', 'Minimum count image', 'Success/count image']
         tab = tab.sort_values(by="Id")
         if save_tab:
             tab.to_csv('../statistical_analysis_tasks/stats_jpg/where_is_tockie/stats_where_is_tockie.csv')
         return tab
 
-    def all_success_plot(self, border=False, block='all', disorder='ocd', max_len=63):
+    def all_success_plot(self, border=False, block='all', disorder='ocd', max_len=63, first_try_analysis=False):
         list_patients = self.get_list_patients(disorder)
         HC_group = []
         disorder_group = []
         HC_group = []
-        disease_group = []
         other_group = []
         for df in self.df_files:
             id = self.get_id(df)
             disease = list_patients[list_patients[0] == id][1].iloc[0]
             tab_patient = []
-            # print(df[(df['no_trial'] == 0) & (df['count_image'] == np.max(df[df['no_trial'] == 0][
-            # 'count_image']))]) tab_results = np.array(df[(df['no_trial'] == i) & (df['count_image'] == np.max(df[
-            # df['no_trial'] == i]['count_image']))] for i in range(0, 32))
             for i in range(32):
-                for j in df[(df['no_trial'] == i) & (df['count_image'] == np.max(df[df['no_trial'] == i]['count_image']))]["result"]:
-                    tab_patient.append(j)
+                if first_try_analysis:
+                    for j in df[(df['no_trial'] == i) & (df['count_image'] == 1)]["result"]:
+                        tab_patient.append(j)
+                else:
+                    for j in \
+                            df[(df['no_trial'] == i) & (
+                                    df['count_image'] == np.max(df[df['no_trial'] == i]['count_image']))][
+                                "result"]:
+                        tab_patient.append(j)
             if disease == 0:
                 HC_group.append(tab_patient)
             elif disease == 1:
-                disease_group.append(tab_patient)
+                disorder_group.append(tab_patient)
             else:
                 other_group.append(tab_patient)
+        final_patient_pourc = []
+        for patient in disorder_group:
+            patient_pourc = []
+            for i in range(len(patient)):
+                patient_pourc.append(sum(patient[:i + 1]) / (len(patient[:i + 1])))
+            final_patient_pourc.append(patient_pourc)
 
+        final_hc_pourc = []
+        for hc in HC_group:
+            hc_pourc = []
+            for i in range(len(hc)):
+                hc_pourc.append(sum(hc[:i + 1]) / (len(hc[:i + 1])))
+            final_hc_pourc.append(hc_pourc)
+
+        # if you want to plot success rate per trial
+        '''
         plt.plot(np.mean(HC_group, axis=0), 'royalblue', alpha=0.25)
         plt.plot(np.mean(HC_group, axis=0), 'royalblue', alpha=0.25)
 
-        plt.plot(np.mean(disease_group, axis=0), 'crimson', alpha=0.25)
-        plt.plot(np.mean(disease_group, axis=0), 'crimson', alpha=0.25)
+        plt.plot(np.mean(disorder_group, axis=0), 'crimson', alpha=0.25)
+        plt.plot(np.mean(disorder_group, axis=0), 'crimson', alpha=0.25)
+        '''
 
+        # if you want to plot success rate continuously
+        plt.plot(np.mean(final_hc_pourc, axis=0) * 100, 'royalblue', alpha=0.25)
+        plt.plot(np.mean(final_hc_pourc, axis=0) * 100, 'royalblue', alpha=0.25)
+        plt.plot(np.mean(final_patient_pourc, axis=0) * 100, 'crimson', alpha=0.25)
+        plt.plot(np.mean(final_patient_pourc, axis=0) * 100, 'crimson', alpha=0.25)
+        print(np.mean(final_hc_pourc, axis=0) * 100)
+        print(np.mean(final_patient_pourc, axis=0) * 100)
+        print(stats.ttest_ind(np.mean(final_hc_pourc, axis=0) * 100, np.mean(final_patient_pourc, axis=0) * 100))
         return HC_group, disorder_group
 
-
-
-
-
-
-    def plot_pourcentage(self, disorder='ocd', border=False, save_fig=True):
+    def plot_pourcentage(self, disorder='ocd', border=False, save_fig=True, first_try_analysis=False):
         """ Create a graph representing success rate depending on the number of trials
         :param disorder: the disorder you are interested in (default = 'ocd')
         :param border: True, if you want margins of the result for each group, False otherwise (default = False)
@@ -73,8 +98,9 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
         """
 
         plt.figure()
-        plt.suptitle(f'WIT - Average of good final answer per trial')
-        self.all_success_plot(disorder='ocd', border=border, max_len=63, block='all')
+        plt.suptitle(f'WIT - Average of good final answer per trial first_try_analysis = {first_try_analysis}')
+        self.all_success_plot(disorder='ocd', border=border, max_len=63, block='all',
+                              first_try_analysis=first_try_analysis)
         plt.legend(self.custom_lines,
                    [f"Healthy Control (n={self.total_people('none')})",
                     f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
@@ -85,9 +111,15 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
         plt.ylabel('Success rate (%)')
         plt.xlabel("N trials")
         plt.grid(False)
+        plt.ylim(0, 105)  # change here to change the scale
         plt.tight_layout()
         if save_fig:
-            plt.savefig(f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/Success_rate_trials_wit.png')
+            if first_try_analysis:
+                plt.savefig(
+                    f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/success_rate_trials_wit_first_try.png')
+            else:
+                plt.savefig(
+                    f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/success_rate_trials_wit_last_try.png')
         plt.show()
 
     def boxplot_average(self, category='Success rate', disorder='ocd', save_fig=True):
@@ -166,7 +198,29 @@ class WhereIsTockieAnalysis(Template_Task_Statistics):
             HC_count[i] = round(HC_count[i] / self.list_patients.count(0), 2)
             disorder_count[i] = round(disorder_count[i] / self.list_patients.count(1), 2)
             other_count[i] = round(other_count[i] / self.list_patients.count(2), 2)
+            if abs(HC_count[i] - disorder_count[i]) >= 0.3:
+                print(i, round(abs(HC_count[i] - disorder_count[i]),
+                               2))  # check quelle image a eu bcp plus de count que les autres entre les deux groupes
         df_count = pd.DataFrame({'HC': HC_count, 'OCD': disorder_count, 'Others': other_count}, index=range(32))
+        print(np.mean(df_count["HC"]))
+        print(np.mean(df_count["OCD"]))
+        print(stats.ttest_ind(df_count["HC"], df_count["OCD"]))
+        plt.plot(HC_count, 'royalblue', alpha=0.25)
+        plt.plot(disorder_count, 'crimson', alpha=0.25)
+        plt.legend(self.custom_lines,
+                   [f"Healthy Control (n={self.total_people('none')})",
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n={self.total_people(disorder)})'])
+
+        plt.legend(self.custom_lines,
+                   [f"Healthy Control (n=37)",
+                    f'{self.list_graph_name[self.list_disorder.index(disorder)]} (n=24)'])
+        plt.ylabel('Count average')
+        plt.xlabel("N trials")
+        plt.grid(False)
+        # plt.ylim(0, 100)  # change here to change the scale
+        plt.tight_layout()
+        plt.savefig(f'../statistical_analysis_tasks/stats_jpg/where_is_tockie/count_average.png')
+        plt.show()
         return df_count
 
     def get_success(self, disorder="ocd"):
